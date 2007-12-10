@@ -1,0 +1,1 @@
+E:\Programs\Java\jdk1.5.0_08\bin\java -jar dist\hoipolloi.jar
