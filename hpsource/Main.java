@@ -20,7 +20,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Debug.turnOff();  
+        //Debug.turnOff();  
+        Debug.turnOn();
         MainMenu foo = new MainMenu();
         try {
             Person dude = new Person(249);

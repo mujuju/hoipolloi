@@ -478,6 +478,13 @@ public class MainMenu extends JFrame implements ActionListener {
         return format.format(dateObject);
     }
     
+    /**
+     * A test approach for editing a profile.
+     * 
+     * Probably won't use this approach, someone make a better idea.
+     * 
+     * @param person The Person's Profile to Edit.
+     */
     public void editProfile(Person person) {
         removeAllComponents();
         
@@ -940,7 +947,7 @@ public class MainMenu extends JFrame implements ActionListener {
             desc = "You have not entered a description for this person yet!";
         
         String fileName = person.getPhotoFileName();
-        System.out.println(fileName); //show filename debug
+        Debug.print(fileName); //show filename debug
         if (fileName == null || fileName.equals(""))
             fileName = "unknown.jpg";      
         
@@ -1144,10 +1151,11 @@ public class MainMenu extends JFrame implements ActionListener {
 
         ArrayList contacts = person.getContacts();
         // Create Table
-        ctnTable = new JTable(contacts.size(), 2);
+        ctnTable = new JTable(contacts.size(), 3);
         
         ctnTable.getColumnModel().getColumn(0).setHeaderValue("Contact Type");
         ctnTable.getColumnModel().getColumn(1).setHeaderValue("Contact Name");
+        ctnTable.getColumnModel().getColumn(2).setHeaderValue("Remove?");
         ctnTable.setPreferredScrollableViewportSize(new Dimension(400, 200));
         ctnTable.setGridColor(Color.LIGHT_GRAY);
         
@@ -1165,33 +1173,54 @@ public class MainMenu extends JFrame implements ActionListener {
         ctnPanel.add(ctnScrollPane, BorderLayout.NORTH);
         
         
-        // New Contact Stuff
-        JPanel newContact = new JPanel();
-        newContact.setLayout(new FlowLayout());
+        // New Contact Stuff ***********************************
+        JPanel newContactPanel = new JPanel();
+        newContactPanel.setLayout(new FlowLayout());
         
-        JComboBox ctnTypeComboBox = new JComboBox();
+        final JComboBox ctnTypeComboBox = new JComboBox();
+        ctnTypeComboBox.setRenderer(new HPCellRenderer());
+        
         ArrayList ctnTypes = Contact.getContactTypes();
-        if (ctnTypes != null && !ctnTypes.isEmpty()) {
-            for (Object value : ctnTypes) {
-                Debug.print(((KeyValue)value).getValue());
-                ctnTypeComboBox.addItem(((KeyValue)value).getValue());
-            }
+
+        // Populate the JComboBox
+        for (Object value : ctnTypes) {
+            //Debug.print(((KeyValue)value).getValue());
+            ctnTypeComboBox.addItem(value);
         }
         
-        JTextField ctnText = new JTextField(15);
+        final JTextField ctnText = new JTextField(15);
         
+        // not sure, but inner class needs this to be final, so i create a copy
+        final Person noob = person;
+        
+        // Action of Add Contact
         btnAddContact.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // do stuff to add the new contact
+            public void actionPerformed(ActionEvent e) {               
+                // do stuff for add new contact
+                if (ctnText != null) {
+                    // Contact Type ID (in Database)
+                    int ctnTypeID = ((KeyValue)ctnTypeComboBox.getSelectedItem()).getKey();
+                                 
+                    noob.addContact(ctnTypeID, ctnText.getText());
+                    noob.saveToDatabase();
+                    
+                    //bug: shows this dialog twice, dunno why
+                    JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
+                    
+                    //bug: at this point, it clears the window no matter what??
+                    //clearWindow();
+                    //showProfile(noob);
+                }               
             }
         });
         
-        newContact.add(ctnTypeComboBox);
-        newContact.add(ctnText);
-        newContact.add(btnAddContact);
+        newContactPanel.add(ctnTypeComboBox);
+        newContactPanel.add(ctnText);
+        newContactPanel.add(btnAddContact);
+               
+        ctnPanel.add(newContactPanel, BorderLayout.SOUTH);
         
-        ctnPanel.add(newContact, BorderLayout.SOUTH);
-        // End New Contact Stuff
+        // End New Contact Stuff **********************************
         
         
         westPanel.add(ctnPanel, BorderLayout.NORTH);
@@ -1237,6 +1266,9 @@ public class MainMenu extends JFrame implements ActionListener {
         setVisible(true);
     }
     
+    /**
+     * Clears and updates the main application window.
+     */
     public void clearWindow() {
         removeAllComponents();
         updateWindow();

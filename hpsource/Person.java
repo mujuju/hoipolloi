@@ -696,7 +696,7 @@ public class Person implements Comparable {
         // Get the right slash to use.
         String slash = "/";
         if (DBHPInterface.getOS() == "WINDOWS") {
-            System.out.println("OS is detected as Windows.");
+            Debug.print("OS is detected as Windows.");
             slash = "\\";
         }
         
