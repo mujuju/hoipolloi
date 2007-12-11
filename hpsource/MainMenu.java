@@ -1155,7 +1155,7 @@ public class MainMenu extends JFrame implements ActionListener {
         
         ctnTable.getColumnModel().getColumn(0).setHeaderValue("Contact Type");
         ctnTable.getColumnModel().getColumn(1).setHeaderValue("Contact Name");
-        ctnTable.getColumnModel().getColumn(2).setHeaderValue("Remove?");
+        ctnTable.getColumnModel().getColumn(2).setHeaderValue("(Del)");
         ctnTable.setPreferredScrollableViewportSize(new Dimension(400, 200));
         ctnTable.setGridColor(Color.LIGHT_GRAY);
         
@@ -1164,7 +1164,11 @@ public class MainMenu extends JFrame implements ActionListener {
             Contact ctn = (Contact)contacts.get(i);
             ctnTable.setValueAt(ctn.getContactType(),i,0);
             ctnTable.setValueAt(ctn.getContact(),i,1);
+            ctnTable.setValueAt(new Boolean(false),i,2);
         }
+        
+        // Set Col Widths based on Content
+        ColumnResizer.adjustColumnPreferredWidths(ctnTable);
         
         
         
