@@ -5,14 +5,13 @@ import javax.swing.table.*;
 import java.awt.Component;
 
 /**
- * A static class to resize a JTable's Columns to non-equal widths.
+ * A static class to resize a JTable's columns to suit the table contents.
  * 
  * From the book, Swing Hacks, Hack #21.
- * Size Your Columns to Suit Your JTable's Contents.
  * 
  * @author  Chris Adamson
  * @author  Joshua Marinacci
- * @version 1.0
+ * @version 1.0 (Dec 11, 2007)
  */
 public class ColumnResizer {                 
     public static void adjustColumnPreferredWidths(JTable table) { 

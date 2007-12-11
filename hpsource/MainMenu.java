@@ -10,10 +10,11 @@ import com.pagosoft.plaf.themes.*;
 import java.io.*;
 
 /**
- * The class that draws the main application interfaces.
+ * Draws the main application interfaces.
  *
  * @author  Brandon Buck
- * @version 0.11
+ * @author  Brandon Tanner
+ * @version 0.15 (Dec 11, 2007)
  */
 public class MainMenu extends JFrame implements ActionListener {
     
@@ -225,6 +226,10 @@ public class MainMenu extends JFrame implements ActionListener {
                     themeMenu.add(grayTheme);
                 // Theme Menu - End
                 
+                JMenuItem settingsItem = new JMenuItem(new MenuAction("Preferences"));
+                //addCorpItem.setIcon(settingsIcon);
+                //addCorpItem.setMnemonic('');
+                
                 editMenu.add(quickAddItem);
                 editMenu.addSeparator();
                 editMenu.add(addIndItem);
@@ -232,6 +237,8 @@ public class MainMenu extends JFrame implements ActionListener {
                 editMenu.add(addCorpItem);
                 editMenu.addSeparator();
                 editMenu.add(themeMenu);
+                editMenu.addSeparator();
+                editMenu.add(settingsItem);
             // Edit Menu - End
                 
             // View Menu - Start
@@ -1149,13 +1156,14 @@ public class MainMenu extends JFrame implements ActionListener {
         ctnPanel.setLayout(new BorderLayout());
         ctnPanel.setBorder(BorderFactory.createTitledBorder("Contact Info"));
 
-        ArrayList contacts = person.getContacts();
+        
         // Create Table
-        ctnTable = new JTable(contacts.size(), 3);
+        ArrayList contacts = person.getContacts();
+        ctnTable = new JTable(contacts.size(), 2); // 3 for checkbox
         
         ctnTable.getColumnModel().getColumn(0).setHeaderValue("Contact Type");
         ctnTable.getColumnModel().getColumn(1).setHeaderValue("Contact Name");
-        ctnTable.getColumnModel().getColumn(2).setHeaderValue("(Del)");
+        //ctnTable.getColumnModel().getColumn(2).setHeaderValue("(Action)");
         ctnTable.setPreferredScrollableViewportSize(new Dimension(400, 200));
         ctnTable.setGridColor(Color.LIGHT_GRAY);
         
@@ -1164,13 +1172,14 @@ public class MainMenu extends JFrame implements ActionListener {
             Contact ctn = (Contact)contacts.get(i);
             ctnTable.setValueAt(ctn.getContactType(),i,0);
             ctnTable.setValueAt(ctn.getContact(),i,1);
-            ctnTable.setValueAt(new Boolean(false),i,2);
+            
+            // need to create our own tablemodel extending abstracttablemodel
+            // then the bools will show up as text boxes instead of jlabels.
+            // ctnTable.setValueAt(new Boolean(false),i,2);
         }
         
         // Set Col Widths based on Content
         ColumnResizer.adjustColumnPreferredWidths(ctnTable);
-        
-        
         
         // Add Table to ScrollPane
         JScrollPane ctnScrollPane = new JScrollPane(ctnTable);
@@ -1192,6 +1201,7 @@ public class MainMenu extends JFrame implements ActionListener {
             ctnTypeComboBox.addItem(value);
         }
         
+        // todo: need to not use absolute width somehow
         final JTextField ctnText = new JTextField(15);
         
         // not sure, but inner class needs this to be final, so i create a copy

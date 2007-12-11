@@ -1,14 +1,15 @@
 package hoipolloi;
 
 import java.sql.*;
-import org.sqlite.JDBC;
 
 /**
- * SQLite Database Connection Class
+ * SQLite Database Connection Class.
+ * 
+ * Be sure to edit the fileName path to your SQLite Database file.
  *
- * @author Brandon Tanner
- * @version 1.0
- * @since November 20, 2006
+ * @author  Brandon Tanner
+ * @version 1.0 (Dec 9, 2007)
+ * @since   November 20, 2006
  */
 public class DBConnection {
     
