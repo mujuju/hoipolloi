@@ -1,5 +1,8 @@
 /**
+ * A free cross-platform contact management system.
+ * 
  * Hoi Polloi is a people database program.
+ * 
  * Its main purpose to keep record of everyone
  * one could possibly know in a meaningful and
  * organized way. By having a program that is
@@ -10,7 +13,7 @@
  * @author  Brandon Tanner (Engine/Design/Database)
  * @author  Brandon Buck   (Interface/Design/Layout)
  * @since   November 2006
- * @version 1.95           (December 15, 2006)
+ * @version 1.96           (December 13, 2007)
  * 
  */
 package hoipolloi;

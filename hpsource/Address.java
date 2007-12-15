@@ -1,11 +1,13 @@
 package hoipolloi;
 
 /**
- * Class to Hold Addresses for People
+ * An Address datatype consisting of Label, 
+ * Address Line 1, 2, and 3, City, State, Zip, 
+ * Country, District and Type (Residential, Billing, Mailing etc).
  *
- * @author Brandon Tanner
- * @version 1.0
- * @since December 12, 2006
+ * @author  Brandon Tanner
+ * @version 1.1 Dec 12, 2007
+ * @since   December 12, 2006
  */
 public class Address {
     
@@ -34,6 +36,15 @@ public class Address {
         this.district      = "";
     }
     
+    /**
+     * Checks if all the required parts of this Address are filled.
+     * 
+     * The minimum required parts are: 
+     * Type, Line 1, City, State, Zip and Country.
+     * The rest of the parts are optional.
+     * 
+     * @return True if all the required parts are filled, otherwise false.
+     */
     public boolean areRequiredPartsFilled() {
         if (this.addressLine1.equals("") || this.addressLine1 == null)
             return false;
@@ -42,7 +53,7 @@ public class Address {
     }
     
     /**
-     * Gets the Address Type
+     * Gets the Address Type.
      *
      * @return The Address Type
      */
@@ -51,7 +62,7 @@ public class Address {
     }
     
     /**
-     * Gets the Address Label
+     * Gets the Address Label.
      *
      * @return The Address Label
      */

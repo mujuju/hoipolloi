@@ -3,6 +3,7 @@
 // (C) Vassili Dzuba, 2000
 // distributed under the Artistic License
 //----------------------------------------------------
+
 package hoipolloi;
 
 import java.io.ObjectInputStream;

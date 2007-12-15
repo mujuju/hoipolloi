@@ -7,8 +7,9 @@
 package hoipolloi;
 
 /**
- *
- * @author  Brandon
+ * A popup window to manage categories.
+ * 
+ * @author  Brandon Tanner
  */
 public class EditCatagories extends javax.swing.JFrame {
     

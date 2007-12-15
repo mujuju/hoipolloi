@@ -39,6 +39,7 @@
  */
 
 package hoipolloi;
+
 import javax.swing.plaf.*;
 import javax.swing.plaf.metal.*;
 import javax.swing.*;
@@ -48,8 +49,8 @@ import java.awt.*;
 /**
  * This class describes a theme using gray colors.
  *
- * 1.9 07/26/04
- * @author Steve Wilson
+ * @version 1.9 07/26/04
+ * @author  Steve Wilson
  */
 public class CharcoalTheme extends DefaultMetalTheme {
 

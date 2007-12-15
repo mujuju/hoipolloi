@@ -1,5 +1,5 @@
 /*
- * @(#)RubyTheme.java	1.0 12/19/06
+ * @(#)DarudeTheme.java	1.0 12/14/07
  */
 
 package hoipolloi;
@@ -11,15 +11,16 @@ import javax.swing.border.*;
 import java.awt.*;
 
 /**
- * This class describes a theme using red colors.
+ * This class describes a theme using orange colors.
  *
- * @version 1.0 12/09/06
- * @author  Brandon Buck
+ * @version 1.0 12/14/07 16:49
+ * @author  Brandon Tanner
+ * @since   Dec 14, 2007
  */
-public class RubyTheme extends DefaultMetalTheme {
+public class DarudeTheme extends DefaultMetalTheme {
 
     /** Gets the theme name */
-    public String getName() { return "Ruby"; }
+    public String getName() { return "Darude"; }
 
     /** Menu Outline */
     private final ColorUIResource primary1 = new ColorUIResource(55, 13, 13);
@@ -37,7 +38,7 @@ public class RubyTheme extends DefaultMetalTheme {
     private final ColorUIResource secondary2 = new ColorUIResource(187, 96, 96);
     
     /** Window Background */
-    private final ColorUIResource secondary3 = new ColorUIResource(130, 43, 43);
+    private final ColorUIResource secondary3 = new ColorUIResource(222, 222, 222);
     
     /** Active Text Foreground */
     private final ColorUIResource black = new ColorUIResource(222, 222, 222);

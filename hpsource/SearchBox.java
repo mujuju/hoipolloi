@@ -12,8 +12,12 @@ import java.awt.event.*;
 import java.util.*;
 
 /**
+ * Shows a search box for searching the HP database.
+ * 
+ * This was made and visually designed in Netbeans.
  *
- * @author  Brandon
+ * @author  Brandon Tanner
+ * @version 1.0
  */
 public class SearchBox extends javax.swing.JFrame implements ActionListener {
     

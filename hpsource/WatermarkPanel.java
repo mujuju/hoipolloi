@@ -1,18 +1,14 @@
-/*
- * WatermarkPanel.java
- *
- * Created on November 10, 2006, 6:19 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
-
 package hoipolloi;
+
 import javax.swing.*;
 import java.awt.*;
+
 /**
- *
- * @author Brandon Buck
+ * Displays a HP logo watermark in the main window.
+ * 
+ * @author  Brandon Buck
+ * @since   Nov 10, 2006 6:19 PM
+ * @version 1.0
  */
 public class WatermarkPanel extends JPanel {
     private ImageIcon watermark;

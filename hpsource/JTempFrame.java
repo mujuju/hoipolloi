@@ -1,21 +1,16 @@
-/*
- * JTempFrame.java
- *
- * Created on December 8, 2006, 7:44 PM
- *
- * To change this template, choose Tools | Template Manager
- * and open the template in the editor.
- */
-
 package hoipolloi;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
 /**
+ * A temporary frame for showing lists of things.
  *
- * @author Brandon Buck
+ * @author  Brandon Buck
+ * @since   Dec 8, 2006 7:44 PM
+ * @version 1.0
  */
 public class JTempFrame extends JFrame {
     private MainMenu parent;

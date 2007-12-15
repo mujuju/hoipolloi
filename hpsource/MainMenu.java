@@ -51,6 +51,7 @@ public class MainMenu extends JFrame implements ActionListener {
     private static final SilverTheme SILVER = new SilverTheme();
     private static final CharcoalTheme CHARCOAL = new CharcoalTheme();
     private static final RubyTheme RUBY = new RubyTheme();
+    private static final DarudeTheme DARUDE = new DarudeTheme();
     
     // Theme buttons
     private JRadioButtonMenuItem grayTheme;
@@ -61,6 +62,7 @@ public class MainMenu extends JFrame implements ActionListener {
     private JRadioButtonMenuItem defaultTheme;
     private JRadioButtonMenuItem silverTheme;
     private JRadioButtonMenuItem charcoalTheme;
+    private JRadioButtonMenuItem darudeTheme;
     
     // All of the Buttons
     private JButton quickAddButton;
@@ -99,6 +101,15 @@ public class MainMenu extends JFrame implements ActionListener {
             ImageIcon addFamIcon = new ImageIcon(getClass().getClassLoader().getResource("family.png"));
             ImageIcon addCorpIcon = new ImageIcon(getClass().getClassLoader().getResource("business.png"));
             ImageIcon quickAddIcon = new ImageIcon(getClass().getClassLoader().getResource("hourglass.png"));
+            ImageIcon searchIcon = new ImageIcon(getClass().getClassLoader().getResource("magnifier.png"));
+            ImageIcon exitIcon = new ImageIcon(getClass().getClassLoader().getResource("exit.png"));
+            ImageIcon reportIcon = new ImageIcon(getClass().getClassLoader().getResource("report.png"));
+            ImageIcon importIcon = new ImageIcon(getClass().getClassLoader().getResource("import.png"));
+            ImageIcon exportIcon = new ImageIcon(getClass().getClassLoader().getResource("export.png"));
+            ImageIcon everyoneIcon = new ImageIcon(getClass().getClassLoader().getResource("everyone.png"));
+            ImageIcon syncIcon = new ImageIcon(getClass().getClassLoader().getResource("sync.png"));
+            ImageIcon printIcon = new ImageIcon(getClass().getClassLoader().getResource("printer.png"));
+            ImageIcon settingsIcon = new ImageIcon(getClass().getClassLoader().getResource("settings.png"));
             
             // File Menu - Start
                 JMenu fileMenu = new JMenu("File");
@@ -130,17 +141,27 @@ public class MainMenu extends JFrame implements ActionListener {
                 saveAsItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.ALT_DOWN_MASK + InputEvent.CTRL_DOWN_MASK));
                 
                 JMenuItem importItem = new JMenuItem(new MenuAction("Import"));
-                importItem.setIcon(blankIcon);
+                importItem.setIcon(importIcon);
                 importItem.setMnemonic('I');
                 importItem.setAccelerator(KeyStroke.getKeyStroke('I', InputEvent.CTRL_DOWN_MASK));
                 
                 JMenuItem exportItem = new JMenuItem(new MenuAction("Export"));
-                exportItem.setIcon(blankIcon);
+                exportItem.setIcon(exportIcon);
                 exportItem.setMnemonic('E');
                 exportItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
                 
+                JMenuItem syncItem = new JMenuItem(new MenuAction("Synchronize"));
+                syncItem.setIcon(syncIcon);
+                syncItem.setMnemonic('z');
+                syncItem.setAccelerator(KeyStroke.getKeyStroke('z', InputEvent.CTRL_DOWN_MASK));
+                
+                JMenuItem printItem = new JMenuItem(new MenuAction("Print"));
+                printItem.setIcon(printIcon);
+                printItem.setMnemonic('P');
+                printItem.setAccelerator(KeyStroke.getKeyStroke('P', InputEvent.CTRL_DOWN_MASK));
+                
                 JMenuItem exitItem = new JMenuItem(new MenuAction("Exit"));
-                exitItem.setIcon(blankIcon);
+                exitItem.setIcon(exitIcon);
                 exitItem.setMnemonic('x');
                 exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.CTRL_DOWN_MASK));
                 
@@ -154,6 +175,8 @@ public class MainMenu extends JFrame implements ActionListener {
                 fileMenu.addSeparator();
                 fileMenu.add(importItem);
                 fileMenu.add(exportItem);
+                fileMenu.add(syncItem);
+                fileMenu.add(printItem);
                 fileMenu.addSeparator();
                 fileMenu.add(exitItem);
             // File Menu - End
@@ -196,6 +219,8 @@ public class MainMenu extends JFrame implements ActionListener {
                     winTheme.addActionListener(this);
                     charcoalTheme = new JRadioButtonMenuItem("Charcoal");
                     charcoalTheme.addActionListener(this);
+                    darudeTheme = new JRadioButtonMenuItem("Darude");
+                    darudeTheme.addActionListener(this);
 
                     ButtonGroup themeGroup = new ButtonGroup();
                     themeGroup.add(defaultTheme);
@@ -206,6 +231,7 @@ public class MainMenu extends JFrame implements ActionListener {
                     themeGroup.add(silverTheme);
                     themeGroup.add(winTheme);
                     themeGroup.add(charcoalTheme);
+                    themeGroup.add(darudeTheme);
 
                     JMenuItem dummyItem = new JMenuItem("Choose A Theme...");
                     
@@ -224,11 +250,12 @@ public class MainMenu extends JFrame implements ActionListener {
                     themeMenu.add(winTheme);
                     themeMenu.add(yellowTheme);
                     themeMenu.add(grayTheme);
+                    themeMenu.add(darudeTheme);
                 // Theme Menu - End
                 
-                JMenuItem settingsItem = new JMenuItem(new MenuAction("Preferences"));
-                //addCorpItem.setIcon(settingsIcon);
-                //addCorpItem.setMnemonic('');
+                JMenuItem settingsItem = new JMenuItem(new MenuAction("Settings"));
+                settingsItem.setIcon(settingsIcon);
+                //settingsItem.setMnemonic('');
                 
                 editMenu.add(quickAddItem);
                 editMenu.addSeparator();
@@ -236,9 +263,8 @@ public class MainMenu extends JFrame implements ActionListener {
                 editMenu.add(addFamItem);
                 editMenu.add(addCorpItem);
                 editMenu.addSeparator();
-                editMenu.add(themeMenu);
-                editMenu.addSeparator();
                 editMenu.add(settingsItem);
+                editMenu.add(themeMenu);
             // Edit Menu - End
                 
             // View Menu - Start
@@ -246,6 +272,7 @@ public class MainMenu extends JFrame implements ActionListener {
                 viewMenu.setMnemonic('V');
                 
                 JMenuItem everyoneItem = new JMenuItem(new MenuAction("Everyone"));
+                everyoneItem.setIcon(everyoneIcon);
                 everyoneItem.setMnemonic('E');
                 everyoneItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
                 
@@ -273,6 +300,7 @@ public class MainMenu extends JFrame implements ActionListener {
                 searchMenu.setMnemonic('S');
                 
                 JMenuItem searchItem = new JMenuItem(new MenuAction("Search"));
+                searchItem.setIcon(searchIcon);
                 searchItem.setMnemonic('e');
                 searchItem.setAccelerator(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK));
                 
@@ -284,6 +312,7 @@ public class MainMenu extends JFrame implements ActionListener {
                 infoMenu.setMnemonic('I');
                 
                 JMenuItem statItem = new JMenuItem(new MenuAction("Statistics"));
+                statItem.setIcon(reportIcon);
                 statItem.setMnemonic('S');
                 
                 JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays"));
@@ -405,6 +434,12 @@ public class MainMenu extends JFrame implements ActionListener {
             PlafOptions.updateAllUIs();
             rubyTheme.setSelected(true);
         }
+        else if (theme.equals("darude")) {
+            PlafOptions.setCurrentTheme(DARUDE);
+            PlafOptions.setAsLookAndFeel();
+            PlafOptions.updateAllUIs();
+            darudeTheme.setSelected(true);
+        }
         else if (theme.equals("win")) {
             PlafOptions.setCurrentTheme(WIN);
             PlafOptions.setAsLookAndFeel();
@@ -481,7 +516,6 @@ public class MainMenu extends JFrame implements ActionListener {
     private String convertDate(String dateString) {
         SimpleDateFormat format = new SimpleDateFormat("MMMMMMMMM dd, yyyy");
         java.sql.Date dateObject = java.sql.Date.valueOf(dateString);
-        
         return format.format(dateObject);
     }
     
@@ -1533,6 +1567,13 @@ public class MainMenu extends JFrame implements ActionListener {
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "ruby");
+            clearWindow();
+        }
+        else if (darudeTheme.isSelected()) {
+            PlafOptions.setCurrentTheme(DARUDE);
+            PlafOptions.setAsLookAndFeel();
+            PlafOptions.updateAllUIs();
+            propFile.setProperty("theme", "darude");
             clearWindow();
         }
         else if (yellowTheme.isSelected()) {
