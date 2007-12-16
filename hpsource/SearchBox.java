@@ -29,6 +29,7 @@ public class SearchBox extends javax.swing.JFrame implements ActionListener {
     public SearchBox(MainMenu parent) {
         this.parent = parent;
         initComponents();
+        this.searchQuery.addKeyListener(new SearchQueryListener());
     }
     
     /** This method is called from within the constructor to
@@ -182,43 +183,63 @@ public class SearchBox extends javax.swing.JFrame implements ActionListener {
     public void actionPerformed(ActionEvent event) {
         AbstractButton pressedButton = (AbstractButton)event.getSource();
         if (pressedButton == btnSearch) {
-            if (searchQuery.getText().equals("")) {
-                JOptionPane.showMessageDialog(this, "Please type something to search, don't be so ignant!??!");
-                return;
-            }
-            Search bar = new Search();
-            if (!checkFirstName.isSelected()) {
-                bar.searchFirstName(false);
-            }
-            if (!checkLastName.isSelected()) {
-                bar.searchLastName(false);
-            }
-            if (!checkNickName.isSelected()) {
-                bar.searchNickName(false);
-            }
-            if (!checkDescription.isSelected()) {
-                bar.searchDescription(false);
-            }
-            if (!checkContacts.isSelected()) {
-                bar.searchContacts(false);
-            }
-            if (!checkAddresses.isSelected()) {
-                bar.searchAddresses(false);
-            }
-            ArrayList people = bar.performSearch(searchQuery.getText());
-            if (people.size() == 1) {
-                try {
-                    Person singlePerson = new Person(((KeyValue)people.get(0)).getKey());
-                    parent.showProfile(singlePerson);
-                }
-                catch (Exception e) {}
-            }
-            else {
-                new JTempFrame(parent, people);
-            }
-            DBHPInterface.printListOfPeopleByLastNameToStdout(people);
-            this.dispose();
+            
+            searchAction();
         }
+    }
+    /**
+     * Method used to search the database with the given query. Called when the
+     * "Search" button is pressed or the Enter key pressed.
+     */
+    public void searchAction() {
+        if (searchQuery.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Please type something to search, don't be so ignant!??!");
+            return;
+        }
+        Search bar = new Search();
+        if (!checkFirstName.isSelected()) {
+            bar.searchFirstName(false);
+        }
+        if (!checkLastName.isSelected()) {
+            bar.searchLastName(false);
+        }
+        if (!checkNickName.isSelected()) {
+            bar.searchNickName(false);
+        }
+        if (!checkDescription.isSelected()) {
+            bar.searchDescription(false);
+        }
+        if (!checkContacts.isSelected()) {
+            bar.searchContacts(false);
+        }
+        if (!checkAddresses.isSelected()) {
+            bar.searchAddresses(false);
+        }
+        ArrayList people = bar.performSearch(searchQuery.getText());
+        if (people.size() == 1) {
+            try {
+                Person singlePerson = new Person(((KeyValue)people.get(0)).getKey());
+                parent.showProfile(singlePerson);
+            }
+            catch (Exception e) {}
+        }
+        else {
+            new JTempFrame(parent, people);
+        }
+        
+        DBHPInterface.printListOfPeopleByLastNameToStdout(people);
+        this.dispose();
+    }
+    
+    class SearchQueryListener implements KeyListener {
+        public void keyReleased(KeyEvent evt) {}
+        public void keyPressed(KeyEvent evt) {
+            System.out.println(evt.getKeyCode() + " = " + evt.VK_ENTER);
+            if (evt.getKeyCode() == evt.VK_ENTER) {
+                searchAction();
+            }
+        }
+        public void keyTyped(KeyEvent evt) {}
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

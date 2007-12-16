@@ -22,7 +22,7 @@ public class DBConnection {
     public Statement getDBStatement() {
         Statement stmt = null;
         try {
-            String fileName = "/home/pyrite/Projects/pmp.s3db";
+            String fileName = "C:\\Users\\Brandon\\Desktop\\Programs\\Old Programs\\College Programs\\hoipolloi\\pmp.s3db";
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection("jdbc:sqlite:"+fileName);
             stmt = conn.createStatement();
