@@ -13,8 +13,9 @@ import java.awt.*;
 /**
  * This class describes a theme using red colors.
  *
- * @version 1.0 12/09/06
+ * @version 1.0 12/15/07
  * @author  Brandon Buck
+ * @since     12/09/06
  */
 public class RubyTheme extends DefaultMetalTheme {
 
