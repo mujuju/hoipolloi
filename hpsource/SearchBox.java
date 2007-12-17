@@ -234,7 +234,7 @@ public class SearchBox extends javax.swing.JFrame implements ActionListener {
     class SearchQueryListener implements KeyListener {
         public void keyReleased(KeyEvent evt) {}
         public void keyPressed(KeyEvent evt) {
-            System.out.println(evt.getKeyCode() + " = " + evt.VK_ENTER);
+            Debug.print(evt.getKeyCode() + " = " + evt.VK_ENTER);
             if (evt.getKeyCode() == evt.VK_ENTER) {
                 searchAction();
             }

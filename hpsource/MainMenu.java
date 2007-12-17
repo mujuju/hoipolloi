@@ -1,6 +1,7 @@
 package hoipolloi;
 
 import javax.swing.*;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -14,30 +15,18 @@ import java.io.*;
  *
  * @author  Brandon Buck
  * @author  Brandon Tanner
- * @version 0.15 (Dec 11, 2007)
+ * @version 0.16 (Dec 16, 2007)
  */
 public class MainMenu extends JFrame implements ActionListener {
     
     // Data members for the JFrame
     private WatermarkPanel contentPane;
     private MainMenu THIS;
+    
+    /** The Properties File */
     private Properties propFile;
-    
-    // Data members for the add pages and stuff
-    private JTextField field1;
-    private JTextField field2;
-    private JTextField field3;
-    
-    private JComboBox comboBox1;
-    private JComboBox comboBox2;
-    private JComboBox comboBox3;
-    
-    private JTextArea textArea1;
-    private JTextArea textArea2;
-    
-    private JList list;
-    
-    // Contact Info Table
+      
+    /** Contact Info Table */
     private JTable ctnTable;
     
     
@@ -112,95 +101,95 @@ public class MainMenu extends JFrame implements ActionListener {
             ImageIcon settingsIcon = new ImageIcon(getClass().getClassLoader().getResource("settings.png"));
             
             // File Menu - Start
-                JMenu fileMenu = new JMenu("File");
-                fileMenu.setMnemonic('F');
-                
-                JMenuItem newItem = new JMenuItem(new MenuAction("New"));
-                newItem.setIcon(newIcon);
-                newItem.setMnemonic('N');
-                newItem.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem openItem = new JMenuItem(new MenuAction("Open"));
-                openItem.setIcon(openIcon);
-                openItem.setMnemonic('O');
-                openItem.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem closeItem = new JMenuItem(new MenuAction("Close"));
-                closeItem.setIcon(closeIcon);
-                closeItem.setMnemonic('C');
-                closeItem.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem saveItem = new JMenuItem(new MenuAction("Save"));
-                saveItem.setIcon(saveIcon);
-                saveItem.setMnemonic('S');
-                saveItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem saveAsItem = new JMenuItem(new MenuAction("Save As"));
-                saveAsItem.setIcon(saveIcon);
-                saveAsItem.setMnemonic('a');
-                saveAsItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.ALT_DOWN_MASK + InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem importItem = new JMenuItem(new MenuAction("Import"));
-                importItem.setIcon(importIcon);
-                importItem.setMnemonic('I');
-                importItem.setAccelerator(KeyStroke.getKeyStroke('I', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem exportItem = new JMenuItem(new MenuAction("Export"));
-                exportItem.setIcon(exportIcon);
-                exportItem.setMnemonic('E');
-                exportItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem syncItem = new JMenuItem(new MenuAction("Synchronize"));
-                syncItem.setIcon(syncIcon);
-                syncItem.setMnemonic('z');
-                syncItem.setAccelerator(KeyStroke.getKeyStroke('z', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem printItem = new JMenuItem(new MenuAction("Print"));
-                printItem.setIcon(printIcon);
-                printItem.setMnemonic('P');
-                printItem.setAccelerator(KeyStroke.getKeyStroke('P', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem exitItem = new JMenuItem(new MenuAction("Exit"));
-                exitItem.setIcon(exitIcon);
-                exitItem.setMnemonic('x');
-                exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.CTRL_DOWN_MASK));
-                
-                fileMenu.add(newItem);
-                fileMenu.addSeparator();
-                fileMenu.add(openItem);
-                fileMenu.add(closeItem);
-                fileMenu.addSeparator();
-                fileMenu.add(saveItem);
-                fileMenu.add(saveAsItem);
-                fileMenu.addSeparator();
-                fileMenu.add(importItem);
-                fileMenu.add(exportItem);
-                fileMenu.add(syncItem);
-                fileMenu.add(printItem);
-                fileMenu.addSeparator();
-                fileMenu.add(exitItem);
+            JMenu fileMenu = new JMenu("File");
+            fileMenu.setMnemonic('F');
+
+            JMenuItem newItem = new JMenuItem(new MenuAction("New"));
+            newItem.setIcon(newIcon);
+            newItem.setMnemonic('N');
+            newItem.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem openItem = new JMenuItem(new MenuAction("Open"));
+            openItem.setIcon(openIcon);
+            openItem.setMnemonic('O');
+            openItem.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem closeItem = new JMenuItem(new MenuAction("Close"));
+            closeItem.setIcon(closeIcon);
+            closeItem.setMnemonic('C');
+            closeItem.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem saveItem = new JMenuItem(new MenuAction("Save"));
+            saveItem.setIcon(saveIcon);
+            saveItem.setMnemonic('S');
+            saveItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem saveAsItem = new JMenuItem(new MenuAction("Save As"));
+            saveAsItem.setIcon(saveIcon);
+            saveAsItem.setMnemonic('a');
+            saveAsItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.ALT_DOWN_MASK + InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem importItem = new JMenuItem(new MenuAction("Import"));
+            importItem.setIcon(importIcon);
+            importItem.setMnemonic('I');
+            importItem.setAccelerator(KeyStroke.getKeyStroke('I', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem exportItem = new JMenuItem(new MenuAction("Export"));
+            exportItem.setIcon(exportIcon);
+            exportItem.setMnemonic('E');
+            exportItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem syncItem = new JMenuItem(new MenuAction("Synchronize"));
+            syncItem.setIcon(syncIcon);
+            syncItem.setMnemonic('z');
+            syncItem.setAccelerator(KeyStroke.getKeyStroke('z', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem printItem = new JMenuItem(new MenuAction("Print"));
+            printItem.setIcon(printIcon);
+            printItem.setMnemonic('P');
+            printItem.setAccelerator(KeyStroke.getKeyStroke('P', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem exitItem = new JMenuItem(new MenuAction("Exit"));
+            exitItem.setIcon(exitIcon);
+            exitItem.setMnemonic('x');
+            exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.CTRL_DOWN_MASK));
+
+            fileMenu.add(newItem);
+            fileMenu.addSeparator();
+            fileMenu.add(openItem);
+            fileMenu.add(closeItem);
+            fileMenu.addSeparator();
+            fileMenu.add(saveItem);
+            fileMenu.add(saveAsItem);
+            fileMenu.addSeparator();
+            fileMenu.add(importItem);
+            fileMenu.add(exportItem);
+            fileMenu.add(syncItem);
+            fileMenu.add(printItem);
+            fileMenu.addSeparator();
+            fileMenu.add(exitItem);
             // File Menu - End
             
             // Edit Menu - Start
-                JMenu editMenu = new JMenu("Edit");
-                editMenu.setMnemonic('E');
-                
-                JMenuItem quickAddItem = new JMenuItem(new MenuAction("Quick Add"));
-                quickAddItem.setIcon(quickAddIcon);
-                quickAddItem.setMnemonic('Q');
-                quickAddItem.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem addIndItem = new JMenuItem(new MenuAction("Add Individual"));
-                addIndItem.setIcon(addIndIcon);
-                addIndItem.setMnemonic('I');
-                
-                JMenuItem addFamItem = new JMenuItem(new MenuAction("Add Family"));
-                addFamItem.setIcon(addFamIcon);
-                addFamItem.setMnemonic('F');
-                
-                JMenuItem addCorpItem = new JMenuItem(new MenuAction("Add Business"));
-                addCorpItem.setIcon(addCorpIcon);
-                addCorpItem.setMnemonic('B');
+            JMenu editMenu = new JMenu("Edit");
+            editMenu.setMnemonic('E');
+
+            JMenuItem quickAddItem = new JMenuItem(new MenuAction("Quick Add"));
+            quickAddItem.setIcon(quickAddIcon);
+            quickAddItem.setMnemonic('Q');
+            quickAddItem.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem addIndItem = new JMenuItem(new MenuAction("Add Individual"));
+            addIndItem.setIcon(addIndIcon);
+            addIndItem.setMnemonic('I');
+
+            JMenuItem addFamItem = new JMenuItem(new MenuAction("Add Family"));
+            addFamItem.setIcon(addFamIcon);
+            addFamItem.setMnemonic('F');
+
+            JMenuItem addCorpItem = new JMenuItem(new MenuAction("Add Business"));
+            addCorpItem.setIcon(addCorpIcon);
+            addCorpItem.setMnemonic('B');
                 
                 // Theme Menu - Start
                     defaultTheme = new JRadioButtonMenuItem("Default");
@@ -253,103 +242,103 @@ public class MainMenu extends JFrame implements ActionListener {
                     themeMenu.add(darudeTheme);
                 // Theme Menu - End
                 
-                JMenuItem settingsItem = new JMenuItem(new MenuAction("Settings"));
-                settingsItem.setIcon(settingsIcon);
-                //settingsItem.setMnemonic('');
-                
-                editMenu.add(quickAddItem);
-                editMenu.addSeparator();
-                editMenu.add(addIndItem);
-                editMenu.add(addFamItem);
-                editMenu.add(addCorpItem);
-                editMenu.addSeparator();
-                editMenu.add(settingsItem);
-                editMenu.add(themeMenu);
+            JMenuItem settingsItem = new JMenuItem(new MenuAction("Settings"));
+            settingsItem.setIcon(settingsIcon);
+            //settingsItem.setMnemonic('');
+
+            editMenu.add(quickAddItem);
+            editMenu.addSeparator();
+            editMenu.add(addIndItem);
+            editMenu.add(addFamItem);
+            editMenu.add(addCorpItem);
+            editMenu.addSeparator();
+            editMenu.add(settingsItem);
+            editMenu.add(themeMenu);
             // Edit Menu - End
                 
             // View Menu - Start
-                JMenu viewMenu = new JMenu("View");
-                viewMenu.setMnemonic('V');
-                
-                JMenuItem everyoneItem = new JMenuItem(new MenuAction("Everyone"));
-                everyoneItem.setIcon(everyoneIcon);
-                everyoneItem.setMnemonic('E');
-                everyoneItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem categoryItem = new JMenuItem(new MenuAction("By Category"));
-                categoryItem.setMnemonic('C');
-                categoryItem.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
-                
-                JMenuItem locationItem = new JMenuItem(new MenuAction("By Location"));
-                locationItem.setMnemonic('L');
-                locationItem.setAccelerator(KeyStroke.getKeyStroke('L', InputEvent.CTRL_DOWN_MASK));
+            JMenu viewMenu = new JMenu("View");
+            viewMenu.setMnemonic('V');
 
-                //JMenuItem typeItem = new JMenuItem(new MenuAction("By Type"));
-                //typeItem.setMnemonic('T');
-                //typeItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
-                
-                viewMenu.add(everyoneItem);
-                viewMenu.addSeparator();
-                viewMenu.add(categoryItem);
-                viewMenu.add(locationItem);
-                //viewMenu.add(typeItem);
+            JMenuItem everyoneItem = new JMenuItem(new MenuAction("Everyone"));
+            everyoneItem.setIcon(everyoneIcon);
+            everyoneItem.setMnemonic('E');
+            everyoneItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem categoryItem = new JMenuItem(new MenuAction("By Category"));
+            categoryItem.setMnemonic('C');
+            categoryItem.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
+
+            JMenuItem locationItem = new JMenuItem(new MenuAction("By Location"));
+            locationItem.setMnemonic('L');
+            locationItem.setAccelerator(KeyStroke.getKeyStroke('L', InputEvent.CTRL_DOWN_MASK));
+
+            //JMenuItem typeItem = new JMenuItem(new MenuAction("By Type"));
+            //typeItem.setMnemonic('T');
+            //typeItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
+
+            viewMenu.add(everyoneItem);
+            viewMenu.addSeparator();
+            viewMenu.add(categoryItem);
+            viewMenu.add(locationItem);
+            //viewMenu.add(typeItem);
             // View Menu - End
                 
             // Search Menu - Start
-                JMenu searchMenu = new JMenu("Search");
-                searchMenu.setMnemonic('S');
-                
-                JMenuItem searchItem = new JMenuItem(new MenuAction("Search"));
-                searchItem.setIcon(searchIcon);
-                searchItem.setMnemonic('e');
-                searchItem.setAccelerator(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK));
-                
-                searchMenu.add(searchItem);
+            JMenu searchMenu = new JMenu("Search");
+            searchMenu.setMnemonic('S');
+
+            JMenuItem searchItem = new JMenuItem(new MenuAction("Search"));
+            searchItem.setIcon(searchIcon);
+            searchItem.setMnemonic('e');
+            searchItem.setAccelerator(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK));
+
+            searchMenu.add(searchItem);
             // Search Menu - End
                 
             // Info Menu - Start
-                JMenu infoMenu = new JMenu("Info");
-                infoMenu.setMnemonic('I');
-                
-                JMenuItem statItem = new JMenuItem(new MenuAction("Statistics"));
-                statItem.setIcon(reportIcon);
-                statItem.setMnemonic('S');
-                
-                JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays"));
-                birthdayItem.setMnemonic('B');
-                
-                infoMenu.add(statItem);
-                infoMenu.add(birthdayItem);
+            JMenu infoMenu = new JMenu("Info");
+            infoMenu.setMnemonic('I');
+
+            JMenuItem statItem = new JMenuItem(new MenuAction("Statistics"));
+            statItem.setIcon(reportIcon);
+            statItem.setMnemonic('S');
+
+            JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays"));
+            birthdayItem.setMnemonic('B');
+
+            infoMenu.add(statItem);
+            infoMenu.add(birthdayItem);
             // Info Menu - End
                 
             // Help Menu - Start
-                JMenu helpMenu = new JMenu("Help");
-                helpMenu.setMnemonic('H');
-                
-                JMenuItem aboutItem = new JMenuItem(new MenuAction("About"));
-                aboutItem.setIcon(infoIcon);
-                aboutItem.setMnemonic('A');
-                
-                JMenuItem helpItem = new JMenuItem(new MenuAction("Help"));
-                helpItem.setIcon(helpIcon);
-                helpItem.setMnemonic('H');
-                helpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
-                
-                helpMenu.add(aboutItem);
-                helpMenu.addSeparator();
-                helpMenu.add(helpItem);
+            JMenu helpMenu = new JMenu("Help");
+            helpMenu.setMnemonic('H');
+
+            JMenuItem aboutItem = new JMenuItem(new MenuAction("About"));
+            aboutItem.setIcon(infoIcon);
+            aboutItem.setMnemonic('A');
+
+            JMenuItem helpItem = new JMenuItem(new MenuAction("Help"));
+            helpItem.setIcon(helpIcon);
+            helpItem.setMnemonic('H');
+            helpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
+
+            helpMenu.add(aboutItem);
+            helpMenu.addSeparator();
+            helpMenu.add(helpItem);
             // Help Menu - End
                 
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(fileMenu);
-        menuBar.add(editMenu);
-        menuBar.add(viewMenu);
-        menuBar.add(searchMenu);
-        menuBar.add(infoMenu);
-        menuBar.add(helpMenu);
+            JMenuBar menuBar = new JMenuBar();
+            menuBar.add(fileMenu);
+            menuBar.add(editMenu);
+            menuBar.add(viewMenu);
+            menuBar.add(searchMenu);
+            menuBar.add(infoMenu);
+            menuBar.add(helpMenu);
         
-        setJMenuBar(menuBar);
-        // JMenuBar - End
+            setJMenuBar(menuBar);
+            // JMenuBar - End
         
         // Buttons - Start
             addIndButton = new JButton("Add Individual");
@@ -365,7 +354,6 @@ public class MainMenu extends JFrame implements ActionListener {
             cancelButton.addActionListener(this);
             
             btnAddContact = new JButton("Add Contact");
-            btnAddContact.addActionListener(this);
         // Buttons - End
         
         // Contact Info Table
@@ -378,10 +366,12 @@ public class MainMenu extends JFrame implements ActionListener {
         // Frame Content - End
         
         // Center the Main Menu
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        //setSize((int)(screenSize.getWidth() * .7), (int)(screenSize.getHeight() * .8));
-        setSize(1000, 800); //for dual monitor screens
-        setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));
+        // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        // setSize((int)(screenSize.getWidth() * .7), (int)(screenSize.getHeight() * .8));
+        // setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));
+        setSize(1000, 800);
+        setLocation(140,140);
+        
         
         // Show the Main Menu
         getContentPane().add(contentPane);
@@ -1193,23 +1183,19 @@ public class MainMenu extends JFrame implements ActionListener {
         
         // Create Table
         ArrayList contacts = person.getContacts();
-        ctnTable = new JTable(contacts.size(), 2); // 3 for checkbox
+        final DefaultTableModel model = new DefaultTableModel();
+        ctnTable = new JTable(model);
         
-        ctnTable.getColumnModel().getColumn(0).setHeaderValue("Contact Type");
-        ctnTable.getColumnModel().getColumn(1).setHeaderValue("Contact Name");
-        //ctnTable.getColumnModel().getColumn(2).setHeaderValue("(Action)");
+        model.addColumn("Contact Type");
+        model.addColumn("Contact Name");
+        
         ctnTable.setPreferredScrollableViewportSize(new Dimension(400, 200));
         ctnTable.setGridColor(Color.LIGHT_GRAY);
         
-        // Loop to Populate Table
+        // Loop to Populate Contacts Table
         for (int i = 0; i < contacts.size(); i++) {
             Contact ctn = (Contact)contacts.get(i);
-            ctnTable.setValueAt(ctn.getContactType(),i,0);
-            ctnTable.setValueAt(ctn.getContact(),i,1);
-            
-            // need to create our own tablemodel extending abstracttablemodel
-            // then the bools will show up as text boxes instead of jlabels.
-            // ctnTable.setValueAt(new Boolean(false),i,2);
+            model.addRow(new Object[] {ctn.getContactType(), ctn.getContact()});
         }
         
         // Set Col Widths based on Content
@@ -1229,9 +1215,8 @@ public class MainMenu extends JFrame implements ActionListener {
         
         ArrayList ctnTypes = Contact.getContactTypes();
 
-        // Populate the JComboBox
+        // Populate the JComboBox (Contact Types)
         for (Object value : ctnTypes) {
-            //Debug.print(((KeyValue)value).getValue());
             ctnTypeComboBox.addItem(value);
         }
         
@@ -1252,12 +1237,12 @@ public class MainMenu extends JFrame implements ActionListener {
                     noob.addContact(ctnTypeID, ctnText.getText());
                     noob.saveToDatabase();
                     
-                    //bug: shows this dialog twice, dunno why
                     JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
                     
-                    //bug: at this point, it clears the window no matter what??
-                    //clearWindow();
-                    //showProfile(noob);
+                    // Update the contacts table
+                    model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
+                    ctnText.setText(null);
+                    ctnTypeComboBox.setSelectedIndex(0);
                 }               
             }
         });
