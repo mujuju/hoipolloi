@@ -1237,7 +1237,7 @@ public class MainMenu extends JFrame implements ActionListener {
                     noob.addContact(ctnTypeID, ctnText.getText());
                     noob.saveToDatabase();
                     
-                    JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
+                    //JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
                     
                     // Update the contacts table
                     model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
@@ -1245,6 +1245,30 @@ public class MainMenu extends JFrame implements ActionListener {
                     ctnTypeComboBox.setSelectedIndex(0);
                 }               
             }
+        });
+        
+        ctnText.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent evt) {
+                if (evt.getKeyCode() == evt.VK_ENTER) {
+                    // do stuff for add new contact
+                    if (ctnText != null) {
+                        // Contact Type ID (in Database)
+                        int ctnTypeID = ((KeyValue)ctnTypeComboBox.getSelectedItem()).getKey();
+
+                        noob.addContact(ctnTypeID, ctnText.getText());
+                        noob.saveToDatabase();
+
+                        //JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
+
+                        // Update the contacts table
+                        model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
+                        ctnText.setText(null);
+                        ctnTypeComboBox.setSelectedIndex(0);
+                    }
+                }
+            }
+            public void keyReleased(KeyEvent evt) {}
+            public void keyTyped(KeyEvent evt) {}
         });
         
         newContactPanel.add(ctnTypeComboBox);

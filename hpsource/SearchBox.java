@@ -30,6 +30,17 @@ public class SearchBox extends javax.swing.JFrame implements ActionListener {
         this.parent = parent;
         initComponents();
         this.searchQuery.addKeyListener(new SearchQueryListener());
+        
+        // Set the location of the Search Window relative to the MainMenu
+        // --CENTER--
+        Point searchBoxLocation = new Point();
+        
+        double searchBoxX = parent.getLocation().getX() + ((parent.getWidth() / 2) - (this.getWidth() / 2));
+        double searchBoxY = parent.getLocation().getY() + ((parent.getHeight() / 2) - (this.getHeight() / 2));
+        
+        searchBoxLocation.setLocation(searchBoxX, searchBoxY);
+        this.setLocation(searchBoxLocation);
+        // --END CENTER--
     }
     
     /** This method is called from within the constructor to
