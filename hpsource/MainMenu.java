@@ -11,11 +11,12 @@ import com.pagosoft.plaf.themes.*;
 import java.io.*;
 
 /**
- * Draws the main application interfaces.
+ * Draws the main application interface.
  *
  * @author  Brandon Buck
  * @author  Brandon Tanner
- * @version 0.16 (Dec 16, 2007)
+ * @version 0.17 (Dec 18, 2007)
+ * @since   November 10, 2006
  */
 public class MainMenu extends JFrame implements ActionListener {
     
@@ -28,6 +29,9 @@ public class MainMenu extends JFrame implements ActionListener {
       
     /** Contact Info Table */
     private JTable ctnTable;
+    
+    /** The current person being viewed or edited */
+    private Person currentPerson;
     
     
     // Themes
@@ -66,6 +70,8 @@ public class MainMenu extends JFrame implements ActionListener {
         // Basic Information
         THIS = this;
         
+        this.currentPerson = null;
+        
         contentPane = new WatermarkPanel("wtlogo.png");
         contentPane.setLayout(new BorderLayout());
         contentPane.setOpaque(false);
@@ -99,6 +105,7 @@ public class MainMenu extends JFrame implements ActionListener {
             ImageIcon syncIcon = new ImageIcon(getClass().getClassLoader().getResource("sync.png"));
             ImageIcon printIcon = new ImageIcon(getClass().getClassLoader().getResource("printer.png"));
             ImageIcon settingsIcon = new ImageIcon(getClass().getClassLoader().getResource("settings.png"));
+            ImageIcon editProfileIcon = new ImageIcon(getClass().getClassLoader().getResource("database.png"));
             
             // File Menu - Start
             JMenu fileMenu = new JMenu("File");
@@ -173,6 +180,11 @@ public class MainMenu extends JFrame implements ActionListener {
             // Edit Menu - Start
             JMenu editMenu = new JMenu("Edit");
             editMenu.setMnemonic('E');
+            
+            JMenuItem editProfileItem = new JMenuItem(new MenuAction("Edit Profile"));
+            editProfileItem.setIcon(editProfileIcon);
+            editProfileItem.setMnemonic('E');
+            editProfileItem.setAccelerator(KeyStroke.getKeyStroke('D', InputEvent.CTRL_DOWN_MASK));
 
             JMenuItem quickAddItem = new JMenuItem(new MenuAction("Quick Add"));
             quickAddItem.setIcon(quickAddIcon);
@@ -246,6 +258,8 @@ public class MainMenu extends JFrame implements ActionListener {
             settingsItem.setIcon(settingsIcon);
             //settingsItem.setMnemonic('');
 
+            editMenu.add(editProfileItem);
+            editMenu.addSeparator();
             editMenu.add(quickAddItem);
             editMenu.addSeparator();
             editMenu.add(addIndItem);
@@ -457,6 +471,12 @@ public class MainMenu extends JFrame implements ActionListener {
         
     }
     
+    /**
+     * What the hell does this do brandon?
+     * 
+     * @author Brandon Buck
+     * @return Some kind of object array?
+     */
     private static Object[] getWinCustomEntries() {
             Color s2 = new Color(0xDCDBCB);
             Color s3 = new Color(0xF1F0E3);
@@ -476,7 +496,12 @@ public class MainMenu extends JFrame implements ActionListener {
                     "ToolBarButton.rolloverGradientEnd", p2
             };
     }
- 
+
+    /**
+     * A window listener sub-class for Hoi Polloi.
+     * 
+     * @author Brandon Buck
+     */
     class HPWindowListener implements WindowListener {
         public void windowDeactivated(WindowEvent evt) { }
         public void windowActivated(WindowEvent evt) { }
@@ -518,11 +543,7 @@ public class MainMenu extends JFrame implements ActionListener {
      */
     public void editProfile(Person person) {
         removeAllComponents();
-        
-        //Debug.print("Getting information on this person: "+person.getPersonID());
-        
-        //propFile.setProperty("lastprofile", person.getPersonID()+"");
-        
+               
         String prefix = person.getPrefix() + " ";
         if (prefix.equals("null ") || prefix.equals(" "))
             prefix = "";
@@ -619,18 +640,30 @@ public class MainMenu extends JFrame implements ActionListener {
         // Prefix, First, Middle, Last, Suffix
         //JLabel nameLabel = new JLabel(name);
         //nameLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        JTextField nameLabel = new JTextField(name);
+        final JTextField psnPrefixBox     = new JTextField(prefix);
+        final JTextField psnFirstNameBox  = new JTextField(firstName);
+        final JTextField psnMiddleNameBox = new JTextField(middleName);
+        final JTextField psnLastNameBox   = new JTextField(lastName);
+        final JTextField psnSuffixBox     = new JTextField(suffix);
         
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        namePanel.add(nameLabel);
-        namePanel.add(new JButton("Update Profile"));
+        namePanel.add(psnPrefixBox);
+        namePanel.add(psnFirstNameBox);
+        namePanel.add(psnMiddleNameBox);
+        namePanel.add(psnLastNameBox);
+        namePanel.add(psnSuffixBox);
+        
+        JButton btnUpdateProfile = new JButton("Update Profile");
+        
+      
+        namePanel.add(btnUpdateProfile);
         
         // Nick Name
         //JLabel nickLabel = new JLabel(nickName);
         //nickLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         //nickLabel.setForeground(Color.GRAY);
-        JTextField nickLabel = new JTextField(nickName);
+        final JTextField nickLabel = new JTextField(nickName);
         
         JPanel nickLabelPanel = new JPanel();
         nickLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -650,7 +683,7 @@ public class MainMenu extends JFrame implements ActionListener {
         picPanel.add(picLabel, BorderLayout.EAST);
         
         // Add description
-        JTextArea descArea = new JTextArea();
+        final JTextArea descArea = new JTextArea();
         descArea.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
         descArea.setText(desc);
         descArea.setBackground(Color.WHITE);
@@ -670,7 +703,7 @@ public class MainMenu extends JFrame implements ActionListener {
         JLabel eyeLabel = new JLabel("Eye Color:");
         eyeLabel.setFont(boldInfoFont);
         //JLabel personEyeLabel = new JLabel(eyeColor);
-        JTextField personEyeLabel = new JTextField(eyeColor);
+        final JTextField personEyeLabel = new JTextField(eyeColor);
         //personEyeLabel.setFont(infoFont);
         JPanel eyePanel = new JPanel();
         eyePanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -680,7 +713,7 @@ public class MainMenu extends JFrame implements ActionListener {
         JLabel hairLabel = new JLabel("Hair Color:");
         hairLabel.setFont(boldInfoFont);
         //JLabel personHairLabel = new JLabel(hairColor);
-        JTextField personHairLabel = new JTextField(hairColor);
+        final JTextField personHairLabel = new JTextField(hairColor);
         //personHairLabel.setFont(infoFont);
         JPanel hairPanel = new JPanel();
         hairPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -690,7 +723,7 @@ public class MainMenu extends JFrame implements ActionListener {
         JLabel heightLabel = new JLabel("Height:");
         heightLabel.setFont(boldInfoFont);
         //JLabel personHeightLabel = new JLabel(height);
-        JTextField personHeightLabel = new JTextField(height);
+        final JTextField personHeightLabel = new JTextField(height);
         //personHeightLabel.setFont(infoFont);
         JPanel heightPanel = new JPanel();
         heightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -700,7 +733,7 @@ public class MainMenu extends JFrame implements ActionListener {
         JLabel weightLabel = new JLabel("Weight:");
         weightLabel.setFont(boldInfoFont);
         //JLabel personWeightLabel = new JLabel(weight);
-        JTextField personWeightLabel = new JTextField(weight);
+        final JTextField personWeightLabel = new JTextField(weight);
         //personWeightLabel.setFont(infoFont);
         JPanel weightPanel = new JPanel();
         weightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -712,11 +745,11 @@ public class MainMenu extends JFrame implements ActionListener {
         //JLabel personDobLabel = new JLabel(dob);
         //personDobLabel.setFont(infoFont);
         
-        JComboBox monthBox = new JComboBox();
+        final JComboBox monthBox = new JComboBox();
         monthBox.setFont(new Font("Arial", Font.PLAIN, 11));
-        JComboBox dayBox   = new JComboBox();
+        final JComboBox dayBox   = new JComboBox();
         dayBox.setFont(new Font("Arial", Font.PLAIN, 11));
-        JComboBox yearBox  = new JComboBox();
+        final JComboBox yearBox  = new JComboBox();
         yearBox.setFont(new Font("Arial", Font.PLAIN, 11));
         
         String months[] = {"January", "February", "March", "April",
@@ -744,7 +777,7 @@ public class MainMenu extends JFrame implements ActionListener {
             yearBox  . setSelectedItem(bYear);
             monthBox . setSelectedIndex(bMonth-1);
             dayBox   . setSelectedItem(bDay);
-            System.out.println(bYear+" "+bMonth+" "+bDay);
+            Debug.print(bYear+"-"+bMonth+"-"+bDay);
         }  
         
         JPanel dobPanel = new JPanel();
@@ -757,7 +790,7 @@ public class MainMenu extends JFrame implements ActionListener {
         JLabel maidenLabel = new JLabel("Maiden Name:");
         maidenLabel.setFont(boldInfoFont);
         //JLabel personMaidenLabel = new JLabel(maidenName);
-        JTextField personMaidenLabel = new JTextField(maidenName);
+        final JTextField personMaidenLabel = new JTextField(maidenName);
         //personMaidenLabel.setFont(infoFont);
         JPanel maidenPanel = new JPanel();
         maidenPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -769,7 +802,7 @@ public class MainMenu extends JFrame implements ActionListener {
         //JLabel personGenderLabel = new JLabel(gender);
         //JTextField personGenderLabel = new JTextField(gender);
         //personGenderLabel.setFont(infoFont);
-        JComboBox personGenderLabel = new JComboBox();
+        final JComboBox personGenderLabel = new JComboBox();
         personGenderLabel.addItem("Male");
         personGenderLabel.addItem("Female");
         
@@ -788,7 +821,7 @@ public class MainMenu extends JFrame implements ActionListener {
         JLabel nationLabel = new JLabel("Nationality:");
         nationLabel.setFont(boldInfoFont);
         //JLabel personNationLabel = new JLabel(nation);
-        JTextField personNationLabel = new JTextField(nation);
+        final JTextField personNationLabel = new JTextField(nation);
         //personNationLabel.setFont(infoFont);
         JPanel nationPanel = new JPanel();
         nationPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -895,6 +928,30 @@ public class MainMenu extends JFrame implements ActionListener {
         contentPane.add(bottomPanel, BorderLayout.SOUTH  );
         contentPane.add(westPanel,   BorderLayout.WEST   );
         
+        // Setup Action for Update Profile Button
+        final Person noob = person;
+        btnUpdateProfile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                noob.setPrefix(psnPrefixBox.getText());
+                noob.setFirstName(psnFirstNameBox.getText());
+                noob.setMiddleName(psnMiddleNameBox.getText());
+                noob.setLastName(psnLastNameBox.getText());
+                noob.setSuffix(psnSuffixBox.getText());
+                noob.setNickName(nickLabel.getText());
+                noob.setEyeColor(personEyeLabel.getText());
+                noob.setHairColor(personHairLabel.getText());
+                noob.setHeight(personHeightLabel.getText());
+                noob.setWeight(personWeightLabel.getText());
+                noob.setBirthday(yearBox.getSelectedItem().toString()+"-"+DBHPInterface.getMonthNumber(monthBox.getSelectedItem().toString())+"-"+dayBox.getSelectedItem().toString());
+                noob.setMaidenName(personMaidenLabel.getText());
+                noob.setGender(personGenderLabel.getSelectedItem().toString());
+                noob.setNationality(personNationLabel.getText());                  
+                noob.setDescription(descArea.getText());
+                noob.saveToDatabase();
+                showProfile(noob);
+            }
+        });
+        
         updateWindow();
         
     }
@@ -905,6 +962,8 @@ public class MainMenu extends JFrame implements ActionListener {
      * @param person The Person whose profile to display.
      */
     public void showProfile(Person person) {
+        this.currentPerson = person;
+        
         removeAllComponents();
         
         Debug.print("Getting information on person with ID #: "+person.getPersonID());
@@ -1274,6 +1333,7 @@ public class MainMenu extends JFrame implements ActionListener {
         newContactPanel.add(ctnTypeComboBox);
         newContactPanel.add(ctnText);
         newContactPanel.add(btnAddContact);
+        //newContactPanel.add(new JButton("Delete"));
                
         ctnPanel.add(newContactPanel, BorderLayout.SOUTH);
         
@@ -1343,6 +1403,10 @@ public class MainMenu extends JFrame implements ActionListener {
     
     /** The Profile Quick-add Feature */
     public void quickAdd() {
+        
+        // Since they are no longer viewing somebody, set this to null.
+        this.currentPerson = null;
+                
         removeAllComponents();
         
         contentPane.setLayout(new BorderLayout());
@@ -1633,6 +1697,11 @@ public class MainMenu extends JFrame implements ActionListener {
             }
             else if (selection.equals("Everyone")) {
                 new JTempFrame(THIS, DBHPInterface.getListOfPeopleByLastName());
+            }
+            else if (selection.equals("Edit Profile")) {
+                if (currentPerson != null) {
+                    editProfile(currentPerson);
+                }
             }
             else if (selection.equals("Quick Add")) {
                 quickAdd();

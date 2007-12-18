@@ -2,17 +2,66 @@ package hoipolloi;
 
 import java.util.*;
 import java.sql.*;
-import org.sqlite.JDBC;
 
 
 /**
  * A class with various static methods to interact with the database.
  *
  * @author  Brandon Tanner
- * @version 1.1 (Dec 28, 2006)
+ * @version 1.2 (Dec 18, 2007)
  * @since   December 12, 2006
  */
 public class DBHPInterface {
+    
+    /**
+     * Gets the month number given a textual month.
+     * 
+     * If it can't recognize the parameter, it returns 00.
+     * 
+     * @param month The Textual Month (January, February ... etc)
+     * @return      The month number (01, 02 ... etc)
+     */
+    protected static String getMonthNumber(String month) {
+        if (month.equals("January")) {
+            return "01";
+        }
+        else if (month.equals("February")) {
+            return "02";
+        }
+        else if (month.equals("March")) {
+            return "03";
+        }
+        else if (month.equals("April")) {
+            return "04";
+        }
+        else if (month.equals("May")) {
+            return "05";
+        }
+        else if (month.equals("June")) {
+            return "06";
+        }
+        else if (month.equals("July")) {
+            return "07";
+        }
+        else if (month.equals("August")) {
+            return "08";
+        }
+        else if (month.equals("September")) {
+            return "09";
+        }
+        else if (month.equals("October")) {
+            return "10";
+        }
+        else if (month.equals("November")) {
+            return "11";
+        }
+        else if (month.equals("December")) {
+            return "12";
+        }
+        else {
+            return "00";
+        }
+    }
     
     /**
      * Gets a List of people sorted by Last Name.
