@@ -35,10 +35,16 @@ public class HPPictureEditor extends JDialog implements ActionListener {
         super(parent);
         this.parent = (MainMenu)parent;
         this.setTitle("Picture Editor");
-        this.setDefaultCloseOperation(this.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         this.setModal(true);
         
         // JMenu
+            // File menu
+            JMenu fileMenu = new JMenu("File");
+            fileMenu.setMnemonic('F');
+                
+                JMenuItem loadImageItem = new JMenuItem(new MenuAction("Load Pic..."));
+                
         // End JMenu
         
         // Component set up
@@ -95,4 +101,13 @@ public class HPPictureEditor extends JDialog implements ActionListener {
         }
     }
 
+    class MenuAction extends AbstractAction {
+        public MenuAction(String name) {
+            super(name);
+        }
+        
+        public void actionPerformed(ActionEvent evt) {
+            String selection = (String)getValue(Action.NAME);
+        }
+    }
 }

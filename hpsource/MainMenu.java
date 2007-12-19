@@ -105,7 +105,7 @@ public class MainMenu extends JFrame implements ActionListener {
             ImageIcon syncIcon = new ImageIcon(getClass().getClassLoader().getResource("sync.png"));
             ImageIcon printIcon = new ImageIcon(getClass().getClassLoader().getResource("printer.png"));
             ImageIcon settingsIcon = new ImageIcon(getClass().getClassLoader().getResource("settings.png"));
-            ImageIcon editProfileIcon = new ImageIcon(getClass().getClassLoader().getResource("database.png"));
+            ImageIcon editProfileIcon = new ImageIcon(getClass().getClassLoader().getResource("user_edit.png"));
             
             // File Menu - Start
             JMenu fileMenu = new JMenu("File");
