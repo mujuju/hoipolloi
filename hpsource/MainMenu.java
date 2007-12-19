@@ -392,6 +392,11 @@ public class MainMenu extends JFrame implements ActionListener {
         setVisible(true);
     }
     
+    /**
+     * Loads the Hoi Polloi properties file.
+     * 
+     * The filename is hp.properties
+     */
     private void loadPropertyFile() {
         try {
             propFile = new Properties();
@@ -409,10 +414,13 @@ public class MainMenu extends JFrame implements ActionListener {
             showProfile(new Person(Integer.parseInt(propFile.getProperty("lastprofile"))));
         }
         catch (Exception e) {}
-        
-        
     }
     
+    /**
+     * Sets the theme for Hoi Polloi.
+     * 
+     * @param theme The name of the theme to set.
+     */
     private void setTheme(String theme) {
         if (theme.equalsIgnoreCase("default")) {
             PlafOptions.setCurrentTheme(DEFAULT);
@@ -474,7 +482,6 @@ public class MainMenu extends JFrame implements ActionListener {
     /**
      * What the hell does this do brandon?
      * 
-     * @author Brandon Buck
      * @return Some kind of object array?
      */
     private static Object[] getWinCustomEntries() {
@@ -520,7 +527,12 @@ public class MainMenu extends JFrame implements ActionListener {
         }
         public void windowOpened(WindowEvent evt) { }
     }
-    
+ 
+    /**
+     * A component listener sub-class for Hoi Polloi.
+     * 
+     * @author Brandon Buck
+     */
     class HPComponentListener implements ComponentListener {
         public void componentHidden(ComponentEvent evt) { }
         public void componentShown(ComponentEvent evt) { }
@@ -528,6 +540,14 @@ public class MainMenu extends JFrame implements ActionListener {
         public void componentResized(ComponentEvent evt) { }
     }
     
+    /**
+     * Formats a date from YYYY-MM-DD into Month day, Year.
+     * 
+     * Eg. Takes in 1979-12-12 and spits out December 12, 1979.
+     * 
+     * @param dateString The date string as YYYY-MM-DD
+     * @return The date formatted by Month day, Year
+     */
     private String convertDate(String dateString) {
         SimpleDateFormat format = new SimpleDateFormat("MMMMMMMMM dd, yyyy");
         java.sql.Date dateObject = java.sql.Date.valueOf(dateString);
@@ -591,8 +611,6 @@ public class MainMenu extends JFrame implements ActionListener {
         String dob = person.getBirthday();
         if (dob == null || dob.equals(""))
             dob = "0000-00-00";
-        //else
-            //dob = convertDate(dob)+" ("+person.getCurrentAge()+")";
         
         String maidenName = person.getMaidenName();
         if (maidenName == null || maidenName.equals(""))
@@ -1714,7 +1732,7 @@ public class MainMenu extends JFrame implements ActionListener {
                 new SearchBox(THIS).setVisible(true);
             }
             else if (selection.equals("Statistics")) {
-                Stats.showStats();
+                Stats.showStats(THIS);
             }
             else if (selection.equals("Everyone")) {
                 new JTempFrame(THIS, DBHPInterface.getListOfPeopleByLastName());
@@ -1731,13 +1749,6 @@ public class MainMenu extends JFrame implements ActionListener {
                 About.showAboutWindow(THIS);
             }
             else if (selection.equals("Birthdays")) {
-                /*
-                String summary = "Birthdays this Month\n\n";
-                for (Object item: DBHPInterface.getBirthdaysThisMonth()) {
-                    summary += ((KeyValue)item).getValue()+"\n";
-                }
-                JOptionPane.showMessageDialog(THIS, summary);
-                 */
                 new JTempFrame(THIS, DBHPInterface.getBirthdaysThisMonth());
             }
         }
