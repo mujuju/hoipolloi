@@ -2,14 +2,14 @@ package hoipolloi;
 
 import java.util.*;
 import java.sql.*;
-import org.sqlite.JDBC;
 import javax.swing.*;
 
 /**
  * A static class containing various methods to get statistical data about the database.
  *
- * @author Brandon Tanner
- * @since  December 12, 2006
+ * @author  Brandon Tanner
+ * @version 1.1 Dec 19, 2007
+ * @since   Dec 12, 2006
  */
 public class Stats {
 
@@ -96,11 +96,11 @@ public class Stats {
     public static void main(String[] args) {
         Debug.turnOn();
         Debug.print(getNumberOfPeople());
-        showStats();
+        showStats(null);
     }
     
     /** Shows a Dialog Box with some Statistics */
-    public static void showStats() {
+    public static void showStats(MainMenu owner) {
         String summary = "<html><table>";
         summary += "<tr><td>Number of Profiles</td><td>:</td><td>"+getNumberOfPeople()+"</td></tr>";
         summary += "<tr><td>Number of Categories</td><td>:</td><td>"+getNumberOfCategories()+"</td></tr>";
@@ -110,7 +110,7 @@ public class Stats {
         summary += "<tr><td>-----------------</td><td>:</td><td>-----</td></tr>";
         //summary += listCategoriesByPeopleNumber();
         summary += "</table></html>";
-        JOptionPane.showMessageDialog(null, summary, "Hoi Polloi Statistics", JOptionPane.DEFAULT_OPTION);
+        JOptionPane.showMessageDialog(owner, summary, "Hoi Polloi Statistics", JOptionPane.DEFAULT_OPTION);
     }
     
 }
