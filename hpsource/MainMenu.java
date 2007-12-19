@@ -646,6 +646,12 @@ public class MainMenu extends JFrame implements ActionListener {
         final JTextField psnLastNameBox   = new JTextField(lastName);
         final JTextField psnSuffixBox     = new JTextField(suffix);
         
+        psnPrefixBox.setColumns(5);
+        psnFirstNameBox.setColumns(5);
+        psnMiddleNameBox.setColumns(5);
+        psnLastNameBox.setColumns(5);
+        psnSuffixBox.setColumns(5);
+        
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         namePanel.add(psnPrefixBox);
@@ -655,15 +661,18 @@ public class MainMenu extends JFrame implements ActionListener {
         namePanel.add(psnSuffixBox);
         
         JButton btnUpdateProfile = new JButton("Update Profile");
+        //JButton btnCancelEdit = new JButton("Cancel");
         
       
         namePanel.add(btnUpdateProfile);
+        //namePanel.add(btnCancelEdit);
         
         // Nick Name
         //JLabel nickLabel = new JLabel(nickName);
         //nickLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         //nickLabel.setForeground(Color.GRAY);
         final JTextField nickLabel = new JTextField(nickName);
+        nickLabel.setColumns(5);
         
         JPanel nickLabelPanel = new JPanel();
         nickLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -767,7 +776,7 @@ public class MainMenu extends JFrame implements ActionListener {
             monthBox.addItem(months[i]);
         for (int j=10; j <= 31; j++)
             dayBox.addItem(j);
-        for (int k=yearNow-110; k <= yearNow; k++)
+        for (int k=yearNow; k >= yearNow-100; k--)
             yearBox.addItem(k);
         
         if (!dob.equals("0000-00-00")) {
