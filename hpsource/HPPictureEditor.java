@@ -208,7 +208,7 @@ public class HPPictureEditor extends JDialog implements ActionListener {
             String filePath = file.getPath();
             String fileType = "";
             if (!file.isDirectory()) {
-                if (filePath.length() > 5)
+                if (filePath.length() > 5 && (filePath.lastIndexOf('.') > -1))
                     fileType = filePath.substring(filePath.lastIndexOf('.'));
                 else
                     return false;
@@ -251,7 +251,7 @@ public class HPPictureEditor extends JDialog implements ActionListener {
         
         public void propertyChange(PropertyChangeEvent evt) {
             try {
-                Debug.print("Updating.");
+                //Debug.print("Updating.");
                 java.io.File file = jfc.getSelectedFile();
                 updateImage(file);
             } catch (java.io.IOException ex) {
