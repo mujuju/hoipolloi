@@ -695,10 +695,12 @@ public class Person implements Comparable {
         
         // Get the right slash to use.
         String slash = "/";
-        if (DBHPInterface.getOS() == "WINDOWS") {
+        if (DBHPInterface.getOS().equals("WINDOWS")) {
             Debug.print("OS is detected as Windows.");
             slash = "\\";
         }
+        
+        //bug here: when running stand alone, src dir doesn't exist.
         
         if (new File("src"+slash+"pictures"+slash+(this.personID)+".jpg").exists())
             return "pictures/"+(this.personID)+".jpg";
@@ -710,7 +712,7 @@ public class Person implements Comparable {
             return "pictures/"+(this.personID)+".gif";
         
         else
-            return "";
+            return "pictures/unknown.jpg";
     }
     
     /**
