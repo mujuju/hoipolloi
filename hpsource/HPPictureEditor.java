@@ -27,7 +27,7 @@ public class HPPictureEditor extends JDialog implements ActionListener {
     // Buttons
     private JButton acceptButton = new JButton("Accept");
     private JButton cancelButton = new JButton("Cancel");
-    private JLabel imageLabel = new JLabel();
+    private JImageLabel imageLabel = new JImageLabel(289, 354);
     private BufferedImage currentImage = null;
     private java.io.File lastSelectedFile = null;
     
