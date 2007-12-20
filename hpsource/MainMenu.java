@@ -982,7 +982,12 @@ public class MainMenu extends JFrame implements ActionListener {
         updateWindow();
         
     }
-    
+    /**
+     * Returns the current person.
+     */
+    public Person getCurrentPerson() {
+        return currentPerson;
+    }
     /**
      * Display a Person's Profile.
      *

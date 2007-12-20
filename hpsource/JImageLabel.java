@@ -13,10 +13,13 @@ public class JImageLabel extends JLabel implements MouseListener, MouseMotionLis
     private Color rectBorderColor;
     private boolean hasImage;
     private boolean movingCropArea = false;
-    int mouseDownX, mouseDownY;
+    private int mouseDownX, mouseDownY;
+    private int cropWidth, cropHeight;
     
     public JImageLabel(int width, int height) {
         cropArea = new Rectangle(0, 0, width, height);
+        cropWidth = width;
+        cropHeight = height;
         // blue: 101, 131, 172
         rectFillColor = new Color(236, 238, 123, 100);
         // blue: 49, 64, 84
@@ -31,8 +34,8 @@ public class JImageLabel extends JLabel implements MouseListener, MouseMotionLis
     public void setIcon(Icon img) {
         super.setIcon(img);
         
-        
-        hasImage = true;
+        if (img != null)
+            hasImage = true;
     }
     
     public void paintComponent(Graphics g) {
@@ -54,6 +57,10 @@ public class JImageLabel extends JLabel implements MouseListener, MouseMotionLis
         }
     }
 
+    public Rectangle getCropBounds() {
+        return cropArea;
+    }
+    
     public void mouseClicked(MouseEvent e) {}
     public void mousePressed(MouseEvent e) {
         if (cropArea.contains(new Point(e.getX(), e.getY()))) {

@@ -123,7 +123,7 @@ public class HPPictureEditor extends JDialog implements ActionListener {
         this.setVisible(true);
     }
     /**
-     * Displays the HPPictureEditor witht he given owner.
+     * Displays the HPPictureEditor with the given owner.
      * 
      * @param owner The frame that this HPPictureEditor belongs to.
      */
