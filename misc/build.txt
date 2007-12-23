@@ -1,0 +1,5 @@
+cd tmp/
+/opt/jdk1.6.0_02/bin/jar cmf ../man.txt hoipolloi.jar *
+mv hoipoll.jar ../
+
+zip HoiPolloi.zip HoiPolloi.bat HoiPolloi.sh hoipolloi.jar hp.properties pmp.s3db lib/*
