@@ -383,7 +383,7 @@ public class MainMenu extends JFrame implements ActionListener {
         // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         // setSize((int)(screenSize.getWidth() * .7), (int)(screenSize.getHeight() * .8));
         // setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));
-        setSize(1000, 800);
+        setSize(910, 700);
         setLocation(140,140);
         
         

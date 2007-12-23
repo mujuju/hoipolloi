@@ -8,20 +8,16 @@
  *    2. Install the pgslookandfeel package into your classpath.
  *       https://pgslookandfeel.dev.java.net/
  * 
- *    3. Install the swing-layout package into your classpath.
- *       It comes with netbeans in the platform(x)/modules/ext directory.
- *       The filename is called "swing-layout-1.0.3.jar"
- * 
- *    4. Get the example SQLite Database file and put it somewhere.
+ *    3. Get the example SQLite Database file and put it somewhere.
  *       Then edit the fileName path to it in the DBConnection.java
  *       The empty/blank database file is in the trunk/misc repository.
  * 
- *    5. Get all the images from the trunk/images repository.
+ *    4. Get all the images from the trunk/images repository.
  *       Netbeans wants them in the project folder/src directory.
  * 
- *    6. Put the hp.properties file in the main netbeans project folder.
+ *    5. Put the hp.properties file in the main netbeans project folder.
  * 
- *    7. Last, just checkout the trunk/hpsource files into your project.
+ *    6. Last, just checkout the trunk/hpsource files into your project.
  * 
  */
 
@@ -34,7 +30,7 @@ package hoipolloi;
  *
  * @author  Brandon Buck
  * @author  Brandon Tanner
- * @version 1.1 (Dec 16, 2007)
+ * @version 1.2 (Dec 23, 2007)
  */
 public class Main {
     

@@ -9,22 +9,45 @@ import java.util.*;
  * Shows a search window for searching the Hoi Polloi database.
  *
  * @author  Brandon Tanner
- * @version 1.0
- * @since   Dec 23, 2007
+ * @version 1.1 (Dec 23, 2007)
+ * @since   Dec 22, 2007
  */
 public class SearchWindow extends JFrame implements ActionListener {
-
-    private MainMenu   parent;                    
-    private JButton    btnSearch;
-    private JCheckBox  checkAddresses;
-    private JCheckBox  checkContacts;
-    private JCheckBox  checkDescription;
-    private JCheckBox  checkFirstName;
-    private JCheckBox  checkLastName;
-    private JCheckBox  checkNickName;
-    private JLabel     searchLabel;
-    private JPanel     topPanel;
-    private JPanel     bottomPanel;
+    
+    /** The parent frame object */
+    private MainMenu parent;
+    
+    /** The Search Button */
+    private JButton btnSearch;
+    
+    /** The Search Addresses Checkbox */
+    private JCheckBox checkAddresses;
+    
+    /** The Search Contacts Checkbox */
+    private JCheckBox checkContacts;
+    
+    /** The Search Description Checkbox */
+    private JCheckBox checkDescription;
+    
+    /** The Search First Name Checkbox */
+    private JCheckBox checkFirstName;
+    
+    /** The Search Last Name Checkbox */
+    private JCheckBox checkLastName;
+    
+    /** The Search Nick Name Checkbox */
+    private JCheckBox checkNickName;
+    
+    /** The Search Query Label */
+    private JLabel searchLabel;
+    
+    /** The Top JPanel in the window */
+    private JPanel topPanel;
+    
+    /** The Bottom JPanel in the window */
+    private JPanel bottomPanel;
+    
+    /** The Search Query Textfield */
     private JTextField searchQuery;
     
     
@@ -55,6 +78,8 @@ public class SearchWindow extends JFrame implements ActionListener {
         
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Find Someone Among the Hoi Polloi");
+        ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("magnifier.png"));
+        setIconImage(icon.getImage());
         setAlwaysOnTop(true);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         setResizable(false);
@@ -107,7 +132,7 @@ public class SearchWindow extends JFrame implements ActionListener {
         // --END CENTER--
     }
     
-    
+    /** Invoked when an action occurs. */
     public void actionPerformed(ActionEvent event) {
         AbstractButton pressedButton = (AbstractButton)event.getSource();
         if (pressedButton == btnSearch) {
@@ -118,7 +143,7 @@ public class SearchWindow extends JFrame implements ActionListener {
     /**
      * Method used to search the database with the given query. 
      * 
-     * Called when the Search button is pressed or the Enter key pressed.
+     * Called when the Search button is pressed or the Enter key is pressed.
      */
     public void searchAction() {
         if (searchQuery.getText().equals("")) {
@@ -160,10 +185,10 @@ public class SearchWindow extends JFrame implements ActionListener {
         this.dispose();
     }
     
+    /* The javadoc should be inherited somehow */
     class SearchQueryListener implements KeyListener {
         public void keyReleased(KeyEvent evt) {}
         public void keyPressed(KeyEvent evt) {
-            Debug.print(evt.getKeyCode() + " = " + KeyEvent.VK_ENTER);
             if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                 searchAction();
             }
