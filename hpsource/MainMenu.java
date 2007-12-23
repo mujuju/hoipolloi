@@ -1734,7 +1734,7 @@ public class MainMenu extends JFrame implements ActionListener {
             if (selection.equals("Exit"))
                 System.exit(0);
             else if (selection.equals("Search")) {
-                new SearchBox(THIS).setVisible(true);
+                new SearchWindow(THIS);
             }
             else if (selection.equals("Statistics")) {
                 Stats.showStats(THIS);
