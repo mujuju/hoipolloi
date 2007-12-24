@@ -2,7 +2,6 @@ package hoipolloi;
 
 import java.util.*;
 import java.sql.*;
-import org.sqlite.JDBC;
 
 /**
  * Stores Contacts for People
@@ -34,7 +33,7 @@ public class Contact {
      * @return A keyvalue list of contact types.
      */
     public static ArrayList getContactTypes() {
-        ArrayList <KeyValue> contactTypes = new ArrayList();
+        ArrayList <KeyValue> contactTypes = new ArrayList<KeyValue>();
         String sql = "SELECT typContactTypeID, typContactType FROM pmp_ctypes";
         DBConnection db = new DBConnection();
         try {

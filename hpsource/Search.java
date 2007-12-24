@@ -146,7 +146,7 @@ public class Search {
         sql += " ORDER BY psnLastName";
         Debug.print(sql);
         /* End Build SQL from phpMyPeople */
-        ArrayList <KeyValue> people = new ArrayList();
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         DBConnection db = new DBConnection();
         try {
             if (howManyAreOn() > 0) {
@@ -199,7 +199,7 @@ public class Search {
         }
         sql += ") ORDER BY psnLastName";
         Debug.print(sql);
-        ArrayList <KeyValue> people = new ArrayList();
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         DBConnection db = new DBConnection();
         try {
             Statement stmt  = db.getDBStatement();
@@ -232,7 +232,7 @@ public class Search {
         }
         sql += ") ORDER BY psnLastName";
         Debug.print(sql);
-        ArrayList <KeyValue> people = new ArrayList();
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         DBConnection db = new DBConnection();
         try {
             Statement stmt  = db.getDBStatement();

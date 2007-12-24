@@ -6,8 +6,6 @@
 
 package hoipolloi;
 
-import java.io.ObjectInputStream;
-import java.io.IOException;
 import java.awt.LayoutManager;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -309,12 +307,8 @@ public class VerticalFlowLayout implements LayoutManager, java.io.Serializable {
 	}
 
 
-	/**
-	 *  Description of the Method
-	 *
-	 *@return    Description of the Returned Value
-	 */
-	public String toString() {
+	/** {@inheritDoc} */
+	@Override public String toString() {
 		String halign = "";
 		switch (_halign) {
 			case TOP:

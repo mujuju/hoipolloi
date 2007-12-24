@@ -2,7 +2,6 @@ package hoipolloi;
 
 import java.util.*;
 import java.sql.*;
-import org.sqlite.JDBC;
 
 /**
  * Stores Address Types
@@ -20,7 +19,7 @@ public class AddressType {
     protected static final String PERMANENT   = "Permanent";
 
     public static ArrayList getAddressTypes() {
-        ArrayList <KeyValue> addressTypes = new ArrayList();
+        ArrayList <KeyValue> addressTypes = new ArrayList<KeyValue>();
         String sql = "SELECT atpAddressTypeID, atpAddressType FROM pmp_addresstypes";
         DBConnection db = new DBConnection();
         try {

@@ -11,13 +11,17 @@ import java.awt.*;
  * @version 1.0
  */
 public class WatermarkPanel extends JPanel {
+    
+    /** The Watermark Image */
     private ImageIcon watermark;
+    
     /** Creates a new instance of WatermarkPanel */
     public WatermarkPanel(String imgName) {
         watermark = new ImageIcon(getClass().getClassLoader().getResource(imgName));
     }
     
-    public void paintComponent(Graphics g) {
+    /** {@inheritDoc} */
+    @Override public void paintComponent(Graphics g) {
         int width = getWidth();
         int height = getHeight();
         

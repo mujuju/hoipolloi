@@ -69,7 +69,7 @@ public class DBHPInterface {
      * @return An ArrayList of KeyValue pairs of the people in the database.
      */
     protected static ArrayList getListOfPeopleByLastName() {
-        ArrayList <KeyValue> people = new ArrayList();
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         String sql = "SELECT * FROM pmp_people ORDER BY psnLastName ASC";
         DBConnection db = new DBConnection();
         try {
@@ -84,7 +84,7 @@ public class DBHPInterface {
     }
     
     protected static ArrayList getListOfCategories() {
-        ArrayList <KeyValue> categories = new ArrayList();
+        ArrayList <KeyValue> categories = new ArrayList<KeyValue>();
         String sql = "SELECT * FROM pmp_categories";
         DBConnection db = new DBConnection();
         try {
@@ -116,7 +116,7 @@ public class DBHPInterface {
      * @return           The list of people who are in the given category.
      */
     protected static ArrayList getPeopleInCategory(int CategoryID) {
-        ArrayList <KeyValue> people = new ArrayList();
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         String sql = "SELECT psnPersonID, psnLastName, psnFirstName FROM pmp_people, pmp_categorylink WHERE (clkCategoryID = '"+CategoryID+"') AND (clkPersonID = psnPersonID) ORDER BY psnLastName ASC";
         DBConnection db = new DBConnection();
         try {
@@ -239,7 +239,7 @@ public class DBHPInterface {
             }
             month = "'"+month+"'";
         }
-        ArrayList <KeyValue> people = new ArrayList();
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         String sql = "SELECT psnPersonID, psnFirstName, psnLastName, psnBirthday FROM pmp_people WHERE ("+month+" = strftime('%m', psnBirthday)) ORDER BY psnLastName ASC";
         Debug.print(sql);
         DBConnection db = new DBConnection();
@@ -260,7 +260,7 @@ public class DBHPInterface {
      * @return A List of Countries
      */
     protected static ArrayList getListOfCountries() {
-        ArrayList <KeyValue> countries = new ArrayList();
+        ArrayList <KeyValue> countries = new ArrayList<KeyValue>();
         String sql = "SELECT ctyCountryID, ctyCountryName FROM pmp_countries";
         DBConnection db = new DBConnection();
         try {

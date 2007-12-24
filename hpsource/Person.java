@@ -1,7 +1,6 @@
 package hoipolloi;
 
 import java.sql.*;
-import org.sqlite.JDBC;
 import javax.swing.*;
 import java.util.*;
 import java.text.*;
@@ -11,7 +10,7 @@ import java.io.*;
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99k December 9, 2007
+ * @version 0.99m December 23, 2007
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -84,9 +83,9 @@ public class Person implements Comparable {
         this.photoBinary   = "";
         this.photoFileName = "";
         this.lastUpdate    = "0000-00-00";
-        this.categories    = new ArrayList();
-        this.contacts      = new ArrayList();
-        this.addresses     = new ArrayList();
+        this.categories    = new ArrayList<KeyValue>();
+        this.contacts      = new ArrayList<Contact>();
+        this.addresses     = new ArrayList<Address>();
         this.occupation    = "";
     }
     
@@ -104,7 +103,7 @@ public class Person implements Comparable {
         }
     }
     
-    /* The Documentation for this method is inherited. */
+    /** {@inheritDoc} */
     public int compareTo(Object o) {
         return -1;
     }
@@ -116,7 +115,7 @@ public class Person implements Comparable {
      *
      * @return The Full Name of the Person, each part seperated by spaces.
      */
-    public String toString() {
+    @Override public String toString() {
         String name = new String("");
         if (!this.prefix.equals("null"))
             name += this.prefix+" ";
