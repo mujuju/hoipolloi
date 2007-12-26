@@ -1354,7 +1354,7 @@ public class MainMenu extends JFrame implements ActionListener {
         
         ctnText.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent evt) {
-                if (evt.getKeyCode() == evt.VK_ENTER) {
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                     // do stuff for add new contact
                     if (ctnText != null) {
                         // Contact Type ID (in Database)
@@ -1737,6 +1737,10 @@ public class MainMenu extends JFrame implements ActionListener {
                 System.exit(0);
             else if (selection.equals("Search")) {
                 new SearchWindow(THIS);
+            }
+            else if (selection.equals("Close")) {
+                // Not sure if this should be close profile or close database?
+                THIS.clearWindow();
             }
             else if (selection.equals("Statistics")) {
                 Stats.showStats(THIS);
