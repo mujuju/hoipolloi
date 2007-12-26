@@ -190,6 +190,32 @@ public class HPPictureEditor extends JDialog implements ActionListener {
                         lastSelectedFile = browser.getSelectedFile();
                         currentImage = ImageIO.read(lastSelectedFile);
                         imageLabel.setIcon(new ImageIcon(lastSelectedFile.getPath()));
+                        
+                        if (currentImage.getWidth() > parent.getWidth()) {
+                            if (currentImage.getHeight() > parent.getHeight()) {
+                                Debug.print("Resizing...");
+                                int width = currentImage.getWidth();
+                                int height = currentImage.getHeight();
+                                
+                                int maxSide = Math.max(width, height);
+                                
+                                double scale = (double)(parent.getWidth() - 20) / maxSide;
+                                
+                                int newWidth = (int)(scale * width);
+                                int newHeight = (int)(scale * height);
+                                
+                                Image scaledImage = currentImage.getScaledInstance(newWidth, newHeight, Image.SCALE_AREA_AVERAGING);
+                                BufferedImage newCurrentImage = createBlankImage(currentImage, newWidth, newHeight);
+                                Graphics2D g2 = newCurrentImage.createGraphics();
+                                g2.drawImage(scaledImage, 0, 0, null);
+                                g2.dispose();
+                                currentImage = newCurrentImage;
+                                imageLabel.setIcon(new ImageIcon(scaledImage));
+                                imageLabel.setText("");
+                                Debug.print("Done resizing: " + "resized by " + scale);
+                            }
+                        }
+                        
                         resizeFrame();
                     } catch(java.io.IOException exc) {
                         Debug.print("ERROR: Problem reading file in.");
@@ -198,6 +224,18 @@ public class HPPictureEditor extends JDialog implements ActionListener {
             } else if (selection.equals("Close")) {
                 disposeEditor();
             }
+        }
+    }
+    
+    public static BufferedImage createBlankImage(BufferedImage src, int w, int h) {
+        int type = src.getType();
+        if (type != BufferedImage.TYPE_CUSTOM)
+            return new BufferedImage(w, h, type);
+        else {
+            ColorModel cm = src.getColorModel();
+            WritableRaster raster = src.getRaster().createCompatibleWritableRaster(w, h);
+            boolean isRasterPremultiplied = src.isAlphaPremultiplied();
+            return new BufferedImage(cm, raster, isRasterPremultiplied, null);
         }
     }
     

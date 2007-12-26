@@ -108,12 +108,17 @@ public class SearchWindow extends JFrame implements ActionListener {
         topPanel.add(searchQuery);
         topPanel.add(btnSearch);
         
-        bottomPanel.add(checkFirstName);
-        bottomPanel.add(checkLastName);
-        bottomPanel.add(checkNickName);
-        bottomPanel.add(checkDescription);
-        bottomPanel.add(checkContacts);
-        bottomPanel.add(checkAddresses);
+        JPanel bottomGridPanel = new JPanel();
+        bottomGridPanel.setLayout(new GridLayout(2, 3));
+        
+        bottomGridPanel.add(checkFirstName);
+        bottomGridPanel.add(checkLastName);
+        bottomGridPanel.add(checkNickName);
+        bottomGridPanel.add(checkDescription);
+        bottomGridPanel.add(checkContacts);
+        bottomGridPanel.add(checkAddresses);
+        
+        bottomPanel.add(bottomGridPanel);
         
         cp.add(topPanel, BorderLayout.NORTH);
         cp.add(bottomPanel, BorderLayout.SOUTH);

@@ -413,8 +413,10 @@ public class MainMenu extends JFrame implements ActionListener {
         try {
             showProfile(new Person(Integer.parseInt(propFile.getProperty("lastprofile"))));
         }
-        catch (Exception e) {}
-    }
+        catch (Exception e) {
+            Debug.print("Error: Unable to load last viewed profile");
+        }   
+    }   
     
     /**
      * Sets the theme for Hoi Polloi.
