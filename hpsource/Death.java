@@ -3,7 +3,7 @@ package hoipolloi;
 import java.sql.*;
 
 /**
- * A static class to delete things from the Hoi Polloi database.
+ * A genocide class to delete things from the Hoi Polloi database.
  *
  * @author  Brandon Tanner
  * @version 1.1 (Dec 27, 2007)
@@ -18,6 +18,9 @@ public class Death {
     
     /**
      * Purges a person from the Hoi Polloi database.
+     * 
+     * This method removes the Person's addresses, contacts, 
+     * category links, contacts and finally the person itself.
      * 
      * @param person The Person to Purge.
      * @return       True if successful, false otherwise.
