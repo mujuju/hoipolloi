@@ -65,6 +65,8 @@ public class MainMenu extends JFrame implements ActionListener {
     private JButton cancelButton;
     private JButton btnAddContact;
     private JButton btnDelContact;
+    private JButton btnDelProfile;
+    private JButton btnUpdateProfile;
     
     /** Creates a new instance of MainMenu */
     public MainMenu() {
@@ -107,7 +109,8 @@ public class MainMenu extends JFrame implements ActionListener {
         ImageIcon printIcon = new ImageIcon(getClass().getClassLoader().getResource("printer.png"));
         ImageIcon settingsIcon = new ImageIcon(getClass().getClassLoader().getResource("settings.png"));
         ImageIcon editProfileIcon = new ImageIcon(getClass().getClassLoader().getResource("user_edit.png"));
-
+        ImageIcon birthdayIcon = new ImageIcon(getClass().getClassLoader().getResource("birthday.png"));
+        
         // File Menu - Start
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
@@ -320,6 +323,7 @@ public class MainMenu extends JFrame implements ActionListener {
         statItem.setMnemonic('S');
 
         JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays"));
+        birthdayItem.setIcon(birthdayIcon);
         birthdayItem.setMnemonic('B');
 
         infoMenu.add(statItem);
@@ -367,9 +371,6 @@ public class MainMenu extends JFrame implements ActionListener {
 
         cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(this);
-
-        btnAddContact = new JButton("Add Contact");
-        btnDelContact = new JButton("-");
         // Buttons - End
         
         // Contact Info Table (is this being used?)
@@ -566,7 +567,7 @@ public class MainMenu extends JFrame implements ActionListener {
     public void editProfile(Person person) {
         removeAllComponents();
                
-        String prefix = person.getPrefix() + " ";
+        String prefix = person.getPrefix();
         if (prefix.equals("null ") || prefix.equals(" "))
             prefix = "";
         
@@ -574,21 +575,17 @@ public class MainMenu extends JFrame implements ActionListener {
         if (firstName == null || firstName.equals(""))
             firstName = "";
         
-        String middleName = " " + person.getMiddleName();
+        String middleName = person.getMiddleName();
         if (middleName.equals(" null") || middleName.equals(" "))
             middleName = "";
         
-        String lastName = " " + person.getLastName();
+        String lastName = person.getLastName();
         if (lastName.equals(" null") || lastName.equals(" "))
             lastName = "";
         
-        String suffix = " " + person.getSuffix();
+        String suffix = person.getSuffix();
         if (suffix.equals(" null") || suffix.equals(" "))
             suffix = "";
-        
-        String name = prefix + firstName + middleName + lastName + suffix;
-        if (name == null || name.equals(""))
-            name = "Unknown Person";
 
         String nickName = person.getNickName();
         if (nickName.equals("null") || nickName.equals(""))
@@ -680,11 +677,13 @@ public class MainMenu extends JFrame implements ActionListener {
         namePanel.add(psnLastNameBox);
         namePanel.add(psnSuffixBox);
         
-        JButton btnUpdateProfile = new JButton("Update Profile");
+        btnUpdateProfile = new JButton("Update Profile");
+        btnDelProfile = new JButton("Delete Profile");
         //JButton btnCancelEdit = new JButton("Cancel");
         
       
         namePanel.add(btnUpdateProfile);
+        namePanel.add(btnDelProfile);
         //namePanel.add(btnCancelEdit);
         
         // Nick Name
@@ -978,6 +977,17 @@ public class MainMenu extends JFrame implements ActionListener {
                 noob.setDescription(descArea.getText());
                 noob.saveToDatabase();
                 showProfile(noob);
+            }
+        });
+        
+        btnDelProfile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (Death.purgePerson(noob)) {
+                    clearWindow();
+                }
+                else {
+                    Debug.print("Failed to Purge this Person");
+                }
             }
         });
         
@@ -1330,6 +1340,52 @@ public class MainMenu extends JFrame implements ActionListener {
         JScrollPane ctnScrollPane = new JScrollPane(ctnTable);
         ctnPanel.add(ctnScrollPane, BorderLayout.NORTH);
         
+        ctnTable.addMouseListener(new MouseAdapter() {
+            @Override public void mouseClicked(MouseEvent e) {
+                // Select first with left mouse button, then middle click.
+                if (e.getClickCount() == 1 && e.getButton() == 2) {
+                    JTable target = (JTable)e.getSource();
+                    int row       = target.getSelectedRow();
+                    String type   = (String)target.getValueAt(row, 0);
+                    String data   = (String)target.getValueAt(row, 1);
+                    
+                    try {
+                        if (type.equals("URL")) {
+                            BrowserLauncher.openURL(data);
+                        }
+                        else if (type.equals("Skype")) {
+                            BrowserLauncher.openURL("skype:"+data+"?chat");
+                        }
+                        else if (type.equals("Home Phone") || type.equals("Work Phone") || type.equals("Cell Phone") || type.equals("Perm Phone") || type.equals("Pager")) {
+                            BrowserLauncher.openURL("callto://"+data);
+                        }
+                        else if (type.equals("Primary Email") || type.equals("Extra Email")) {
+                            BrowserLauncher.openURL("mailto://"+data);
+                        }
+                        else if (type.equals("AIM")) {
+                            BrowserLauncher.openURL("aim:goim?screenname="+data);
+                        }
+                        else if (type.equals("YIM")) {
+                            BrowserLauncher.openURL("ymsgr:sendim?"+data);
+                        }
+                        else if (type.equals("ICQ")) {
+                            BrowserLauncher.openURL("http://web.icq.com/whitepages/message_me?uin="+data+"&action=message");
+                        }
+                        else if (type.equals("MSN")) {
+                            BrowserLauncher.openURL("msnim:chat?contact="+data);
+                        }
+                        // fax
+                        // QQ
+                        // Google Talk
+                        // Jabber
+                    }
+                    catch (Exception ex) {
+                        Debug.print(ex.getMessage());
+                    }
+                }
+            }
+        });
+        
         
         // New Contact Stuff ***********************************
         JPanel newContactPanel = new JPanel();
@@ -1352,6 +1408,7 @@ public class MainMenu extends JFrame implements ActionListener {
         final Person noob = person;
         
         // Action of Add Contact
+        btnAddContact = new JButton("Add Contact");
         btnAddContact.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {               
                 // do stuff for add new contact
@@ -1372,6 +1429,8 @@ public class MainMenu extends JFrame implements ActionListener {
             }
         });
         
+        // Action of Delete Contact
+        btnDelContact = new JButton("-");
         btnDelContact.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 int row = ctnTable.getSelectedRow();
@@ -1419,7 +1478,7 @@ public class MainMenu extends JFrame implements ActionListener {
         newContactPanel.add(ctnText);
         newContactPanel.add(btnAddContact);
         newContactPanel.add(btnDelContact);
-        //newContactPanel.add(new JButton("Delete"));
+        
                
         ctnPanel.add(newContactPanel, BorderLayout.SOUTH);
         

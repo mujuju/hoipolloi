@@ -42,7 +42,9 @@ public class DBConnection {
         try {
             conn.close();
         }
-        catch (Exception e) {}
+        catch (Exception e) {
+            Debug.print(e.getMessage());
+        }
     }
     
     /** Loads the File Path to the Database */

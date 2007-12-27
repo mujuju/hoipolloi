@@ -13,7 +13,7 @@
  * @author  Brandon Tanner (Engine/Design/Database)
  * @author  Brandon Buck   (Interface/Design/Layout)
  * @since   November 2006
- * @version 1.96           (December 13, 2007)
+ * @version 1.97           (December 27, 2007)
  * 
  */
 package hoipolloi;
