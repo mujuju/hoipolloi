@@ -8,9 +8,9 @@ import java.sql.*;
  * This class however is not used to add 
  * or remove contacts from the database.
  *
- * @version 1.0
- * @since December 15, 2006
- * @author Brandon Tanner
+ * @version 1.2 (Dec 26, 2007)
+ * @since   December 15, 2006
+ * @author  Brandon Tanner
  */
 public class Contact {
     
@@ -79,7 +79,7 @@ public class Contact {
         this.contact = contact;
     }
     
-    public String toString() {
+    @Override public String toString() {
         String ctn = new String();
         ctn = "Contact ID: "+this.contactID+" "+this.contactType+": "+this.contact;
         return ctn;

@@ -10,7 +10,7 @@ import java.io.*;
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99m December 23, 2007
+ * @version 0.99n December 26, 2007
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -365,7 +365,7 @@ public class Person implements Comparable {
      * @param prefix The Person's Prefix.
      */
     public void setPrefix(String prefix) {
-        this.prefix = prefix;
+        this.prefix = prefix.trim();
     }
 
     /**
@@ -374,7 +374,7 @@ public class Person implements Comparable {
      * @param suffix The Person's Suffix.
      */
     public void setSuffix(String suffix) {
-        this.suffix = suffix;
+        this.suffix = suffix.trim();
     }
     
     /**
@@ -383,7 +383,7 @@ public class Person implements Comparable {
      * @param firstname The Person's First Name.
      */
     public void setFirstName(String firstname) {
-        this.firstName = firstname;
+        this.firstName = firstname.trim();
     }
     
     /**
@@ -392,7 +392,7 @@ public class Person implements Comparable {
      * @param middlename The Person's Middle Name
      */
     public void setMiddleName(String middlename) {
-        this.middleName = middlename;
+        this.middleName = middlename.trim();
     }
     
     /**
@@ -401,7 +401,7 @@ public class Person implements Comparable {
      * @param lastname The Person's Last Name
      */
     public void setLastName(String lastname) {
-        this.lastName = lastname;
+        this.lastName = lastname.trim();
     }
     
     /**
@@ -410,7 +410,7 @@ public class Person implements Comparable {
      * @param maidenname The Person's Maiden Name
      */
     public void setMaidenName(String maidenname) {
-        this.maidenName = maidenname;
+        this.maidenName = maidenname.trim();
     }
     
     /**
@@ -484,7 +484,7 @@ public class Person implements Comparable {
      * @param nickname The Person's Nick Name
      */
     public void setNickName(String nickname) {
-        this.nickName = nickname;
+        this.nickName = nickname.trim();
     }
     
     /**
@@ -493,7 +493,7 @@ public class Person implements Comparable {
      * @param nationality The Person's Nationality
      */
     public void setNationality(String nationality) {
-        this.nationality = nationality;
+        this.nationality = nationality.trim();
     }
     
     /**
@@ -529,7 +529,7 @@ public class Person implements Comparable {
      * @param occupation The Person's Occupation
      */
     public void setOccupation(String occupation) {
-        this.occupation = occupation;
+        this.occupation = occupation.trim();
     }
     
     /**
@@ -699,17 +699,14 @@ public class Person implements Comparable {
             slash = "\\";
         }
         
-        //bug here: when running stand alone, src dir doesn't exist.
-        
-        if (new File("src"+slash+"pictures"+slash+(this.personID)+".jpg").exists())
+        if (new File("pictures"+slash+(this.personID)+".jpg").exists())
             return "pictures/"+(this.personID)+".jpg";
         
-        else if (new File("src"+slash+"pictures"+slash+(this.personID)+".png").exists())
+        else if (new File("pictures"+slash+(this.personID)+".png").exists())
             return "pictures/"+(this.personID)+".png";
         
-        else if (new File("src"+slash+"pictures"+slash+(this.personID)+".gif").exists())
+        else if (new File("pictures"+slash+(this.personID)+".gif").exists())
             return "pictures/"+(this.personID)+".gif";
-        
         else
             return "pictures/unknown.jpg";
     }
@@ -1017,7 +1014,55 @@ public class Person implements Comparable {
     }
     
     /**
-     * Removes a Contact for this Person
+     * Gets the ID number of a contact given the contact and type as strings.
+     * 
+     * This ID number is the one from the database for the contact record.
+     * 
+     * @param strContactType The Contact Type
+     * @param strContact     The Contact
+     * @return               The Contact ID Number, or -1 if it can't locate it.
+     */
+    protected int getContactIDFromStrings(String strContactType, String strContact) {
+        if (strContactType.isEmpty() || strContact.isEmpty() || this.personID < 1) {
+            return -1;
+        }
+        else {
+            DBConnection db = new DBConnection();
+            try {
+                Statement stmt = db.getDBStatement();
+                ResultSet rs = stmt.executeQuery("SELECT ctnContactID FROM pmp_contacts, pmp_ctypes WHERE (ctnPersonID = \""+this.personID+"\") AND (ctnContact = \""+strContact+"\") AND (typContactType = \""+strContactType+"\") AND (ctnContactTypeID = typContactTypeID)");
+                return rs.getInt("ctnContactID");
+            }
+            catch (Exception e) {
+                Debug.print("Failed to get contact id for given type and contact.");
+                Debug.print(e.getCause());
+                return -1; 
+            }
+            finally {
+                db.closeConnection();
+            }
+        }
+    }
+    
+    /**
+     * Removes a Contact for this Person.
+     *
+     * @param contactType The Contact Type String
+     * @param contact     The Contact String
+     * @return            True if Successful, otherwise false
+     */
+    protected boolean removeContact(String contactType, String contact) {
+        int contactID = getContactIDFromStrings(contactType, contact);
+        if (removeContact(contactID)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    /**
+     * Removes a Contact for this Person.
      *
      * @param contactID The ID of the Contact from the database to remove
      * @return True if Successful, otherwise false
@@ -1057,9 +1102,9 @@ public class Person implements Comparable {
     public static void main(String[] args) {
         Debug.turnOn();
         try {
-            Person dude = new Person(249);
+            //Person dude = new Person(249);
             //Person dude = new Person();
-            Debug.print(dude.loadFromDatabase());
+            //Debug.print(dude.loadFromDatabase());
             //Debug.print(dude.getLastName());
             //Debug.print(dude.getBirthday());
             //dude.setFirstName("Brandon");
@@ -1083,19 +1128,19 @@ public class Person implements Comparable {
             //Debug.print(dude.addCategory(24));
             //Debug.print(dude.removeCategory(24));
             //dude.setBirthday("1986-11-12");
-            Debug.print("|"+dude+"|");
+            //Debug.print("|"+dude+"|");
             //Debug.print(dude.getCurrentAge());
             //Debug.print(dude.getAgeThisYear());
             //DBHPInterface.printListOfPeopleByLastNameToStdout(dude.getCategories());
             //DBHPInterface.printListOfPeopleByLastNameToStdout(dude.getContacts());
-            Address myAddress = new Address();
-            myAddress.setAddressCity("Bullard");
-            myAddress.setAddressLabel("Mr. B. C. Tanner");
-            myAddress.setAddressLine1("23262 CR 181");
-            myAddress.setAddressState("TX");
-            myAddress.setAddressZip("75757");
-            myAddress.setAddressType(new KeyValue(1, ""));
-            myAddress.setAddressCountry(new KeyValue(223, "USA"));
+            //Address myAddress = new Address();
+            //myAddress.setAddressCity("Bullard");
+            //myAddress.setAddressLabel("Mr. B. C. Tanner");
+            //myAddress.setAddressLine1("23262 CR 181");
+            //myAddress.setAddressState("TX");
+            //myAddress.setAddressZip("75757");
+            //myAddress.setAddressType(new KeyValue(1, ""));
+            //myAddress.setAddressCountry(new KeyValue(223, "USA"));
             //Debug.print(dude.addAddress(myAddress));
             //Debug.print(dude.removeAddress(1));
         }
