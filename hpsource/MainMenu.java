@@ -1532,6 +1532,7 @@ public class MainMenu extends JFrame implements ActionListener {
      * Clears and updates the main application window.
      */
     public void clearWindow() {
+        this.currentPerson = null;
         removeAllComponents();
         updateWindow();
     }
@@ -1665,12 +1666,15 @@ public class MainMenu extends JFrame implements ActionListener {
                                 newPerson.setDescription(description);
                                 boolean success = newPerson.saveToDatabase();
                                 
-                                JOptionPane.showMessageDialog(THIS, newPerson.addCategory(catID));
+                                newPerson.addCategory(catID);
                                 
-                                if (success)
-                                    JOptionPane.showMessageDialog(THIS, firstName + " " + lastName + " was added to the database!", "Success!", JOptionPane.INFORMATION_MESSAGE);
-                                else
+                                if (success) {
+                                    //JOptionPane.showMessageDialog(THIS, firstName + " " + lastName + " was added to the database!", "Success!", JOptionPane.INFORMATION_MESSAGE);
+                                    showProfile(newPerson);
+                                }
+                                else {
                                     JOptionPane.showMessageDialog(THIS, "There was a problem saving this person to the database, please try again.", "Failure", JOptionPane.ERROR_MESSAGE);
+                                }
                             }
                             else
                                 JOptionPane.showMessageDialog(THIS, "The First Name, Last Name, and Category must have valid entries!", "Cannot Add", JOptionPane.ERROR_MESSAGE);
