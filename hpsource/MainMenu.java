@@ -384,11 +384,13 @@ public class MainMenu extends JFrame implements ActionListener {
         
         // Center the Main Menu and Set Size to 80% of Screen Width/Height
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setSize((int)(screenSize.getWidth() * .8), (int)(screenSize.getHeight() * .8));
+        //setSize((int)(screenSize.getWidth() * .8), (int)(screenSize.getHeight() * .8));
+        setSize(800, 600); // Goal
         setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));       
         
         // Show the Main Menu
         getContentPane().add(contentPane);
+        //pack();
         setVisible(true);
     }
     
@@ -546,13 +548,13 @@ public class MainMenu extends JFrame implements ActionListener {
     /**
      * Formats a date from YYYY-MM-DD into Month day, Year.
      * 
-     * Eg. Takes in 1979-12-12 and spits out December 12, 1979.
+     * Eg. Takes in 1979-12-12 and spits out Dec 12, 1979.
      * 
      * @param dateString The date string as YYYY-MM-DD
      * @return The date formatted by Month day, Year
      */
     private String convertDate(String dateString) {
-        SimpleDateFormat format = new SimpleDateFormat("MMMMMMMMM dd, yyyy");
+        SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
         java.sql.Date dateObject = java.sql.Date.valueOf(dateString);
         return format.format(dateObject);
     }
@@ -567,61 +569,21 @@ public class MainMenu extends JFrame implements ActionListener {
     public void editProfile(Person person) {
         removeAllComponents();
                
-        String prefix = person.getPrefix();
-        if (prefix.equals("null ") || prefix.equals(" "))
-            prefix = "";
-        
-        String firstName =  person.getFirstName();
-        if (firstName == null || firstName.equals(""))
-            firstName = "";
-        
+        String prefix     = person.getPrefix();
+        String firstName  = person.getFirstName();       
         String middleName = person.getMiddleName();
-        if (middleName.equals(" null") || middleName.equals(" "))
-            middleName = "";
-        
-        String lastName = person.getLastName();
-        if (lastName.equals(" null") || lastName.equals(" "))
-            lastName = "";
-        
-        String suffix = person.getSuffix();
-        if (suffix.equals(" null") || suffix.equals(" "))
-            suffix = "";
-
-        String nickName = person.getNickName();
-        if (nickName.equals("null") || nickName.equals(""))
-            nickName = "";
-        
-        String eyeColor = person.getEyeColor();
-        if (eyeColor == null || eyeColor.equals(""))
-            eyeColor = "Unknown";
-        
-        String hairColor = person.getHairColor();
-        if (hairColor == null || hairColor.equals(""))
-            hairColor = "Unknown";
-        
-        String height = person.getHeight();
-        if (height == null || height.equals(""))
-            height = "Unknown";
-        
-        String weight = person.getWeight();
-        if (weight == null || weight.equals(""))
-            weight = "Unknown";
-        
-        String dob = person.getBirthday();
-        if (dob == null || dob.equals(""))
-            dob = "0000-00-00";
-        
+        String lastName   = person.getLastName();
+        String suffix     = person.getSuffix();
+        String nickName   = person.getNickName();
+        String eyeColor   = person.getEyeColor();
+        String hairColor  = person.getHairColor();
+        String height     = person.getHeight();
+        String weight     = person.getWeight();
+        String dob        = person.getBirthday();
         String maidenName = person.getMaidenName();
-        if (maidenName == null || maidenName.equals(""))
-            maidenName = "Unknown";
-        
-        String gender = person.getGender();
-        if (gender == null || gender.equals(""))
-            gender = "Unknown";
-        
-        String nation = person.getNationality();
-        if (nation == null || nation.equals(""))
-            nation = "Unknown";
+        String gender     = person.getGender();
+        String nation     = person.getNationality();
+
         
         String desc = person.getDescription();
         if (desc == null || desc.equals(""))
@@ -651,12 +613,6 @@ public class MainMenu extends JFrame implements ActionListener {
             }
         }
         
-        //Debug.print("Done getting info for this person:");
-            
-        // Name
-        // Prefix, First, Middle, Last, Suffix
-        //JLabel nameLabel = new JLabel(name);
-        //nameLabel.setFont(new Font("Arial", Font.BOLD, 30));
         final JTextField psnPrefixBox     = new JTextField(prefix);
         final JTextField psnFirstNameBox  = new JTextField(firstName);
         final JTextField psnMiddleNameBox = new JTextField(middleName);
@@ -678,18 +634,12 @@ public class MainMenu extends JFrame implements ActionListener {
         namePanel.add(psnSuffixBox);
         
         btnUpdateProfile = new JButton("Update Profile");
-        btnDelProfile = new JButton("Delete Profile");
-        //JButton btnCancelEdit = new JButton("Cancel");
-        
+        btnDelProfile    = new JButton("Delete Profile"); 
       
         namePanel.add(btnUpdateProfile);
         namePanel.add(btnDelProfile);
-        //namePanel.add(btnCancelEdit);
         
-        // Nick Name
-        //JLabel nickLabel = new JLabel(nickName);
-        //nickLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        //nickLabel.setForeground(Color.GRAY);
+
         final JTextField nickLabel = new JTextField(nickName);
         nickLabel.setColumns(5);
         
@@ -730,9 +680,9 @@ public class MainMenu extends JFrame implements ActionListener {
         
         JLabel eyeLabel = new JLabel("Eye Color:");
         eyeLabel.setFont(boldInfoFont);
-        //JLabel personEyeLabel = new JLabel(eyeColor);
+        
         final JTextField personEyeLabel = new JTextField(eyeColor);
-        //personEyeLabel.setFont(infoFont);
+        
         JPanel eyePanel = new JPanel();
         eyePanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         eyePanel.add(eyeLabel);
@@ -1324,7 +1274,7 @@ public class MainMenu extends JFrame implements ActionListener {
         model.addColumn("Contact Type");
         model.addColumn("Contact Name");
         
-        ctnTable.setPreferredScrollableViewportSize(new Dimension(400, 200));
+        ctnTable.setPreferredScrollableViewportSize(new Dimension(150, 150));
         ctnTable.setGridColor(Color.LIGHT_GRAY);
         
         // Loop to Populate Contacts Table
@@ -1402,13 +1352,13 @@ public class MainMenu extends JFrame implements ActionListener {
         }
         
         // todo: need to not use absolute width somehow
-        final JTextField ctnText = new JTextField(15);
+        final JTextField ctnText = new JTextField(10);
         
         // not sure, but inner class needs this to be final, so i create a copy
         final Person noob = person;
         
         // Action of Add Contact
-        btnAddContact = new JButton("Add Contact");
+        btnAddContact = new JButton("Add");
         btnAddContact.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {               
                 // do stuff for add new contact

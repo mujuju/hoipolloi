@@ -22,7 +22,7 @@ public class DBHPInterface {
      * @return      The month number (01, 02 ... etc)
      */
     protected static String getMonthNumber(String month) {
-        if (month.equals("January")) {
+        if (month.equals("Jan")) {
             return "01";
         }
         else if (month.equals("February")) {
