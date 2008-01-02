@@ -68,6 +68,7 @@ public class MainMenu extends JFrame implements ActionListener {
     private JButton btnDelProfile;
     private JButton btnUpdateProfile;
     
+    
     /** Creates a new instance of MainMenu */
     public MainMenu() {
         // Basic Information
@@ -419,7 +420,22 @@ public class MainMenu extends JFrame implements ActionListener {
             Debug.print("Error: Unable to load last viewed profile");
             Debug.print(e.getMessage());
         }   
-    }   
+    }
+    
+    /**
+     * Saves the Hoi Polloi properties file.
+     * 
+     * The filename is hp.properties
+     */
+    private void savePropertyFile() {
+        try {
+            propFile.store(new java.io.FileOutputStream(new java.io.File("hp.properties")), "Property File for Hoi Polloi");
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(THIS, "Error saving property file, if you changed\n"
+                    + "settings then they have not been saved.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     
     /**
      * Sets the theme for Hoi Polloi.
@@ -521,14 +537,7 @@ public class MainMenu extends JFrame implements ActionListener {
         public void windowIconified(WindowEvent evt) { }
         public void windowClosed(WindowEvent evt) { }
         public void windowClosing(WindowEvent evt) { 
-            try {
-                propFile.store(new java.io.FileOutputStream(new java.io.File("hp.properties")), "Property File for Hoi Polloi");
-            }
-            catch (Exception e) {
-                JOptionPane.showMessageDialog(THIS, "Error saving property file, if you changed\n"
-                        + "settings then they have not been saved.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        
+            savePropertyFile();
         }
         public void windowOpened(WindowEvent evt) { }
     }
@@ -1437,25 +1446,139 @@ public class MainMenu extends JFrame implements ActionListener {
         
         westPanel.add(ctnPanel, BorderLayout.NORTH);
         
-        // Address Box
-        JPanel adrPanel = new JPanel();
-        adrPanel.setLayout(new FlowLayout());
-        adrPanel.setBorder(BorderFactory.createTitledBorder("Locations"));
-        JLabel adrLabel = new JLabel("Select Address Label: ");
-        JComboBox addressBox = new JComboBox();
-        ArrayList addressList = person.getAddresses();
+        // Address Box *******************************************************
+        JTabbedPane addressPane = new JTabbedPane();
+        ArrayList <Address> addressList = person.getAddresses();
+        
+        // Loop to Create Tabs
         if (addressList != null && !addressList.isEmpty()) {
-            for (Object value : addressList) {
-                addressBox.addItem(((Address)value).getAddressLabel());
+            for (Address address : addressList) {
+                // Get Address Parts
+                String addressType     = address.getAddressType().getValue();
+                String addressLabel    = address.getAddressLabel();
+                String addressLine1    = address.getAddressLine1();
+                String addressLine2    = address.getAddressLine2();
+                String addressLine3    = address.getAddressLine3();
+                String addressCity     = address.getAddressCity();
+                String addressState    = address.getAddressState();
+                String addressZip      = address.getAddressZip();
+                String addressCountry  = address.getAddressCountry().getValue();
+                String addressDistrict = address.getAddressDistrict();
+                
+                // Make Panel to Display Address (should really make our own component for this)
+                JPanel addressPanel = new JPanel();
+                addressPanel.setLayout(new GridBagLayout());
+                GridBagConstraints c = new GridBagConstraints();
+                
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 0;
+                c.gridy = 0;
+                addressPanel.add(new JLabel(addressLabel), c);
+                
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 0;
+                c.gridy = 1;
+                addressPanel.add(new JLabel(addressLine1), c);
+                
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 0;
+                c.gridy = 2;
+                addressPanel.add(new JLabel(addressLine2), c);
+                
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 0;
+                c.gridy = 3;
+                addressPanel.add(new JLabel(addressLine3), c);
+                
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 0;
+                c.gridy = 4;
+                addressPanel.add(new JLabel(addressCity+", "), c);
+                
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 1;
+                c.gridy = 4;
+                addressPanel.add(new JLabel(addressState+" "), c);
+                
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 2;
+                c.gridy = 4;
+                addressPanel.add(new JLabel(addressZip), c);
+                
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 0;
+                c.gridy = 5;
+                addressPanel.add(new JLabel(addressDistrict), c);
+                
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 0;
+                c.gridy = 6;
+                addressPanel.add(new JLabel(addressCountry), c);
+                
+                JLabel googlemaps = new JLabel("<html><a href='http://maps.google.com/'>Google Maps</a></html>");
+                googlemaps.setToolTipText("Click here to view this address at Google Maps");
+                
+                JLabel mapquest = new JLabel("<html><a href='http://www.mapquest.com/'>Mapquest</a></html>");
+                mapquest.setToolTipText("Click here to view this address at Mapquest");
+                
+                final Address a = address;
+                googlemaps.addMouseListener(new MouseListener() {
+                    public void mouseClicked(MouseEvent e) {
+                        try { BrowserLauncher.openURL(a.getGoogleMapsURL()); } catch (Exception ex) {}
+                    }
+                    public void mousePressed(MouseEvent e) {
+                        setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                    }
+                    public void mouseReleased(MouseEvent e) {
+                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    }
+                    public void mouseEntered(MouseEvent e) {
+                        setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    }
+                    public void mouseExited(MouseEvent e) {
+                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    }
+                });
+                
+                mapquest.addMouseListener(new MouseListener() {
+                    public void mouseClicked(MouseEvent e) {
+                        try { BrowserLauncher.openURL(a.getMapquestURL()); } catch (Exception ex) {}
+                    }
+                    public void mousePressed(MouseEvent e) {
+                        setCursor(new Cursor(Cursor.WAIT_CURSOR));
+                    }
+                    public void mouseReleased(MouseEvent e) {
+                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    }
+                    public void mouseEntered(MouseEvent e) {
+                        setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    }
+                    public void mouseExited(MouseEvent e) {
+                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    }
+                });
+                
+                
+                c.gridx = 0;
+                c.gridy = 8;
+                addressPanel.add(googlemaps, c);
+                c.gridx = 1;
+                c.gridy = 8;
+                addressPanel.add(mapquest, c);
+                                
+                
+                addressPane.addTab(addressType, addressPanel);
             }
         }
         else {
-            addressBox.addItem("No Addresses Found");
+            JPanel noAddressPanel = new JPanel(new BorderLayout());
+            noAddressPanel.add(new JLabel("     Edit Profile to Add Addresses"), BorderLayout.CENTER);
+            addressPane.addTab("Address", noAddressPanel);
         }
-        adrPanel.add(adrLabel);
-        adrPanel.add(addressBox);
-        adrPanel.add(new JButton("View"));
-        westPanel.add(adrPanel);
+        // End Address Box ***************************************************
+        
+        
+        westPanel.add(addressPane);
         
         
         contentPane.setLayout(new BorderLayout());
@@ -1786,8 +1909,10 @@ public class MainMenu extends JFrame implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
             String selection = (String)getValue(Action.NAME);
             
-            if (selection.equals("Exit"))
+            if (selection.equals("Exit")) {
+                savePropertyFile();
                 System.exit(0);
+            }
             else if (selection.equals("Search")) {
                 new SearchWindow(THIS);
             }

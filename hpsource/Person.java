@@ -938,7 +938,7 @@ public class Person implements Comparable {
      *
      * @return The Person's List of Addresses
      */
-    public ArrayList getAddresses() {
+    public ArrayList <Address> getAddresses() {
         return this.addresses;
     }
     

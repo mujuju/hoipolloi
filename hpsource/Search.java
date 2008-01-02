@@ -144,7 +144,7 @@ public class Search {
             }
         }
         sql += " ORDER BY psnLastName";
-        Debug.print(sql);
+        //Debug.print(sql);
         /* End Build SQL from phpMyPeople */
         ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         DBConnection db = new DBConnection();
@@ -198,7 +198,7 @@ public class Search {
             }
         }
         sql += ") ORDER BY psnLastName";
-        Debug.print(sql);
+        //Debug.print(sql);
         ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         DBConnection db = new DBConnection();
         try {
@@ -231,7 +231,7 @@ public class Search {
             }
         }
         sql += ") ORDER BY psnLastName";
-        Debug.print(sql);
+        //Debug.print(sql);
         ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         DBConnection db = new DBConnection();
         try {
