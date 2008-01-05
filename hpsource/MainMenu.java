@@ -111,6 +111,7 @@ public class MainMenu extends JFrame implements ActionListener {
         ImageIcon settingsIcon = new ImageIcon(getClass().getClassLoader().getResource("settings.png"));
         ImageIcon editProfileIcon = new ImageIcon(getClass().getClassLoader().getResource("user_edit.png"));
         ImageIcon birthdayIcon = new ImageIcon(getClass().getClassLoader().getResource("birthday.png"));
+        ImageIcon timeIcon = new ImageIcon(getClass().getClassLoader().getResource("birthday.png"));
         
         // File Menu - Start
         JMenu fileMenu = new JMenu("File");
@@ -295,11 +296,68 @@ public class MainMenu extends JFrame implements ActionListener {
         //JMenuItem typeItem = new JMenuItem(new MenuAction("By Type"));
         //typeItem.setMnemonic('T');
         //typeItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
+        
+        // *********** Begin Dynamic Menus from Database Data **********************/
+        
+        JMenu categoryMenu = new JMenu("Categories");
+        JMenu locationMenu = new JMenu("Locations");
+        JMenu recentMenu   = new JMenu("Recently Added");
+        
+        ButtonGroup categoryGroup = new ButtonGroup();
+        ButtonGroup locationGroup = new ButtonGroup();
+        ButtonGroup recentGroup   = new ButtonGroup();
+        
+        JMenuItem dummyCategory = new JMenuItem("Choose A Category...");
+        dummyCategory.setFont(new Font(categoryMenu.getFont().getFamily(), Font.BOLD, categoryMenu.getFont().getSize()));
+        dummyCategory.setEnabled(false); // set to false to not allow clicking
+        
+        JMenuItem dummyLocation = new JMenuItem("Choose A Location...");
+        dummyLocation.setFont(new Font(locationMenu.getFont().getFamily(), Font.BOLD, locationMenu.getFont().getSize()));
+        dummyLocation.setEnabled(false); // set to false to not allow clicking
+        
+        // Category Submenu
+        categoryMenu.add(dummyCategory);
+        categoryMenu.addSeparator();
+        ArrayList cats = DBHPInterface.getListOfCategories();
+        for (Object c : cats) {
+            String catName = ((KeyValue)c).getValue();
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(catName);
+            item.addActionListener(this);
+            categoryGroup.add(item);
+            categoryMenu.add(item);
+        }
+        
+        // Locations (City) Submenu
+        locationMenu.add(dummyLocation);
+        locationMenu.addSeparator();
+        ArrayList cities = DBHPInterface.getCitiesPeopleAreIn();
+        for (Object c : cities) {
+            String cityName = (String)c;
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(cityName);
+            item.addActionListener(this);
+            locationGroup.add(item);
+            locationMenu.add(item);
+        }
+        
+        // 10 Most Recently Added People Submenu
+        ArrayList newfish = DBHPInterface.getMostRecentlyAdded(10);
+        for (Object c : newfish) {
+            String label = (String)c;
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(label);
+            item.addActionListener(this);
+            recentGroup.add(item);
+            recentMenu.add(item);
+        }
+        
+        
+        // End Dynamic Menus **************************************************
 
         viewMenu.add(everyoneItem);
         viewMenu.addSeparator();
-        viewMenu.add(categoryItem);
-        viewMenu.add(locationItem);
+        viewMenu.add(categoryMenu);
+        viewMenu.add(locationMenu);
+        viewMenu.add(recentMenu);
+        
         //viewMenu.add(typeItem);
         // View Menu - End
 
@@ -326,9 +384,15 @@ public class MainMenu extends JFrame implements ActionListener {
         JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays"));
         birthdayItem.setIcon(birthdayIcon);
         birthdayItem.setMnemonic('B');
+        
+        JMenuItem timeItem = new JMenuItem(new MenuAction("World Clocks"));
+        timeItem.setIcon(timeIcon);
+        timeItem.setMnemonic('T');
+        
 
         infoMenu.add(statItem);
         infoMenu.add(birthdayItem);
+        infoMenu.add(timeItem);
         // Info Menu - End
                 
         // Help Menu - Start
@@ -355,6 +419,7 @@ public class MainMenu extends JFrame implements ActionListener {
         menuBar.add(viewMenu);
         menuBar.add(searchMenu);
         menuBar.add(infoMenu);
+        menuBar.add(Box.createHorizontalGlue()); //Postion Next Item Far Right
         menuBar.add(helpMenu);
 
         setJMenuBar(menuBar);
@@ -600,7 +665,7 @@ public class MainMenu extends JFrame implements ActionListener {
         
         String fileName = person.getPhotoFileName();
         if (fileName == null || fileName.equals(""))
-            fileName = "unknown.jpg";      
+            fileName = "pictures/unknown.jpg";      
         
         String lastUpdate = person.getLastUpdate();
         if (lastUpdate == null || lastUpdate.equals("") || lastUpdate.equals("0000-00-00"))
@@ -662,7 +727,7 @@ public class MainMenu extends JFrame implements ActionListener {
         
         // Add Picture
         JLabel picLabel = new JLabel();
-        picLabel.setIcon(new ImageIcon(getClass().getClassLoader().getResource(fileName)));
+        picLabel.setIcon(new ImageIcon(fileName));
         picLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 0, Color.BLACK));
         
         JPanel picPanel = new JPanel();
@@ -941,11 +1006,15 @@ public class MainMenu extends JFrame implements ActionListener {
         
         btnDelProfile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (Death.purgePerson(noob)) {
-                    clearWindow();
-                }
-                else {
-                    Debug.print("Failed to Purge this Person");
+                ImageIcon deathIcon = new ImageIcon(getClass().getClassLoader().getResource("death.gif"));
+                int response = JOptionPane.showConfirmDialog(THIS, "Are you sure you want to purge this profile?", "Purge Profile", 0, 0, deathIcon);
+                if (response == 0) {
+                    if (Death.purgePerson(noob)) {
+                        clearWindow();
+                    }
+                    else {
+                        Debug.print("Failed to Purge this Person");
+                    }
                 }
             }
         });
@@ -1060,7 +1129,7 @@ public class MainMenu extends JFrame implements ActionListener {
         String fileName = person.getPhotoFileName();
         Debug.print(fileName); //show filename debug
         if (fileName == null || fileName.equals(""))
-            fileName = "unknown.jpg";      
+            fileName = "pictures/unknown.jpg";      
         
         String lastUpdate = person.getLastUpdate();
         if (lastUpdate == null || lastUpdate.equals("") || lastUpdate.equals("0000-00-00"))
@@ -1108,7 +1177,9 @@ public class MainMenu extends JFrame implements ActionListener {
         
         // Add Picture
         JLabel picLabel = new JLabel();
-        picLabel.setIcon(new ImageIcon(getClass().getClassLoader().getResource(fileName)));
+        //Looks for file file starting inside the jar
+        //picLabel.setIcon(new ImageIcon(getClass().getClassLoader().getResource(fileName)));
+        picLabel.setIcon(new ImageIcon(fileName));
         picLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 0, Color.BLACK));
         
         JPanel picPanel = new JPanel();
@@ -1319,7 +1390,7 @@ public class MainMenu extends JFrame implements ActionListener {
                             BrowserLauncher.openURL("callto://"+data);
                         }
                         else if (type.equals("Primary Email") || type.equals("Extra Email")) {
-                            BrowserLauncher.openURL("mailto://"+data);
+                            BrowserLauncher.openURL("mailto:"+data);
                         }
                         else if (type.equals("AIM")) {
                             BrowserLauncher.openURL("aim:goim?screenname="+data);
@@ -1834,6 +1905,8 @@ public class MainMenu extends JFrame implements ActionListener {
                 THIS.setVisible(true);
             }
         }
+        
+        
         
         // Theme Buttons
         if (defaultTheme.isSelected()) {

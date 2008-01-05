@@ -227,7 +227,13 @@ public class DBHPInterface {
     protected static ArrayList getBirthdaysThisMonth() {
         return getBirthdaysInMonth("current");
     }
-       
+    
+    /**
+     * Gets the list of people with birthdays in the given month.
+     * 
+     * @param month Month as String
+     * @return List of people with birthdays in given month
+     */
     protected static ArrayList getBirthdaysInMonth(String month) {
         if (month.equals("current")) {
             month = "strftime('%m', 'now', 'localtime')";
@@ -259,7 +265,7 @@ public class DBHPInterface {
      *
      * @return A List of Countries
      */
-    protected static ArrayList getListOfCountries() {
+    public static ArrayList getListOfCountries() {
         ArrayList <KeyValue> countries = new ArrayList<KeyValue>();
         String sql = "SELECT ctyCountryID, ctyCountryName FROM pmp_countries";
         DBConnection db = new DBConnection();
@@ -272,6 +278,65 @@ public class DBHPInterface {
             return countries;
         }
         catch (Exception e) { return null; }
+        finally {
+            db.closeConnection();
+        }
+    }
+    
+    /**
+     * Gets the list of cities people have addresses in.
+     * 
+     * @return The City List
+     */
+    public static ArrayList getCitiesPeopleAreIn() {
+        ArrayList locations = new ArrayList();
+        String sql = "SELECT DISTINCT adrCity FROM pmp_addresses WHERE (adrCity <> '') ORDER BY adrCity";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt = db.getDBStatement();
+            ResultSet rs   = stmt.executeQuery(sql);
+            while (rs.next()) {
+                locations.add(rs.getString("adrCity"));
+            }
+            return locations;
+        }
+        catch (Exception e) {
+            Debug.print(e.getMessage());
+            return null;
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+    
+    /**
+     * Gets "x" most recently added people.
+     * 
+     * @param count The Number of Recent People to Get
+     * @return      The List of x Most recently added people
+     */
+    public static ArrayList getMostRecentlyAdded(int count) {
+        if (count < 1) {
+            count = 1;
+        }
+        ArrayList newfish = new ArrayList();
+        String sql = "SELECT psnFirstName, psnLastName FROM pmp_people ORDER BY psnPersonID DESC LIMIT "+count;
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt = db.getDBStatement();
+            ResultSet rs   = stmt.executeQuery(sql);
+            while (rs.next()) {
+                newfish.add(rs.getString("psnFirstName")+" "+rs.getString("psnLastName"));
+            }
+            return newfish;
+        }
+        catch (Exception e) {
+            Debug.print(e.getMessage());
+            return null;
+        }
+        finally {
+            db.closeConnection();
+        }
     }
     
     /**
@@ -279,22 +344,13 @@ public class DBHPInterface {
      *
      * @return WINDOWS or UNIX.
      */
-    protected static String getOS() {
-        if (System.getProperty("os.name").toUpperCase() == "WINDOWS") {
+    public static String getOS() {
+        if (System.getProperty("os.name").toUpperCase().equals("WINDOWS")) {
             return "WINDOWS";
         }
         else {
             return "UNIX";
         }
-    }
-    
-    public static void main(String[] args) {
-        Debug.turnOn();
-        
-        //printListOfPeopleByLastNameToStdout(getListOfCategories());
-        //printListOfPeopleByLastNameToStdout(getPeopleInCategory(1));
-        //printListOfPeopleByLastNameToStdout(getListOfCountries());
-        printListOfPeopleByLastNameToStdout(getBirthdaysInMonth("1"));
     }
     
 }

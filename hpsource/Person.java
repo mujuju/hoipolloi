@@ -10,7 +10,7 @@ import java.io.*;
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99n December 26, 2007
+ * @version 0.99o Jan 5, 2008
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -692,6 +692,8 @@ public class Person implements Comparable {
      */
     public String getPhotoFileName() {
         
+        // The pictures/ folder should be inside same folder as hp.properties, jar etc.
+        
         // Get the right slash to use.
         String slash = "/";
         if (DBHPInterface.getOS().equals("WINDOWS")) {
@@ -707,8 +709,13 @@ public class Person implements Comparable {
         
         else if (new File("pictures"+slash+(this.personID)+".gif").exists())
             return "pictures/"+(this.personID)+".gif";
-        else
+        
+        else if (new File("pictures"+slash+"unknown.jpg").exists())
             return "pictures/unknown.jpg";
+        
+        else 
+            return "";
+        
     }
     
     /**

@@ -8,7 +8,7 @@ import javax.swing.*;
  * A static class containing various methods to get statistical data about the database.
  *
  * @author  Brandon Tanner
- * @version 1.1 Dec 19, 2007
+ * @version 1.2 Jan 3, 2008
  * @since   Dec 12, 2006
  */
 public class Stats {
@@ -39,6 +39,11 @@ public class Stats {
         finally { db.closeConnection(); }          
     }
     
+    /**
+     * Gets the number of people who don't have their birthday set in their profile.
+     * 
+     * @return Number of People
+     */
     public static int getNumberOfPeopleWithoutBirthdays() {
         String sql = "SELECT COUNT(*) AS total FROM pmp_people WHERE (psnBirthday IS NULL) OR (psnBirthday = '') OR (psnBirthday = '0000-00-00') OR (psnBirthday = '2006-11-25')";
         DBConnection db = new DBConnection();
@@ -51,6 +56,11 @@ public class Stats {
         finally { db.closeConnection(); }        
     }
     
+    /**
+     * Gets the number of males.
+     * 
+     * @return Number of Males
+     */
     public static int getNumberOfMales() {
         String sql = "SELECT COUNT(*) AS total FROM pmp_people WHERE (psnGender = 'Male') OR (psnGender = 'male')";
         DBConnection db = new DBConnection();
@@ -63,12 +73,35 @@ public class Stats {
         finally { db.closeConnection(); }
     }
     
+    /**
+     * Gets the number of females.
+     * 
+     * @return Number of Females
+     */
     public static int getNumberOfFemales() {
         String sql = "SELECT COUNT(*) AS total FROM pmp_people WHERE (psnGender = 'Female') OR (psnGender = 'female')";
         DBConnection db = new DBConnection();
         try {
             Statement stmt  = db.getDBStatement();
             ResultSet rs    = stmt.executeQuery(sql);
+            return rs.getInt("total");
+        }
+        catch (Exception e) { return -1; }
+        finally { db.closeConnection(); }
+    }
+    
+    /**
+     * Gets the number of countries represented by the Hoi Polloi.
+     * 
+     * @return The Number of Countries Represented
+     */
+    public static int getCountriesRepresented() {
+        String sql = "SELECT COUNT(DISTINCT adrCountryID) AS total FROM pmp_addresses";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt  = db.getDBStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+            
             return rs.getInt("total");
         }
         catch (Exception e) { return -1; }
@@ -107,6 +140,7 @@ public class Stats {
         summary += "<tr><td>People without Birthdays</td><td>:</td><td>"+getNumberOfPeopleWithoutBirthdays()+"</td></tr>";
         summary += "<tr><td>Number of Males</td><td>:</td><td>"+getNumberOfMales()+"</td></tr>";
         summary += "<tr><td>Number of Females</td><td>:</td><td>"+getNumberOfFemales()+"</td></tr>";
+        summary += "<tr><td>Countries Represented</td><td>:</td><td>"+getCountriesRepresented()+"</td></tr>";
         summary += "<tr><td>-----------------</td><td>:</td><td>-----</td></tr>";
         //summary += listCategoriesByPeopleNumber();
         summary += "</table></html>";
