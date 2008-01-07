@@ -10,7 +10,7 @@ import java.io.*;
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99o Jan 5, 2008
+ * @version 0.99p Jan 7, 2008
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -45,8 +45,8 @@ public class Person implements Comparable {
     protected String description;
     /** The Person's Nick Name */
     protected String nickName;
-    /** The Person's Nationality like American, Thai or Singaporean */
-    protected String nationality;
+    /** The Person's Demonym like American, Thai or Singaporean */
+    protected KeyValue demonym;
     /** The Person's Profile Picture in Binary or BASE64 Format */
     protected String photoBinary;
     /** The File Name of the Person's Profile Picture */
@@ -79,7 +79,7 @@ public class Person implements Comparable {
         this.birthday      = "0000-00-00";
         this.description   = "";
         this.nickName      = "";
-        this.nationality   = "";
+        this.demonym       = new KeyValue();
         this.photoBinary   = "";
         this.photoFileName = "";
         this.lastUpdate    = "0000-00-00";
@@ -179,7 +179,7 @@ public class Person implements Comparable {
             try {
                 setLastUpdate();
                 Statement stmt  = db.getDBStatement();
-                stmt.executeUpdate("INSERT INTO pmp_people (psnPrefix, psnSuffix, psnFirstName, psnMiddleName, psnLastName, psnMaidenName, psnGender, psnEyeColor, psnHairColor, psnHeight, psnWeight, psnBirthday, psnDescription, psnNickName, psnNationality, psnPhotoBinary, psnPhotoFileName, psnLastUpdate, psnOccupation) VALUES (\""+this.prefix+"\", \""+this.suffix+"\", \""+this.firstName+"\", \""+this.middleName+"\", \""+this.lastName+"\", \""+this.maidenName+"\", \""+this.gender+"\", \""+this.eyeColor+"\", \""+this.hairColor+"\", \""+this.height+"\", \""+this.weight+"\", \""+this.birthday+"\", \""+this.description+"\", \""+this.nickName+"\", \""+this.nationality+"\", \""+this.photoBinary+"\", \""+this.photoFileName+"\", \""+this.lastUpdate+"\", \""+this.occupation+"\")");
+                stmt.executeUpdate("INSERT INTO pmp_people (psnPrefix, psnSuffix, psnFirstName, psnMiddleName, psnLastName, psnMaidenName, psnGender, psnEyeColor, psnHairColor, psnHeight, psnWeight, psnBirthday, psnDescription, psnNickName, psnDemonymID, psnPhotoBinary, psnPhotoFileName, psnLastUpdate, psnOccupation) VALUES (\""+this.prefix+"\", \""+this.suffix+"\", \""+this.firstName+"\", \""+this.middleName+"\", \""+this.lastName+"\", \""+this.maidenName+"\", \""+this.gender+"\", \""+this.eyeColor+"\", \""+this.hairColor+"\", \""+this.height+"\", \""+this.weight+"\", \""+this.birthday+"\", \""+this.description+"\", \""+this.nickName+"\", \""+this.demonym.getKey()+"\", \""+this.photoBinary+"\", \""+this.photoFileName+"\", \""+this.lastUpdate+"\", \""+this.occupation+"\")");
                 setNewPersonID();
                 return true;
             }
@@ -190,7 +190,7 @@ public class Person implements Comparable {
             try {
                 setLastUpdate();
                 Statement stmt  = db.getDBStatement();
-                stmt.executeUpdate("UPDATE pmp_people SET psnPrefix = \""+this.prefix+"\", psnSuffix = \""+this.suffix+"\", psnFirstName = \""+this.firstName+"\", psnMiddleName = \""+this.middleName+"\", psnLastName = \""+this.lastName+"\", psnMaidenName = \""+this.maidenName+"\", psnGender = \""+this.gender+"\", psnEyeColor = \""+this.eyeColor+"\", psnHairColor = \""+this.hairColor+"\", psnHeight = \""+this.height+"\", psnWeight = \""+this.weight+"\", psnBirthday = \""+this.birthday+"\", psnDescription = \""+this.description+"\", psnNickName = \""+this.nickName+"\", psnNationality = \""+this.nationality+"\", psnPhotoBinary = \""+this.photoBinary+"\", psnPhotoFileName = \""+this.photoFileName+"\", psnLastUpdate = \""+this.lastUpdate+"\", psnOccupation = \""+this.occupation+"\" WHERE (psnPersonID = \""+this.personID+"\")");
+                stmt.executeUpdate("UPDATE pmp_people SET psnPrefix = \""+this.prefix+"\", psnSuffix = \""+this.suffix+"\", psnFirstName = \""+this.firstName+"\", psnMiddleName = \""+this.middleName+"\", psnLastName = \""+this.lastName+"\", psnMaidenName = \""+this.maidenName+"\", psnGender = \""+this.gender+"\", psnEyeColor = \""+this.eyeColor+"\", psnHairColor = \""+this.hairColor+"\", psnHeight = \""+this.height+"\", psnWeight = \""+this.weight+"\", psnBirthday = \""+this.birthday+"\", psnDescription = \""+this.description+"\", psnNickName = \""+this.nickName+"\", psnDemonymID = \""+this.demonym.getKey()+"\", psnPhotoBinary = \""+this.photoBinary+"\", psnPhotoFileName = \""+this.photoFileName+"\", psnLastUpdate = \""+this.lastUpdate+"\", psnOccupation = \""+this.occupation+"\" WHERE (psnPersonID = \""+this.personID+"\")");
                 return true;
             }
             catch (Exception e) { Debug.print(e.getMessage()); return false; }
@@ -316,7 +316,7 @@ public class Person implements Comparable {
      * @return True if Successful, otherwise false.
      */
     protected boolean loadFromDatabase() {
-        String sql = "SELECT * FROM pmp_people WHERE (psnPersonID = '"+this.personID+"') LIMIT 1";
+        String sql = "SELECT * FROM pmp_people, pmp_demonyms WHERE (psnDemonymID = demID) AND (psnPersonID = '"+this.personID+"') LIMIT 1";
         DBConnection db = new DBConnection();
         try {
             Statement stmt  = db.getDBStatement();
@@ -335,7 +335,8 @@ public class Person implements Comparable {
             this.birthday      = rs.getString("psnBirthday");
             this.description   = rs.getString("psnDescription");
             this.nickName      = rs.getString("psnNickName");
-            this.nationality   = rs.getString("psnNationality");
+            this.demonym.setKey(rs.getInt("demID"));
+            this.demonym.setValue(rs.getString("demDemonym"));
             this.photoBinary   = rs.getString("psnPhotoBinary");
             this.photoFileName = rs.getString("psnPhotoFileName");
             this.lastUpdate    = rs.getString("psnLastUpdate");
@@ -488,12 +489,13 @@ public class Person implements Comparable {
     }
     
     /**
-     * Sets the Person's Nationality
+     * Sets the Person's Demonym
      *
-     * @param nationality The Person's Nationality
+     * @param demonym The Person's Demonym
      */
-    public void setNationality(String nationality) {
-        this.nationality = nationality.trim();
+    public void setDemonym(KeyValue demonym) {
+        this.demonym.setKey(demonym.getKey());
+        this.demonym.setValue(demonym.getValue());
     }
     
     /**
@@ -668,12 +670,21 @@ public class Person implements Comparable {
     }
     
     /**
-     * Gets the Person's Nationality
+     * Gets the Person's Demonym.
      *
-     * @return The Person's Nationality
+     * @return The Person's Demonym
      */
-    public String getNationality() {
-        return this.nationality;
+    public KeyValue getDemonym() {
+        return this.demonym;
+    }
+    
+    /**
+     * Gets the Person's Demonym Text.
+     * 
+     * @return The Person's Demonym Text
+     */
+    public String getDemonymText() {
+        return this.demonym.getValue();
     }
     
     /**
@@ -889,11 +900,11 @@ public class Person implements Comparable {
             return this.categories.get(0).getValue();
         }
         else {
-            String categories = "";
+            String catString = "";
             for (Object item: this.categories) {
-                categories += ((KeyValue)item).getValue()+", ";
+                catString += ((KeyValue)item).getValue()+", ";
             }
-            return categories.substring(0,categories.length()-2);
+            return catString.substring(0,catString.length()-2);
         }
     }
     
@@ -1109,47 +1120,7 @@ public class Person implements Comparable {
     public static void main(String[] args) {
         Debug.turnOn();
         try {
-            //Person dude = new Person(249);
-            //Person dude = new Person();
-            //Debug.print(dude.loadFromDatabase());
-            //Debug.print(dude.getLastName());
-            //Debug.print(dude.getBirthday());
-            //dude.setFirstName("Brandon");
-            //dude.setMiddleName("Cole");
-            //dude.setLastName("Tanner");
-            //dude.setPrefix("");
-            //dude.setSuffix("");
-            //dude.setMiddleName("L.");
-            //dude.setBirthday("1979-12-12");
-            //dude.setEyeColor("Green");
-            //dude.setGender("Male");
-            //dude.setHairColor("Brown");
-            //dude.setHeight("6'2");
-            //dude.setWeight("250 lbs");
-            //dude.setNationality("Texan");
-            //dude.setPhotoFileName("249.jpg");
-            //dude.addContact(1, "(903) 203-2030");
-            //Debug.print(dude.saveToDatabase());
-            //Debug.print(dude.addContact(1, "(903) 894-3563"));
-            //DBHPInterface.printListOfPeopleByLastNameToStdout(DBHPInterface.getListOfCategories());
-            //Debug.print(dude.addCategory(24));
-            //Debug.print(dude.removeCategory(24));
-            //dude.setBirthday("1986-11-12");
-            //Debug.print("|"+dude+"|");
-            //Debug.print(dude.getCurrentAge());
-            //Debug.print(dude.getAgeThisYear());
-            //DBHPInterface.printListOfPeopleByLastNameToStdout(dude.getCategories());
-            //DBHPInterface.printListOfPeopleByLastNameToStdout(dude.getContacts());
-            //Address myAddress = new Address();
-            //myAddress.setAddressCity("Bullard");
-            //myAddress.setAddressLabel("Mr. B. C. Tanner");
-            //myAddress.setAddressLine1("23262 CR 181");
-            //myAddress.setAddressState("TX");
-            //myAddress.setAddressZip("75757");
-            //myAddress.setAddressType(new KeyValue(1, ""));
-            //myAddress.setAddressCountry(new KeyValue(223, "USA"));
-            //Debug.print(dude.addAddress(myAddress));
-            //Debug.print(dude.removeAddress(1));
+            // do some stuff
         }
         catch (Exception e) {
             Debug.print(e.getMessage());

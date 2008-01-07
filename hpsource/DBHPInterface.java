@@ -8,7 +8,7 @@ import java.sql.*;
  * A class with various static methods to interact with the database.
  *
  * @author  Brandon Tanner
- * @version 1.2 (Dec 18, 2007)
+ * @version 1.3 (Jan 07, 2008)
  * @since   December 12, 2006
  */
 public class DBHPInterface {
@@ -278,6 +278,32 @@ public class DBHPInterface {
             return countries;
         }
         catch (Exception e) { return null; }
+        finally {
+            db.closeConnection();
+        }
+    }
+    
+    /**
+     * Gets a List of Demonyms.
+     * 
+     * @return A List of Demonyms sorted alphabetically
+     */
+    public static ArrayList getListOfDemonyms() {
+        ArrayList <KeyValue> demonyms = new ArrayList<KeyValue>();
+        String sql = "SELECT demID, demDemonym FROM pmp_demonyms ORDER BY demDemonym ASC";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt  = db.getDBStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+            while (rs.next()) {
+                demonyms.add( new KeyValue( rs.getInt("demID"), rs.getString("demDemonym") ) );
+            }
+            return demonyms;
+        }
+        catch (Exception e) {
+            Debug.print(e.getMessage());
+            return null;
+        }
         finally {
             db.closeConnection();
         }

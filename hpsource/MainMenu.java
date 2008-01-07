@@ -656,7 +656,7 @@ public class MainMenu extends JFrame implements ActionListener {
         String dob        = person.getBirthday();
         String maidenName = person.getMaidenName();
         String gender     = person.getGender();
-        String nation     = person.getNationality();
+        String demonym    = person.getDemonymText();
 
         
         String desc = person.getDescription();
@@ -870,15 +870,24 @@ public class MainMenu extends JFrame implements ActionListener {
         genderPanel.add(genderLabel);
         genderPanel.add(personGenderLabel);
         
-        JLabel nationLabel = new JLabel("Nationality:");
-        nationLabel.setFont(boldInfoFont);
-        //JLabel personNationLabel = new JLabel(nation);
-        final JTextField personNationLabel = new JTextField(nation);
-        //personNationLabel.setFont(infoFont);
-        JPanel nationPanel = new JPanel();
-        nationPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        nationPanel.add(nationLabel);
-        nationPanel.add(personNationLabel);
+        
+        JLabel demonymLabel = new JLabel("Demonym:");
+        demonymLabel.setFont(boldInfoFont);
+        JLabel personDemonymLabel = new JLabel(demonym);
+        //final JTextField personDemonymLabel = new JTextField(demonym);
+        personDemonymLabel.setFont(infoFont);
+        JPanel demonymPanel = new JPanel();
+        demonymPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        demonymPanel.add(demonymLabel);
+        demonymPanel.add(personDemonymLabel);
+        
+        JComboBox demonymBox = new JComboBox();
+        ArrayList <KeyValue> demonyms = DBHPInterface.getListOfDemonyms();
+        for (KeyValue dem : demonyms) {
+            String demstr = dem.getValue();
+            //demonymBox.add(demstr);
+        }
+        
         
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new GridLayout(8, 1));
@@ -889,7 +898,7 @@ public class MainMenu extends JFrame implements ActionListener {
         infoPanel.add(dobPanel);
         infoPanel.add(maidenPanel);
         infoPanel.add(genderPanel);
-        infoPanel.add(nationPanel);
+        infoPanel.add(demonymPanel);
         
         picPanel.add(infoPanel, BorderLayout.WEST);
         
@@ -1135,7 +1144,7 @@ public class MainMenu extends JFrame implements ActionListener {
                 p.setBirthday(yearBox.getSelectedItem().toString()+"-"+DBHPInterface.getMonthNumber(monthBox.getSelectedItem().toString())+"-"+dayBox.getSelectedItem().toString());
                 p.setMaidenName(personMaidenLabel.getText());
                 p.setGender(personGenderLabel.getSelectedItem().toString());
-                p.setNationality(personNationLabel.getText());                  
+                p.setDemonym(new KeyValue());                  
                 p.setDescription(descArea.getText());
                 p.saveToDatabase();
                 showProfile(p);
@@ -1256,9 +1265,7 @@ public class MainMenu extends JFrame implements ActionListener {
         if (gender == null || gender.equals(""))
             gender = "Unknown";
         
-        String nation = person.getNationality();
-        if (nation == null || nation.equals(""))
-            nation = "Unknown";
+        String demonym = person.getDemonymText();
         
         String desc = person.getDescription();
         if (desc == null || desc.equals(""))
@@ -1418,14 +1425,14 @@ public class MainMenu extends JFrame implements ActionListener {
         genderPanel.add(genderLabel);
         genderPanel.add(personGenderLabel);
         
-        JLabel nationLabel = new JLabel("Nationality:");
-        nationLabel.setFont(boldInfoFont);
-        JLabel personNationLabel = new JLabel(nation);
-        personNationLabel.setFont(infoFont);
-        JPanel nationPanel = new JPanel();
-        nationPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        nationPanel.add(nationLabel);
-        nationPanel.add(personNationLabel);
+        JLabel demonymLabel = new JLabel("Demonym:");
+        demonymLabel.setFont(boldInfoFont);
+        JLabel personDemonymLabel = new JLabel(demonym);
+        personDemonymLabel.setFont(infoFont);
+        JPanel demonymPanel = new JPanel();
+        demonymPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        demonymPanel.add(demonymLabel);
+        demonymPanel.add(personDemonymLabel);
         
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new GridLayout(8, 1));
@@ -1438,7 +1445,7 @@ public class MainMenu extends JFrame implements ActionListener {
             infoPanel.add(maidenPanel);
         }
         infoPanel.add(genderPanel);
-        infoPanel.add(nationPanel);
+        infoPanel.add(demonymPanel);
         
         picPanel.add(infoPanel, BorderLayout.WEST);
         
