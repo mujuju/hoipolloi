@@ -930,47 +930,185 @@ public class MainMenu extends JFrame implements ActionListener {
         // West Panel -- BT
         JPanel westPanel = new JPanel();
         westPanel.setLayout(new BorderLayout());
+        
+
+        // Contacts Box
         JPanel ctnPanel = new JPanel();
         ctnPanel.setLayout(new BorderLayout());
         ctnPanel.setBorder(BorderFactory.createTitledBorder("Contact Info"));
 
         ArrayList contacts = person.getContacts();
-        // Create Table
-        //JTable ctnTable = new JTable(contacts.size(), 2);
-        ctnTable.getColumnModel().getColumn(0).setHeaderValue("Contact Type");
-        ctnTable.getColumnModel().getColumn(1).setHeaderValue("Contact Name");
-        ctnTable.setPreferredScrollableViewportSize(new Dimension(400, 200));
+        final DefaultTableModel model = new DefaultTableModel();
+        ctnTable = new JTable(model);
+        
+        model.addColumn("Contact Type");
+        model.addColumn("Contact Name");
+        
+        ctnTable.setPreferredScrollableViewportSize(new Dimension(150, 150));
         ctnTable.setGridColor(Color.LIGHT_GRAY);
-        // Loop to Populate Table
+        
+        // Loop to Populate Contacts Table
         for (int i = 0; i < contacts.size(); i++) {
             Contact ctn = (Contact)contacts.get(i);
-            ctnTable.setValueAt(ctn.getContactType(),i,0);
-            ctnTable.setValueAt(ctn.getContact(),i,1);
+            model.addRow(new Object[] {ctn.getContactType(), ctn.getContact()});
         }
+        
+        // Set Col Widths based on Content
+        ColumnResizer.adjustColumnPreferredWidths(ctnTable);
+        
         // Add Table to ScrollPane
         JScrollPane ctnScrollPane = new JScrollPane(ctnTable);
         ctnPanel.add(ctnScrollPane, BorderLayout.NORTH);
+        
+        ctnTable.addMouseListener(new MouseAdapter() {
+            @Override public void mouseClicked(MouseEvent e) {
+                // Select first with left mouse button, then middle click.
+                if (e.getClickCount() == 1 && e.getButton() == 2) {
+                    JTable target = (JTable)e.getSource();
+                    int row       = target.getSelectedRow();
+                    String type   = (String)target.getValueAt(row, 0);
+                    String data   = (String)target.getValueAt(row, 1);
+                    
+                    try {
+                        if (type.equals("URL")) {
+                            BrowserLauncher.openURL(data);
+                        }
+                        else if (type.equals("Skype")) {
+                            BrowserLauncher.openURL("skype:"+data+"?chat");
+                        }
+                        else if (type.equals("Home Phone") || type.equals("Work Phone") || type.equals("Cell Phone") || type.equals("Perm Phone") || type.equals("Pager")) {
+                            BrowserLauncher.openURL("callto://"+data);
+                        }
+                        else if (type.equals("Primary Email") || type.equals("Extra Email")) {
+                            BrowserLauncher.openURL("mailto:"+data);
+                        }
+                        else if (type.equals("AIM")) {
+                            BrowserLauncher.openURL("aim:goim?screenname="+data);
+                        }
+                        else if (type.equals("YIM")) {
+                            BrowserLauncher.openURL("ymsgr:sendim?"+data);
+                        }
+                        else if (type.equals("ICQ")) {
+                            BrowserLauncher.openURL("http://web.icq.com/whitepages/message_me?uin="+data+"&action=message");
+                        }
+                        else if (type.equals("MSN")) {
+                            BrowserLauncher.openURL("msnim:chat?contact="+data);
+                        }
+                        // fax
+                        // QQ
+                        // Google Talk
+                        // Jabber
+                    }
+                    catch (Exception ex) {
+                        Debug.print(ex.getMessage());
+                    }
+                }
+            }
+        });
+        
+        
+        // New Contact Stuff ***********************************
+        JPanel newContactPanel = new JPanel();
+        newContactPanel.setLayout(new FlowLayout());
+        
+        final JComboBox ctnTypeComboBox = new JComboBox();
+        ctnTypeComboBox.setRenderer(new HPCellRenderer());
+        
+        ArrayList ctnTypes = Contact.getContactTypes();
+
+        // Populate the JComboBox (Contact Types)
+        for (Object value : ctnTypes) {
+            ctnTypeComboBox.addItem(value);
+        }
+        
+        // todo: need to not use absolute width somehow
+        final JTextField ctnText = new JTextField(10);
+        
+        // not sure, but inner class needs this to be final, so i create a copy
+        final Person noob = person;
+        
+        // Action of Add Contact
+        btnAddContact = new JButton("Add");
+        btnAddContact.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {               
+                // do stuff for add new contact
+                if (ctnText != null && !ctnText.equals("")) {
+                    // Contact Type ID (in Database)
+                    int ctnTypeID = ((KeyValue)ctnTypeComboBox.getSelectedItem()).getKey();
+                                 
+                    noob.addContact(ctnTypeID, ctnText.getText());
+                    noob.saveToDatabase();
+                    
+                    //JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
+                    
+                    // Update the contacts table
+                    model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
+                    ctnText.setText(null);
+                    ctnTypeComboBox.setSelectedIndex(0);
+                }               
+            }
+        });
+        
+        // Action of Delete Contact
+        btnDelContact = new JButton("-");
+        btnDelContact.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int row = ctnTable.getSelectedRow();
+                if (row < 0) {
+                    JOptionPane.showMessageDialog(THIS, "Please selecte a contact to remove.");
+                }
+                else {
+                    String ctnType = (String)model.getValueAt(row, 0);
+                    String ctnData = (String)model.getValueAt(row, 1);
+
+                    noob.removeContact(ctnType, ctnData);
+                    noob.saveToDatabase();
+
+                    Debug.print("Removing "+ctnType+": "+ctnData+" for Person #"+noob.getPersonID());
+                    model.removeRow(row);
+                }
+            }
+        });
+        
+        ctnText.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    // do stuff for add new contact
+                    if (ctnText != null) {
+                        // Contact Type ID (in Database)
+                        int ctnTypeID = ((KeyValue)ctnTypeComboBox.getSelectedItem()).getKey();
+
+                        noob.addContact(ctnTypeID, ctnText.getText());
+                        noob.saveToDatabase();
+
+                        //JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
+
+                        // Update the contacts table
+                        model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
+                        ctnText.setText(null);
+                        ctnTypeComboBox.setSelectedIndex(0);
+                    }
+                }
+            }
+            public void keyReleased(KeyEvent evt) {}
+            public void keyTyped(KeyEvent evt) {}
+        });
+        
+        newContactPanel.add(ctnTypeComboBox);
+        newContactPanel.add(ctnText);
+        newContactPanel.add(btnAddContact);
+        newContactPanel.add(btnDelContact);
+        
+               
+        ctnPanel.add(newContactPanel, BorderLayout.SOUTH);
+        
+        // End New Contact Stuff **********************************
+        
+        
         westPanel.add(ctnPanel, BorderLayout.NORTH);
         
         // Address Box
-        JPanel adrPanel = new JPanel();
-        adrPanel.setLayout(new FlowLayout());
-        adrPanel.setBorder(BorderFactory.createTitledBorder("Locations"));
-        JLabel adrLabel = new JLabel("Select Address Label: ");
-        JComboBox addressBox = new JComboBox();
-        ArrayList addressList = person.getAddresses();
-        if (addressList != null && !addressList.isEmpty()) {
-            for (Object value : addressList) {
-                addressBox.addItem(((Address)value).getAddressLabel());
-            }
-        }
-        else {
-            addressBox.addItem("No Addresses Found");
-        }
-        adrPanel.add(adrLabel);
-        adrPanel.add(addressBox);
-        adrPanel.add(new JButton("View"));
-        westPanel.add(adrPanel);
+        westPanel.add(getAddressPane(person));
         
         
         contentPane.setLayout(new BorderLayout());
@@ -981,26 +1119,26 @@ public class MainMenu extends JFrame implements ActionListener {
         contentPane.add(westPanel,   BorderLayout.WEST   );
         
         // Setup Action for Update Profile Button
-        final Person noob = person;
+        final Person p = person;
         btnUpdateProfile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                noob.setPrefix(psnPrefixBox.getText());
-                noob.setFirstName(psnFirstNameBox.getText());
-                noob.setMiddleName(psnMiddleNameBox.getText());
-                noob.setLastName(psnLastNameBox.getText());
-                noob.setSuffix(psnSuffixBox.getText());
-                noob.setNickName(nickLabel.getText());
-                noob.setEyeColor(personEyeLabel.getText());
-                noob.setHairColor(personHairLabel.getText());
-                noob.setHeight(personHeightLabel.getText());
-                noob.setWeight(personWeightLabel.getText());
-                noob.setBirthday(yearBox.getSelectedItem().toString()+"-"+DBHPInterface.getMonthNumber(monthBox.getSelectedItem().toString())+"-"+dayBox.getSelectedItem().toString());
-                noob.setMaidenName(personMaidenLabel.getText());
-                noob.setGender(personGenderLabel.getSelectedItem().toString());
-                noob.setNationality(personNationLabel.getText());                  
-                noob.setDescription(descArea.getText());
-                noob.saveToDatabase();
-                showProfile(noob);
+                p.setPrefix(psnPrefixBox.getText());
+                p.setFirstName(psnFirstNameBox.getText());
+                p.setMiddleName(psnMiddleNameBox.getText());
+                p.setLastName(psnLastNameBox.getText());
+                p.setSuffix(psnSuffixBox.getText());
+                p.setNickName(nickLabel.getText());
+                p.setEyeColor(personEyeLabel.getText());
+                p.setHairColor(personHairLabel.getText());
+                p.setHeight(personHeightLabel.getText());
+                p.setWeight(personWeightLabel.getText());
+                p.setBirthday(yearBox.getSelectedItem().toString()+"-"+DBHPInterface.getMonthNumber(monthBox.getSelectedItem().toString())+"-"+dayBox.getSelectedItem().toString());
+                p.setMaidenName(personMaidenLabel.getText());
+                p.setGender(personGenderLabel.getSelectedItem().toString());
+                p.setNationality(personNationLabel.getText());                  
+                p.setDescription(descArea.getText());
+                p.saveToDatabase();
+                showProfile(p);
             }
         });
         
@@ -1009,7 +1147,7 @@ public class MainMenu extends JFrame implements ActionListener {
                 ImageIcon deathIcon = new ImageIcon(getClass().getClassLoader().getResource("death.gif"));
                 int response = JOptionPane.showConfirmDialog(THIS, "Are you sure you want to purge this profile?", "Purge Profile", 0, 0, deathIcon);
                 if (response == 0) {
-                    if (Death.purgePerson(noob)) {
+                    if (Death.purgePerson(p)) {
                         clearWindow();
                     }
                     else {
@@ -1341,10 +1479,11 @@ public class MainMenu extends JFrame implements ActionListener {
         // West Panel -- BT
         JPanel westPanel = new JPanel();
         westPanel.setLayout(new BorderLayout());
+        
+        // Contacts Box
         JPanel ctnPanel = new JPanel();
         ctnPanel.setLayout(new BorderLayout());
         ctnPanel.setBorder(BorderFactory.createTitledBorder("Contact Info"));
-
         
         // Create Table
         ArrayList contacts = person.getContacts();
@@ -1354,7 +1493,7 @@ public class MainMenu extends JFrame implements ActionListener {
         model.addColumn("Contact Type");
         model.addColumn("Contact Name");
         
-        ctnTable.setPreferredScrollableViewportSize(new Dimension(150, 150));
+        ctnTable.setPreferredScrollableViewportSize(new Dimension(350, 200));
         ctnTable.setGridColor(Color.LIGHT_GRAY);
         
         // Loop to Populate Contacts Table
@@ -1415,108 +1554,41 @@ public class MainMenu extends JFrame implements ActionListener {
                 }
             }
         });
-        
-        
-        // New Contact Stuff ***********************************
-        JPanel newContactPanel = new JPanel();
-        newContactPanel.setLayout(new FlowLayout());
-        
-        final JComboBox ctnTypeComboBox = new JComboBox();
-        ctnTypeComboBox.setRenderer(new HPCellRenderer());
-        
-        ArrayList ctnTypes = Contact.getContactTypes();
-
-        // Populate the JComboBox (Contact Types)
-        for (Object value : ctnTypes) {
-            ctnTypeComboBox.addItem(value);
-        }
-        
-        // todo: need to not use absolute width somehow
-        final JTextField ctnText = new JTextField(10);
-        
-        // not sure, but inner class needs this to be final, so i create a copy
-        final Person noob = person;
-        
-        // Action of Add Contact
-        btnAddContact = new JButton("Add");
-        btnAddContact.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {               
-                // do stuff for add new contact
-                if (ctnText != null && !ctnText.equals("")) {
-                    // Contact Type ID (in Database)
-                    int ctnTypeID = ((KeyValue)ctnTypeComboBox.getSelectedItem()).getKey();
-                                 
-                    noob.addContact(ctnTypeID, ctnText.getText());
-                    noob.saveToDatabase();
-                    
-                    //JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
-                    
-                    // Update the contacts table
-                    model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
-                    ctnText.setText(null);
-                    ctnTypeComboBox.setSelectedIndex(0);
-                }               
-            }
-        });
-        
-        // Action of Delete Contact
-        btnDelContact = new JButton("-");
-        btnDelContact.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int row = ctnTable.getSelectedRow();
-                if (row < 0) {
-                    JOptionPane.showMessageDialog(THIS, "Please selecte a contact to remove.");
-                }
-                else {
-                    String ctnType = (String)model.getValueAt(row, 0);
-                    String ctnData = (String)model.getValueAt(row, 1);
-
-                    noob.removeContact(ctnType, ctnData);
-                    noob.saveToDatabase();
-
-                    Debug.print("Removing "+ctnType+": "+ctnData+" for Person #"+noob.getPersonID());
-                    model.removeRow(row);
-                }
-            }
-        });
-        
-        ctnText.addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent evt) {
-                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-                    // do stuff for add new contact
-                    if (ctnText != null) {
-                        // Contact Type ID (in Database)
-                        int ctnTypeID = ((KeyValue)ctnTypeComboBox.getSelectedItem()).getKey();
-
-                        noob.addContact(ctnTypeID, ctnText.getText());
-                        noob.saveToDatabase();
-
-                        //JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
-
-                        // Update the contacts table
-                        model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
-                        ctnText.setText(null);
-                        ctnTypeComboBox.setSelectedIndex(0);
-                    }
-                }
-            }
-            public void keyReleased(KeyEvent evt) {}
-            public void keyTyped(KeyEvent evt) {}
-        });
-        
-        newContactPanel.add(ctnTypeComboBox);
-        newContactPanel.add(ctnText);
-        newContactPanel.add(btnAddContact);
-        newContactPanel.add(btnDelContact);
-        
-               
-        ctnPanel.add(newContactPanel, BorderLayout.SOUTH);
-        
-        // End New Contact Stuff **********************************
-        
-        
+              
+        // Contacts Box
         westPanel.add(ctnPanel, BorderLayout.NORTH);
         
+        // Address Box
+        westPanel.add(getAddressPane(person));
+        
+        
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(topPanel,    BorderLayout.NORTH  );
+        contentPane.add(eastPanel,   BorderLayout.EAST   );
+        contentPane.add(centerPanel, BorderLayout.CENTER );
+        contentPane.add(bottomPanel, BorderLayout.SOUTH  );
+        contentPane.add(westPanel,   BorderLayout.WEST   );
+        
+        updateWindow();
+    }
+    
+    /** Clears the main application window screen and shows the HP logo in the center.*/
+    public void removeAllComponents() {
+        contentPane.removeAll();
+    }
+    
+    public void updateWindow() {
+        update(getGraphics());
+        setVisible(true);
+    }
+    
+    /**
+     * Gets a JTabbedPane showing addresses for a given person.
+     * 
+     * @param person The Target Person
+     * @return A JTabbedPane showing Addresses for the Target Person
+     */
+    public JTabbedPane getAddressPane(Person person) {
         // Address Box *******************************************************
         JTabbedPane addressPane = new JTabbedPane();
         ArrayList <Address> addressList = person.getAddresses();
@@ -1540,103 +1612,110 @@ public class MainMenu extends JFrame implements ActionListener {
                 JPanel addressPanel = new JPanel();
                 addressPanel.setLayout(new GridBagLayout());
                 GridBagConstraints c = new GridBagConstraints();
+                Font addressFont = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
                 
+                JLabel label = new JLabel(addressLabel);
+                label.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 0;
-                addressPanel.add(new JLabel(addressLabel), c);
+                addressPanel.add(label, c);
                 
+                JLabel a1 = new JLabel(addressLine1);
+                a1.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 1;
-                addressPanel.add(new JLabel(addressLine1), c);
+                addressPanel.add(a1, c);
                 
+                JLabel a2 = new JLabel(addressLine2);
+                a2.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 2;
-                addressPanel.add(new JLabel(addressLine2), c);
+                addressPanel.add(a2, c);
                 
+                JLabel a3 = new JLabel(addressLine3);
+                a3.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 3;
-                addressPanel.add(new JLabel(addressLine3), c);
+                addressPanel.add(a3, c);
                 
+                JLabel city  = new JLabel(addressCity+", ");
+                JLabel state = new JLabel(addressState);
+                JLabel zip   = new JLabel(addressZip);
+                city.setFont(addressFont);
+                state.setFont(addressFont);
+                zip.setFont(addressFont);
+                JPanel CityStateZip = new JPanel(new BorderLayout());
+                CityStateZip.add(city, BorderLayout.WEST);
+                CityStateZip.add(state, BorderLayout.CENTER);
+                CityStateZip.add(zip, BorderLayout.EAST);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 4;
-                addressPanel.add(new JLabel(addressCity+", "), c);
+                addressPanel.add(CityStateZip, c);
                 
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 1;
-                c.gridy = 4;
-                addressPanel.add(new JLabel(addressState+" "), c);
-                
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 2;
-                c.gridy = 4;
-                addressPanel.add(new JLabel(addressZip), c);
-                
+                JLabel district = new JLabel(addressDistrict);
+                district.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 5;
-                addressPanel.add(new JLabel(addressDistrict), c);
+                addressPanel.add(district, c);
                 
+                JLabel country = new JLabel(addressCountry);
+                country.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 6;
-                addressPanel.add(new JLabel(addressCountry), c);
+                addressPanel.add(country, c);
                 
-                JLabel googlemaps = new JLabel("<html><a href='http://maps.google.com/'>Google Maps</a></html>");
-                googlemaps.setToolTipText("Click here to view this address at Google Maps");
+                JPanel mapPanel = new JPanel(new FlowLayout());
+                ButtonGroup maps = new ButtonGroup();
                 
-                JLabel mapquest = new JLabel("<html><a href='http://www.mapquest.com/'>Mapquest</a></html>");
-                mapquest.setToolTipText("Click here to view this address at Mapquest");
+                JButton googlemaps = new JButton("Google Maps");
+                googlemaps.setToolTipText("View this Address in Google Maps");
+                
+                JButton mapquest = new JButton("MapQuest");
+                mapquest.setToolTipText("MapQuest this Address");
+                
+                maps.add(googlemaps);
+                maps.add(mapquest);
+                
+                mapPanel.add(googlemaps);
+                mapPanel.add(mapquest);
+                
+                
                 
                 final Address a = address;
-                googlemaps.addMouseListener(new MouseListener() {
-                    public void mouseClicked(MouseEvent e) {
-                        try { BrowserLauncher.openURL(a.getGoogleMapsURL()); } catch (Exception ex) {}
-                    }
-                    public void mousePressed(MouseEvent e) {
-                        setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                    }
-                    public void mouseReleased(MouseEvent e) {
-                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    }
-                    public void mouseEntered(MouseEvent e) {
-                        setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    }
-                    public void mouseExited(MouseEvent e) {
-                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                googlemaps.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        try { 
+                            BrowserLauncher.openURL(a.getGoogleMapsURL()); 
+                        } 
+                        catch (Exception e) {
+                            Debug.print(e.getMessage());
+                        }
                     }
                 });
                 
-                mapquest.addMouseListener(new MouseListener() {
-                    public void mouseClicked(MouseEvent e) {
-                        try { BrowserLauncher.openURL(a.getMapquestURL()); } catch (Exception ex) {}
-                    }
-                    public void mousePressed(MouseEvent e) {
-                        setCursor(new Cursor(Cursor.WAIT_CURSOR));
-                    }
-                    public void mouseReleased(MouseEvent e) {
-                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-                    }
-                    public void mouseEntered(MouseEvent e) {
-                        setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    }
-                    public void mouseExited(MouseEvent e) {
-                        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                mapquest.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent event) {
+                        try { 
+                            BrowserLauncher.openURL(a.getMapquestURL()); 
+                        } 
+                        catch (Exception e) {
+                            Debug.print(e.getMessage());
+                        }
                     }
                 });
                 
                 
+                c.fill  = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
-                c.gridy = 8;
-                addressPanel.add(googlemaps, c);
-                c.gridx = 1;
-                c.gridy = 8;
-                addressPanel.add(mapquest, c);
-                                
+                c.gridy = 7;
+                addressPanel.add(mapPanel, c);                                
                 
                 addressPane.addTab(addressType, addressPanel);
             }
@@ -1648,28 +1727,7 @@ public class MainMenu extends JFrame implements ActionListener {
         }
         // End Address Box ***************************************************
         
-        
-        westPanel.add(addressPane);
-        
-        
-        contentPane.setLayout(new BorderLayout());
-        contentPane.add(topPanel,    BorderLayout.NORTH  );
-        contentPane.add(eastPanel,   BorderLayout.EAST   );
-        contentPane.add(centerPanel, BorderLayout.CENTER );
-        contentPane.add(bottomPanel, BorderLayout.SOUTH  );
-        contentPane.add(westPanel,   BorderLayout.WEST   );
-        
-        updateWindow();
-    }
-    
-    /** Clears the main application window screen and shows the HP logo in the center.*/
-    public void removeAllComponents() {
-        contentPane.removeAll();
-    }
-    
-    public void updateWindow() {
-        update(getGraphics());
-        setVisible(true);
+        return addressPane;
     }
     
     /**
