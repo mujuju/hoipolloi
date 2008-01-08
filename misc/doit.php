@@ -1,6 +1,6 @@
 <?php
 /* Convert a phpMyPeople mysql database into a Hoi Polloi sqlite database */
-/* Jan 2, 2008, run this script as root inside phpmypeople directory: php -f doit.php */
+/* Jan 7, 2008, run this script as root inside phpmypeople directory: php -f doit.php */
 
 // Include the ADOdb Class
 include("adodb/adodb.inc.php");
@@ -80,6 +80,7 @@ while (!$rs->EOF) {
 	$f5 = $rs->fields[10]; //Nationality
 	$f6 = $rs->fields[11]; //Description
 	$f7 = "";
+	$f8 = "Male";
 
 	// Get Nationality ID Number
 	switch ($f5) {
@@ -105,7 +106,7 @@ while (!$rs->EOF) {
 		$f7 = "jpg";
 	}
 	
-	$hp->exec("INSERT INTO pmp_people (psnPersonID, psnFirstName, psnLastName, psnDescription, psnNickName, psnDemonymID, psnPhotoFilename) VALUES (\"$f1\", \"$f2\", \"$f3\", \"$f6\", \"$f4\", \"$f5\", \"$f7\")") or die(print_r($hp->errorInfo()));
+	$hp->exec("INSERT INTO pmp_people (psnPersonID, psnFirstName, psnLastName, psnDescription, psnNickName, psnDemonymID, psnPhotoFilename, psnGender) VALUES (\"$f1\", \"$f2\", \"$f3\", \"$f6\", \"$f4\", \"$f5\", \"$f7\", \"$f8\")") or die(print_r($hp->errorInfo()));
 	$rs->MoveNext();
 }
 
