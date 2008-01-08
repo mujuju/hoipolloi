@@ -153,6 +153,26 @@ public class DBHPInterface {
     }
     
     /**
+     * Finds the ID of a given Demonym name in the Database.
+     * 
+     * @param demonym The Demonym Name String
+     * @return The database id of the given demonym
+     */
+    public static int getIDOfDemonym(String demonym) {
+        String sql = "SELECT demID FROM pmp_demonyms WHERE (demDemonym = '"+demonym+"')";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt  = db.getDBStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+            return rs.getInt("demID");
+        }
+        catch (Exception e) {return -1;}
+        finally {
+            db.closeConnection();
+        }
+    }
+    
+    /**
      * Adds a New Category to the Database and returns its primary key.
      * If the new category already exists, it simply returns the primary
      * key of the existing category.
@@ -315,7 +335,7 @@ public class DBHPInterface {
      * @return The City List
      */
     public static ArrayList getCitiesPeopleAreIn() {
-        ArrayList locations = new ArrayList();
+        ArrayList <String> locations = new ArrayList<String>();
         String sql = "SELECT DISTINCT adrCity FROM pmp_addresses WHERE (adrCity <> '') ORDER BY adrCity";
         DBConnection db = new DBConnection();
         try {
@@ -345,7 +365,7 @@ public class DBHPInterface {
         if (count < 1) {
             count = 1;
         }
-        ArrayList newfish = new ArrayList();
+        ArrayList <String> newfish = new ArrayList <String>();
         String sql = "SELECT psnFirstName, psnLastName FROM pmp_people ORDER BY psnPersonID DESC LIMIT "+count;
         DBConnection db = new DBConnection();
         try {

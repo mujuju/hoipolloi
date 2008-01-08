@@ -111,7 +111,7 @@ public class MainMenu extends JFrame implements ActionListener {
         ImageIcon settingsIcon = new ImageIcon(getClass().getClassLoader().getResource("settings.png"));
         ImageIcon editProfileIcon = new ImageIcon(getClass().getClassLoader().getResource("user_edit.png"));
         ImageIcon birthdayIcon = new ImageIcon(getClass().getClassLoader().getResource("birthday.png"));
-        ImageIcon timeIcon = new ImageIcon(getClass().getClassLoader().getResource("birthday.png"));
+        ImageIcon timeIcon = new ImageIcon(getClass().getClassLoader().getResource("time.png"));
         
         // File Menu - Start
         JMenu fileMenu = new JMenu("File");
@@ -656,7 +656,7 @@ public class MainMenu extends JFrame implements ActionListener {
         String dob        = person.getBirthday();
         String maidenName = person.getMaidenName();
         String gender     = person.getGender();
-        String demonym    = person.getDemonymText();
+        KeyValue demonym  = person.getDemonym();
 
         
         String desc = person.getDescription();
@@ -749,7 +749,6 @@ public class MainMenu extends JFrame implements ActionListener {
         //picPanel.add(descScroller, BorderLayout.CENTER);
         
         // Add Information
-        Font infoFont = new Font("Arial", Font.PLAIN, 12);
         Font boldInfoFont = new Font("Arial", Font.BOLD, 12);
         
         JLabel eyeLabel = new JLabel("Eye Color:");
@@ -841,9 +840,7 @@ public class MainMenu extends JFrame implements ActionListener {
         
         JLabel maidenLabel = new JLabel("Maiden Name:");
         maidenLabel.setFont(boldInfoFont);
-        //JLabel personMaidenLabel = new JLabel(maidenName);
         final JTextField personMaidenLabel = new JTextField(maidenName);
-        //personMaidenLabel.setFont(infoFont);
         JPanel maidenPanel = new JPanel();
         maidenPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         maidenPanel.add(maidenLabel);
@@ -851,9 +848,6 @@ public class MainMenu extends JFrame implements ActionListener {
         
         JLabel genderLabel = new JLabel("Gender:");
         genderLabel.setFont(boldInfoFont);
-        //JLabel personGenderLabel = new JLabel(gender);
-        //JTextField personGenderLabel = new JTextField(gender);
-        //personGenderLabel.setFont(infoFont);
         final JComboBox personGenderLabel = new JComboBox();
         personGenderLabel.addItem("Male");
         personGenderLabel.addItem("Female");
@@ -873,20 +867,19 @@ public class MainMenu extends JFrame implements ActionListener {
         
         JLabel demonymLabel = new JLabel("Demonym:");
         demonymLabel.setFont(boldInfoFont);
-        JLabel personDemonymLabel = new JLabel(demonym);
-        //final JTextField personDemonymLabel = new JTextField(demonym);
-        personDemonymLabel.setFont(infoFont);
-        JPanel demonymPanel = new JPanel();
-        demonymPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        demonymPanel.add(demonymLabel);
-        demonymPanel.add(personDemonymLabel);
-        
-        JComboBox demonymBox = new JComboBox();
+        final JComboBox demonymBox = new JComboBox();
         ArrayList <KeyValue> demonyms = DBHPInterface.getListOfDemonyms();
         for (KeyValue dem : demonyms) {
             String demstr = dem.getValue();
-            //demonymBox.add(demstr);
+            demonymBox.addItem(demstr);
         }
+        if (!demonym.getValue().equals("")) {
+            demonymBox.setSelectedItem(demonym.getValue());
+        }
+        JPanel demonymPanel = new JPanel();
+        demonymPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        demonymPanel.add(demonymLabel);
+        demonymPanel.add(demonymBox);
         
         
         JPanel infoPanel = new JPanel();
@@ -1113,7 +1106,7 @@ public class MainMenu extends JFrame implements ActionListener {
         
         // End New Contact Stuff **********************************
         
-        
+        // Contacts Box
         westPanel.add(ctnPanel, BorderLayout.NORTH);
         
         // Address Box
@@ -1144,7 +1137,10 @@ public class MainMenu extends JFrame implements ActionListener {
                 p.setBirthday(yearBox.getSelectedItem().toString()+"-"+DBHPInterface.getMonthNumber(monthBox.getSelectedItem().toString())+"-"+dayBox.getSelectedItem().toString());
                 p.setMaidenName(personMaidenLabel.getText());
                 p.setGender(personGenderLabel.getSelectedItem().toString());
-                p.setDemonym(new KeyValue());                  
+                KeyValue d = new KeyValue();
+                d.setKey(DBHPInterface.getIDOfDemonym((String)demonymBox.getSelectedItem()));
+                d.setValue((String)demonymBox.getSelectedItem());
+                p.setDemonym(d);                  
                 p.setDescription(descArea.getText());
                 p.saveToDatabase();
                 showProfile(p);
