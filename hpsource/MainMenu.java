@@ -709,9 +709,11 @@ public class MainMenu extends JFrame implements ActionListener {
         
         btnUpdateProfile = new JButton("Update Profile");
         btnDelProfile    = new JButton("Delete Profile"); 
+        JButton btnAddAddress = new JButton("Add Address");
       
         namePanel.add(btnUpdateProfile);
         namePanel.add(btnDelProfile);
+        namePanel.add(btnAddAddress);
         
 
         final JTextField nickLabel = new JTextField(nickName);
@@ -1159,6 +1161,12 @@ public class MainMenu extends JFrame implements ActionListener {
                         Debug.print("Failed to Purge this Person");
                     }
                 }
+            }
+        });
+        
+        btnAddAddress.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new AddressBox(THIS, p, false);
             }
         });
         

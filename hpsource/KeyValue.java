@@ -10,8 +10,8 @@ package hoipolloi;
  * other collection of KeyValue objects.
  *
  * @author  Brandon Tanner
- * @version 1.1
- * @since November 26, 2006
+ * @version 1.2 (Jan 13, 2008)
+ * @since   November 26, 2006
  */
 public class KeyValue implements Comparable {
     
@@ -85,12 +85,12 @@ public class KeyValue implements Comparable {
     }
     
     /**
-     * Returns a String of the Key and Value separated by a space.
+     * Returns a String of the Value.
      *
-     * @return The Key and Value separated by a space.
+     * @return The Value
      */
-    public String toString() {
-        return this.key + " " + this.value;
+    @Override public String toString() {
+        return this.value;
     }
     
     /**
