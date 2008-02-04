@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.image.*;
 import javax.imageio.*;
 import java.beans.*;
+
 /**
  * Hoi Polloi picture editor, mainly used to crop/resize pictures to fit the
  * size specified by the program for the profile picture.
@@ -17,9 +18,9 @@ import java.beans.*;
  * Resizing will be used for pictures that are large to allow faces to fit
  * within the bounds of the cropping rectangle.
  * 
- * @author Brandon
+ * @author  Brandon
  * @version 1.0 (Dec 18, 2007)
- * @since December 18, 2007
+ * @since   December 18, 2007
  */
 public class HPPictureEditor extends JDialog implements ActionListener {
     private MainMenu parent;
@@ -122,6 +123,7 @@ public class HPPictureEditor extends JDialog implements ActionListener {
         // --END CENTER--
         this.setVisible(true);
     }
+    
     /**
      * Displays the HPPictureEditor with the given owner.
      * 
@@ -130,6 +132,25 @@ public class HPPictureEditor extends JDialog implements ActionListener {
     public static void showHPPictureEditor(Frame owner) {
         new HPPictureEditor(owner);
     }
+    
+    /**
+     * Prints the coordinates of the crop area selected.
+     * 
+     * Note: The origin appears at the bottom left.
+     * 
+     * @param box The Rectangle Crop Area
+     */
+    private void printCoord(Rectangle box) {
+        String topLeft     = box.getMinX()+", "+box.getMaxY();
+        String topRight    = box.getMaxX()+", "+box.getMaxY();
+        String bottomLeft  = box.getMinX()+", "+box.getMinY();
+        String bottomRight = box.getMaxX()+", "+box.getMinY();
+        
+        Debug.print("Crop Area (Origin at Bottom Left)");
+        Debug.print(topLeft+" - "+topRight);
+        Debug.print(bottomLeft+" - "+bottomRight);
+    }
+    
     /**
      * Handles any events that may be generated or used by this HPPictureEditor.
      * 
@@ -139,6 +160,8 @@ public class HPPictureEditor extends JDialog implements ActionListener {
         JButton sourceButton = (JButton)(evt.getSource());
         
         if (sourceButton == acceptButton) {
+            printCoord(imageLabel.getCropBounds());
+            
             
         } else if (sourceButton == cancelButton) {
             this.dispose();
