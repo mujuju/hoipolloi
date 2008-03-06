@@ -9,7 +9,8 @@
  *       https://pgslookandfeel.dev.java.net/
  * 
  *    3. Get the example SQLite Database file and put it somewhere.
- *       Then edit the fileName path to it in the DBConnection.java
+ *       Then edit the fileName path to it in the hp.properties file.
+ *       By default, not having a path will look for it in your project folder.
  *       The empty/blank database file is in the trunk/misc repository.
  * 
  *    4. Get all the images from the trunk/images repository.

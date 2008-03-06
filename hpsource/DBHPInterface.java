@@ -273,7 +273,8 @@ public class DBHPInterface {
             Statement stmt  = db.getDBStatement();
             ResultSet rs    = stmt.executeQuery(sql);
             while (rs.next()) {
-                people.add( new KeyValue( rs.getInt("psnPersonID"), rs.getString("psnLastName")+", "+rs.getString("psnFirstName")+" - "+rs.getString("psnBirthday")+" (27)" ) );
+                int age = getAgeThisYear(rs.getString("psnBirthday"));
+                people.add( new KeyValue( rs.getInt("psnPersonID"), rs.getString("psnLastName")+", "+rs.getString("psnFirstName")+" - "+rs.getString("psnBirthday")+" ("+age+")" ) );
             }
             return people;
         }
@@ -396,6 +397,64 @@ public class DBHPInterface {
         }
         else {
             return "UNIX";
+        }
+    }
+    
+    /**
+     * Gets a person's age given a birthday.
+     * 
+     * @param strBirthday  A string of the form YYYY-MM-DD
+     * @return             Age in Years
+     */
+    public static int getAge(String strBirthday) {
+        if (strBirthday.equals("0000-00-00") || strBirthday.equals("")) {
+            return -1;
+        }
+        else {
+            int ageYears  = 0;
+            Calendar cd   = Calendar.getInstance(); // Today's Date
+            int year      = Integer.parseInt(strBirthday.substring(0,4));
+            int month     = Integer.parseInt(strBirthday.substring(5,7));
+            int day       = Integer.parseInt(strBirthday.substring(8));
+            Calendar bd   = new GregorianCalendar(year, month-1, day);
+            ageYears      = cd.get(Calendar.YEAR) - bd.get(Calendar.YEAR); // This can be a year too old.
+            if (bd.get(Calendar.MONTH) < cd.get(Calendar.MONTH)) {
+                return ageYears;
+            }
+            else if (bd.get(Calendar.MONTH) > cd.get(Calendar.MONTH)) {
+                ageYears--; 
+                return ageYears;
+            } // over by a year
+            else { // it's the month the user was born. we need to check the day
+                if (bd.get(Calendar.DAY_OF_MONTH) > cd.get(Calendar.DAY_OF_MONTH)) {
+                    ageYears--; 
+                    return ageYears;
+                } // over by a year
+                else {
+                    return ageYears;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Gets the Person's Age this Year.
+     * 
+     * Used for showing people with birthdays this month and how old they will be.
+     *
+     * @return The Person's Age this Year or -1 if their birthday isn't set.
+     */
+    public static int getAgeThisYear(String strBirthday) {
+        if (strBirthday.equals("0000-00-00") || strBirthday.equals("")) {
+            return -1;
+        }
+        else {
+            Calendar cd   = Calendar.getInstance(); // Today's Date
+            int year      = Integer.parseInt(strBirthday.substring(0,4));
+            int month     = Integer.parseInt(strBirthday.substring(5,7));
+            int day       = Integer.parseInt(strBirthday.substring(8));
+            Calendar bd   = new GregorianCalendar(year, month-1, day);
+            return          cd.get(Calendar.YEAR) - bd.get(Calendar.YEAR);
         }
     }
     

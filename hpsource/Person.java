@@ -10,7 +10,7 @@ import java.io.*;
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99p Jan 7, 2008
+ * @version 0.99q March 5, 2008
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -763,18 +763,8 @@ public class Person implements Comparable {
      *
      * @return The Person's Age this Year or -1 if their birthday isn't set.
      */
-    protected long getAgeThisYear() {
-        if (this.birthday.equals("0000-00-00")) {
-            return -1;
-        }
-        else {
-            Calendar cd   = Calendar.getInstance(); // Today's Date
-            int year      = Integer.parseInt(this.birthday.substring(0,4));
-            int month     = Integer.parseInt(this.birthday.substring(5,7));
-            int day       = Integer.parseInt(this.birthday.substring(8));
-            Calendar bd   = new GregorianCalendar(year, month-1, day);
-            return          cd.get(Calendar.YEAR) - bd.get(Calendar.YEAR);
-        }
+    protected int getAgeThisYear() {
+        return DBHPInterface.getAgeThisYear(this.birthday);
     }
     
     /**
@@ -783,35 +773,8 @@ public class Person implements Comparable {
      *
      * @return The Person's Current Age or -1 if the Person's Birthday isn't set.
      */
-    public long getCurrentAge() {
-        if (this.birthday.equals("0000-00-00")) {
-            return -1;
-        }
-        else {
-            int ageYears  = 0;
-            Calendar cd   = Calendar.getInstance(); // Today's Date
-            int year      = Integer.parseInt(this.birthday.substring(0,4));
-            int month     = Integer.parseInt(this.birthday.substring(5,7));
-            int day       = Integer.parseInt(this.birthday.substring(8));
-            Calendar bd   = new GregorianCalendar(year, month-1, day);
-            ageYears      = cd.get(Calendar.YEAR) - bd.get(Calendar.YEAR); // This can be a year too old.
-            if (bd.get(Calendar.MONTH) < cd.get(Calendar.MONTH)) {
-                return ageYears;
-            }
-            else if (bd.get(Calendar.MONTH) > cd.get(Calendar.MONTH)) {
-                ageYears--; 
-                return ageYears;
-            } // over by a year
-            else { // it's the month the user was born. we need to check the day
-                if (bd.get(Calendar.DAY_OF_MONTH) > cd.get(Calendar.DAY_OF_MONTH)) {
-                    ageYears--; 
-                    return ageYears;
-                } // over by a year
-                else {
-                    return ageYears;
-                }
-            }
-        }
+    public int getCurrentAge() {
+        return DBHPInterface.getAge(this.birthday);
     }
     
     /**

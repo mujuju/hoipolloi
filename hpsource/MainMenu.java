@@ -757,6 +757,7 @@ public class MainMenu extends JFrame implements ActionListener {
         eyeLabel.setFont(boldInfoFont);
         
         final JTextField personEyeLabel = new JTextField(eyeColor);
+        personEyeLabel.setColumns(5);
         
         JPanel eyePanel = new JPanel();
         eyePanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -767,6 +768,7 @@ public class MainMenu extends JFrame implements ActionListener {
         hairLabel.setFont(boldInfoFont);
         //JLabel personHairLabel = new JLabel(hairColor);
         final JTextField personHairLabel = new JTextField(hairColor);
+        personHairLabel.setColumns(5);
         //personHairLabel.setFont(infoFont);
         JPanel hairPanel = new JPanel();
         hairPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -777,6 +779,7 @@ public class MainMenu extends JFrame implements ActionListener {
         heightLabel.setFont(boldInfoFont);
         //JLabel personHeightLabel = new JLabel(height);
         final JTextField personHeightLabel = new JTextField(height);
+        personHeightLabel.setColumns(5);
         //personHeightLabel.setFont(infoFont);
         JPanel heightPanel = new JPanel();
         heightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -787,6 +790,7 @@ public class MainMenu extends JFrame implements ActionListener {
         weightLabel.setFont(boldInfoFont);
         //JLabel personWeightLabel = new JLabel(weight);
         final JTextField personWeightLabel = new JTextField(weight);
+        personWeightLabel.setColumns(5);
         //personWeightLabel.setFont(infoFont);
         JPanel weightPanel = new JPanel();
         weightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -827,9 +831,16 @@ public class MainMenu extends JFrame implements ActionListener {
             int bYear  = Integer.parseInt(dob.substring(0,4));
             int bMonth = Integer.parseInt(dob.substring(5,7));
             int bDay   = Integer.parseInt(dob.substring(8,10));
+            if (bDay < 10) {
+                // Pad it with a zero
+                dayBox.setSelectedItem("0"+bDay);
+            }
+            else {
+                dayBox.setSelectedItem(bDay);
+            }
             yearBox  . setSelectedItem(bYear);
             monthBox . setSelectedIndex(bMonth-1);
-            dayBox   . setSelectedItem(bDay);
+            
             Debug.print(bYear+"-"+bMonth+"-"+bDay);
         }  
         
@@ -843,6 +854,7 @@ public class MainMenu extends JFrame implements ActionListener {
         JLabel maidenLabel = new JLabel("Maiden Name:");
         maidenLabel.setFont(boldInfoFont);
         final JTextField personMaidenLabel = new JTextField(maidenName);
+        personMaidenLabel.setColumns(5);
         JPanel maidenPanel = new JPanel();
         maidenPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         maidenPanel.add(maidenLabel);
@@ -2081,6 +2093,15 @@ public class MainMenu extends JFrame implements ActionListener {
             }
             else if (selection.equals("Birthdays")) {
                 new JTempFrame(THIS, DBHPInterface.getBirthdaysThisMonth());
+            }
+            else if (selection.equals("Help")) {
+                JOptionPane.showMessageDialog(THIS, "Help is on the way ...");
+            }
+            else if (selection.equals("World Clocks")) {
+                JOptionPane.showMessageDialog(THIS, "Coming soon!");
+            }
+            else if (selection.equals("Synchronize")) {
+                JOptionPane.showMessageDialog(THIS, "Please donate a blue tooth phone or dongle!");
             }
         }
     }
