@@ -829,7 +829,8 @@ public class MainMenu extends JFrame implements ActionListener {
         for (int k=yearNow; k >= yearNow-100; k--)
             yearBox.addItem(k);
         
-        if (!dob.equals("0000-00-00")) {
+        // If the DOB is of the form YYYY-MM-DD
+        if (dob.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
             int bYear  = Integer.parseInt(dob.substring(0,4));
             int bMonth = Integer.parseInt(dob.substring(5,7));
             int bDay   = Integer.parseInt(dob.substring(8,10));
