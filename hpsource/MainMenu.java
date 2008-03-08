@@ -478,13 +478,15 @@ public class MainMenu extends JFrame implements ActionListener {
         setTheme(propFile.getProperty("theme"));
         
         // Show the Last Profile Viewed
-        try {
-            showProfile(new Person(Integer.parseInt(propFile.getProperty("lastprofile"))));
+        if (!propFile.getProperty("lastprofile").equals("-1")) {
+            try {
+                showProfile(new Person(Integer.parseInt(propFile.getProperty("lastprofile"))));
+            }
+            catch (Exception e) {
+                Debug.print("Error: Unable to load last viewed profile");
+                Debug.print(e.getMessage());
+            }
         }
-        catch (Exception e) {
-            Debug.print("Error: Unable to load last viewed profile");
-            Debug.print(e.getMessage());
-        }   
     }
     
     /**
@@ -1167,6 +1169,9 @@ public class MainMenu extends JFrame implements ActionListener {
                 int response = JOptionPane.showConfirmDialog(THIS, "Are you sure you want to purge this profile?", "Purge Profile", 0, 0, deathIcon);
                 if (response == 0) {
                     if (Death.purgePerson(p)) {
+                        currentPerson = null;
+                        propFile.setProperty("lastprofile", "-1");
+                        savePropertyFile();
                         clearWindow();
                     }
                     else {
