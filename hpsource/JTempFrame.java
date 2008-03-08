@@ -33,7 +33,7 @@ public class JTempFrame extends JFrame {
         list.addMouseListener(new ClickListener());
         
         JScrollPane listScroller = new JScrollPane(list);
-        listScroller.setPreferredSize(new Dimension(150, parent.getContentPane().getHeight()));
+        listScroller.setPreferredSize(new Dimension(220, parent.getContentPane().getHeight()));
         
         add(listScroller, BorderLayout.CENTER);
         

@@ -448,7 +448,7 @@ public class Person implements Comparable {
      * @param height The Person's Height
      */
     public void setHeight(String height) {
-        this.height = height;
+        this.height = height.replaceAll("\"", "");
     }
     
     /**

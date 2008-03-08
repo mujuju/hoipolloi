@@ -451,7 +451,7 @@ public class MainMenu extends JFrame implements ActionListener {
         // Center the Main Menu and Set Size to 80% of Screen Width/Height
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         //setSize((int)(screenSize.getWidth() * .8), (int)(screenSize.getHeight() * .8));
-        setSize(800, 600); // Goal
+        setSize(900, 600); // Goal
         setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));       
         
         // Show the Main Menu
@@ -1250,6 +1250,7 @@ public class MainMenu extends JFrame implements ActionListener {
             suffix = "";
         
         String name = prefix + firstName + middleName + lastName + suffix;
+        Debug.print("Name = "+person.getPersonID());
         if (name == null || name.equals(""))
             name = "Unknown Person";
 
@@ -1288,6 +1289,8 @@ public class MainMenu extends JFrame implements ActionListener {
             gender = "Unknown";
         
         String demonym = person.getDemonymText();
+        if (demonym == null || demonym.equals(""))
+            demonym = "Unknown";
         
         String desc = person.getDescription();
         if (desc == null || desc.equals(""))
@@ -1882,19 +1885,20 @@ public class MainMenu extends JFrame implements ActionListener {
                                 int catID = -1;
                                 if (catAdd.equals("New Category")) {
                                     catID = DBHPInterface.addNewCategoryToDB(newCatName);
-                                    //int catID = DBHPInterface.getIDOfCategory(newCatName);
-                                    //category = new KeyValue(catID, newCatName);
                                 }
                                 else {
                                     catID = DBHPInterface.getIDOfCategory(catAdd);
-                                    //category = new KeyValue(catID, catAdd);
                                 }
                                 
-                                
-                                //newPerson.addCategory(category);
+
                                 newPerson.setFirstName(firstName);
                                 newPerson.setLastName(lastName);
                                 newPerson.setDescription(description);
+                                
+                                // Unavoidable Defaults
+                                newPerson.setDemonym(new KeyValue(193, "Unknown"));
+                                newPerson.setBirthday("1970-01-01");
+                                
                                 boolean success = newPerson.saveToDatabase();
                                 
                                 newPerson.addCategory(catID);
