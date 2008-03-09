@@ -1098,7 +1098,6 @@ public class Person implements Comparable {
         cols.add("Birthday");
         cols.add("Description");
         cols.add("Nick Name");
-        cols.add("Demonym");
         
         return cols;
     }

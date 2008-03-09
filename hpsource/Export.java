@@ -62,7 +62,6 @@ public class Export extends JFrame implements ActionListener {
         instrPanel.setBorder(BorderFactory.createTitledBorder(""));
         northPanel.setBorder(BorderFactory.createTitledBorder("Choose"));
         southPanel.setBorder(BorderFactory.createTitledBorder("Export"));
-        buttonPanel.setBorder(BorderFactory.createTitledBorder(""));
         
         Container cp = this.getContentPane();
         cp.setLayout(new BorderLayout());
@@ -98,6 +97,8 @@ public class Export extends JFrame implements ActionListener {
         fieldPanel.add(fieldSP);
         
         buttonPanel.add(btnExport);
+        buttonPanel.add(new JSeparator(SwingConstants.VERTICAL));
+        buttonPanel.add(Box.createHorizontalStrut(5));
         buttonPanel.add(btnExit);
         
         JLabel instructions = new JLabel("<html>Select the category on the left (only one may be selected at a time)<br> and the colunns you want to export on the right. To select multiple <br>columns on the right, hold down the Control key.</html>");
