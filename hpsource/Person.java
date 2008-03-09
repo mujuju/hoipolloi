@@ -10,7 +10,7 @@ import java.io.*;
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99q March 5, 2008
+ * @version 0.99r March 8, 2008
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -1074,6 +1074,33 @@ public class Person implements Comparable {
                 db.closeConnection();
             }
         }
+    }
+    
+    /**
+     * Gets a list of columns available for export.
+     * 
+     * @return List of Columns
+     */
+    public static ArrayList getColumnsForExport() {
+        ArrayList cols = new ArrayList();
+        
+        cols.add("Prefix");
+        cols.add("Suffix");
+        cols.add("First Name");
+        cols.add("Middle Name");
+        cols.add("Last Name");
+        cols.add("Maiden Name");
+        cols.add("Gender");
+        cols.add("Eye Color");
+        cols.add("Hair Color");
+        cols.add("Height");
+        cols.add("Weight");
+        cols.add("Birthday");
+        cols.add("Description");
+        cols.add("Nick Name");
+        cols.add("Demonym");
+        
+        return cols;
     }
     
     /** 

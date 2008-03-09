@@ -3,6 +3,8 @@ package hoipolloi;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.io.*;
+import java.util.*;
+import java.sql.*;
 
 /**
  * Export a JTable to an Excel (CSV) File.
@@ -31,11 +33,13 @@ public class ExcelExporter {
      */
     public void exportTable(JTable table, File file) throws IOException { 
         TableModel model = table.getModel(); 
-        FileWriter out = new FileWriter(file); 
+        FileWriter out = new FileWriter(file);
+        // Write the Column Name Row
         for(int i=0; i < model.getColumnCount(); i++) { 
             out.write(model.getColumnName(i) + "\t"); 
         } 
-        out.write("\n"); 
+        out.write("\n");
+        // Write Each Row of Data
         for(int i=0; i< model.getRowCount(); i++) { 
             for(int j=0; j < model.getColumnCount(); j++) { 
                 out.write(model.getValueAt(i,j).toString()+"\t"); 
@@ -44,6 +48,78 @@ public class ExcelExporter {
         } 
         out.close(); 
         Debug.print("write out to: " + file); 
+    }
+    
+    public void exportCategory(Object category, Object[] cols, String path) {
+        // based on the columns, get group data
+        int categoryID = ((KeyValue)category).getKey();
+        
+        // Construct People to Export
+        ArrayList people = DBHPInterface.getPeopleInCategory(categoryID);
+        
+        // Construct Column Names for use in SQL Query
+        ArrayList cNames = new ArrayList();
+        for(Object c : cols) {
+            String col = (String)c;
+            String dbColName = "psn"+col;
+            dbColName = dbColName.replaceAll(" ", "");
+            dbColName = dbColName.trim();
+            cNames.add(dbColName);
+        }
+        
+        // Construct SQL Query
+        String sql = "SELECT ";
+        for (Object c : cNames) {
+            sql += (String)c+", ";
+        }
+        sql = sql.trim();
+        sql = sql.substring(0, sql.lastIndexOf(','));
+        sql += " FROM pmp_people WHERE (psnPersonID = '";
+        
+        ArrayList data = new ArrayList();
+        String isql = "";
+        for (Object p : people) {
+            int uid = ((KeyValue)p).getKey();
+            isql = sql;
+            isql += uid+"')";
+            DBConnection db = new DBConnection();
+            try {
+                Statement stmt  = db.getDBStatement();
+                ResultSet rs    = stmt.executeQuery(isql);
+                while (rs.next()) {
+                    String row = "";
+                    for (int i=1; i <= cols.length; i++) {
+                        row += "\""+rs.getString(i)+"\"";
+                        if (i < cols.length) {
+                            row += "\t";
+                        }
+                    }
+                    row += "\n";
+                    data.add(row);
+                }
+            }
+            catch (Exception e) { Debug.print(e.getMessage()); }
+        }
+        
+        
+        try {
+            File oFile = new File(path);
+            FileWriter out = new FileWriter(oFile);
+            // Write Column Names Row
+            for (Object c : cols) {
+                out.write("\""+(String)c + "\"\t");
+            }
+            out.write("\n");
+            // Write Each Row of Data
+            for (Object d : data) {
+                out.write((String)d);
+            }
+            out.close();
+        }
+        catch (Exception e) {
+            Debug.print("Oh shit, we got problems");
+            Debug.print(e.getMessage());
+        }
     }
     
 }

@@ -2080,6 +2080,9 @@ public class MainMenu extends JFrame implements ActionListener {
             else if (selection.equals("Search")) {
                 new SearchWindow(THIS);
             }
+            else if (selection.equals("Export")) {
+                new Export(THIS);
+            }
             else if (selection.equals("Close")) {
                 // Not sure if this should be close profile or close database?
                 THIS.clearWindow();

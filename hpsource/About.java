@@ -46,7 +46,7 @@ public class About extends JDialog implements ActionListener, MouseListener {
         name2  = new JLabel("Name: Brandon Buck");
         skype1 = new JLabel("<html><font color='green'>Skype</font>: <a href='skype:orangepyrite?chat'>orangepyrite</a></html>");
         skype2 = new JLabel("<html><font color='green'>Skype</font>: <a href='skype:lord.izuriel?chat'>lord.izuriel</a></html>");
-        desc   = new JLabel("<html>A people database written by the Brandon's for <i>the masses</i></html>");
+        desc   = new JLabel("<html>A people database written by the Brandons for <i>the masses</i>.</html>");
         
         
         spec1 = new JLabel("Specialty: Engine");
