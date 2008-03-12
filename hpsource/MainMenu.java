@@ -1359,7 +1359,7 @@ public class MainMenu extends JFrame implements ActionListener {
         picLabel.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    HPPictureEditor.showHPPictureEditor(THIS);
+                    HPPictureEditor.showHPPictureEditor(THIS, currentPerson.getPersonID());
                 }
             }
             public void mousePressed(MouseEvent e) {}

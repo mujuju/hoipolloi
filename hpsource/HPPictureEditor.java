@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.awt.image.*;
 import javax.imageio.*;
 import java.beans.*;
+import java.io.*;
 
 /**
  * Hoi Polloi picture editor, mainly used to crop/resize pictures to fit the
@@ -15,11 +16,14 @@ import java.beans.*;
  * a picture and the selecting the "crop" option to cut out the portion of the
  * picture in the bounds of the rectangle.
  * 
+ * For note, the crop area is officially 291x356 pixels.
+ * 
  * Resizing will be used for pictures that are large to allow faces to fit
  * within the bounds of the cropping rectangle.
  * 
- * @author  Brandon
- * @version 1.0 (Dec 18, 2007)
+ * @author  Brandon Buck
+ * @author  Brandon Tanner
+ * @version 1.2 (March 12, 2008)
  * @since   December 18, 2007
  */
 public class HPPictureEditor extends JDialog implements ActionListener {
@@ -28,9 +32,10 @@ public class HPPictureEditor extends JDialog implements ActionListener {
     // Buttons
     private JButton acceptButton = new JButton("Accept");
     private JButton cancelButton = new JButton("Cancel");
-    private JImageLabel imageLabel = new JImageLabel(289, 354);
+    private JImageLabel imageLabel = new JImageLabel(291, 356);
     private BufferedImage currentImage = null;
     private java.io.File lastSelectedFile = null;
+    private int userID;
     
     /**
      * Default constructor for the HPPictureEditor. This constructer sets up
@@ -38,13 +43,14 @@ public class HPPictureEditor extends JDialog implements ActionListener {
      * 
      * @param parent The Frame that is HPPictureEditor belongs to.
      */
-    public HPPictureEditor(Frame parent) {
+    public HPPictureEditor(Frame parent, int uid) {
         super(parent);
         this.parent = (MainMenu)parent;
         this.setTitle("Picture Editor");
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         this.setModal(true);
         this.setResizable(false);
+        this.userID = uid;
         
         // JMenu
             ImageIcon loadImageIcon = new ImageIcon(getClass().getClassLoader().getResource("picture.png"));
@@ -128,27 +134,10 @@ public class HPPictureEditor extends JDialog implements ActionListener {
      * Displays the HPPictureEditor with the given owner.
      * 
      * @param owner The frame that this HPPictureEditor belongs to.
+     * @param uid   The Person ID who we are adding a photo for.
      */
-    public static void showHPPictureEditor(Frame owner) {
-        new HPPictureEditor(owner);
-    }
-    
-    /**
-     * Prints the coordinates of the crop area selected.
-     * 
-     * Note: The origin appears at the bottom left.
-     * 
-     * @param box The Rectangle Crop Area
-     */
-    private void printCoord(Rectangle box) {
-        String topLeft     = box.getMinX()+", "+box.getMaxY();
-        String topRight    = box.getMaxX()+", "+box.getMaxY();
-        String bottomLeft  = box.getMinX()+", "+box.getMinY();
-        String bottomRight = box.getMaxX()+", "+box.getMinY();
-        
-        Debug.print("Crop Area (Origin at Bottom Left)");
-        Debug.print(topLeft+" - "+topRight);
-        Debug.print(bottomLeft+" - "+bottomRight);
+    public static void showHPPictureEditor(Frame owner, int uid) {
+        new HPPictureEditor(owner, uid);
     }
     
     /**
@@ -160,8 +149,25 @@ public class HPPictureEditor extends JDialog implements ActionListener {
         JButton sourceButton = (JButton)(evt.getSource());
         
         if (sourceButton == acceptButton) {
-            printCoord(imageLabel.getCropBounds());
-            
+            // Use getSubimage to get an area of the original image into a new bufferedimage
+            // then use ImageIO to save to disk.
+            try {
+               Rectangle mybox = imageLabel.getCropBounds();
+               int topLeftX = (int)mybox.getX();
+               int topLeftY = (int)mybox.getY();
+               BufferedImage outimage = currentImage.getSubimage(topLeftX, topLeftY, 291, 356);
+               // Save the new Picture to Disk
+               File outputFile = new File("pictures/"+this.userID+".jpg");
+               ImageIO.write(outimage, "JPG", outputFile);
+               // Update the Main Window
+               parent.showProfile(parent.getCurrentPerson());
+               // Close the Crop Editor
+               this.dispose();
+            }
+            catch (Exception e) {
+                Debug.print("Error Cropping Photo:");
+                Debug.print(e.getMessage());
+            }
             
         } else if (sourceButton == cancelButton) {
             this.dispose();
