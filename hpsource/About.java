@@ -10,7 +10,7 @@ import java.net.*;
  * The About Hoi Polloi Window.
  *
  * @author  Brandon Tanner
- * @version 1.2 (Dec 17, 2007)
+ * @version 1.22 (Mar 12, 2008)
  * @since   December 12, 2006
  */
 public class About extends JDialog implements ActionListener, MouseListener {
@@ -25,9 +25,9 @@ public class About extends JDialog implements ActionListener, MouseListener {
     protected String definition = "Hoi polloi (Greek:), an expression meaning \"the many\" in both Ancient Greek and Modern Greek, is used in English to denote \"the masses\" or \"the people.\"";
     
     /** Creates a new instance of About */
-    public About(Frame owner) {
+    public About(Frame owner, String version) {
         super(owner);
-        this.setTitle("About Hoi Polloi");
+        this.setTitle("Hoi Polloi: v"+version);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         this.setModal(true);
         this.setResizable(false);
@@ -158,8 +158,8 @@ public class About extends JDialog implements ActionListener, MouseListener {
     }
     
     /** Displays the About Window */
-    public static void showAboutWindow(Frame owner) {
-        new About(owner);
+    public static void showAboutWindow(Frame owner, String version) {
+        new About(owner, version);
     }
     
 }

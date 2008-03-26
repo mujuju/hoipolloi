@@ -33,6 +33,9 @@ public class MainMenu extends JFrame implements ActionListener {
     /** The current person being viewed or edited */
     private Person currentPerson;
     
+    /** The Version of Hoi Polloi */
+    private String hpVersion;
+    
     
     // Themes
     // Need to install: https://pgslookandfeel.dev.java.net/
@@ -443,6 +446,9 @@ public class MainMenu extends JFrame implements ActionListener {
         ctnTable = new JTable(0, 2);
         
         loadPropertyFile();
+        
+        
+        
             
         // Frame Content - Start
 
@@ -476,6 +482,15 @@ public class MainMenu extends JFrame implements ActionListener {
         }
         
         setTheme(propFile.getProperty("theme"));
+        
+        // Get the Hoi Polloi Version
+        if (propFile.getProperty("version") == null) {
+            propFile.setProperty("version", "0.004A");
+            this.hpVersion = "0.004A";
+        } 
+        else {
+            this.hpVersion = propFile.getProperty("version");
+        }
         
         // Show the Last Profile Viewed
         if (!propFile.getProperty("lastprofile").equals("-1")) {
@@ -1604,6 +1619,56 @@ public class MainMenu extends JFrame implements ActionListener {
         updateWindow();
     }
     
+    /**
+     * Shows a JList of People on the Left Side of the Application.
+     * 
+     * @param peeps The People to Put in the JLIst
+     */
+    public void showPeopleList(ArrayList peeps) {
+        contentPane.removeAll();
+        Object[] people = peeps.toArray();
+        
+        final JList list = new JList();
+        list.setCellRenderer(new HPCellRenderer());
+        list.setListData(people);
+        
+        list.addMouseListener(new MouseListener() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int index = list.locationToIndex(e.getPoint());
+                    list.setSelectedIndex(index);
+                    KeyValue value = (KeyValue)(list.getSelectedValue());
+                    try {
+                        showProfile(new Person(value.getKey()));
+                    }
+                    catch (Exception ex) {
+                        Debug.print(ex.getMessage());
+                    }
+                }
+                if (e.getClickCount() == 1) {
+                    int index = list.locationToIndex(e.getPoint());
+                    list.setSelectedIndex(index);
+                }
+            }
+            public void mousePressed(MouseEvent e) {}
+            public void mouseReleased(MouseEvent e) {}
+            public void mouseEntered(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {}      
+        });
+        
+        JScrollPane listScroller = new JScrollPane(list);
+        listScroller.setPreferredSize(new Dimension(220, getContentPane().getHeight()));
+        JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScroller, null);
+        
+        
+        jsp.setOneTouchExpandable(true);
+        jsp.setDividerLocation(150);
+        
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(jsp, BorderLayout.WEST);
+        updateWindow();
+    }
+    
     /** Clears the main application window screen and shows the HP logo in the center.*/
     public void removeAllComponents() {
         contentPane.removeAll();
@@ -2005,63 +2070,63 @@ public class MainMenu extends JFrame implements ActionListener {
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "default");
-            clearWindow();
+            //clearWindow();
         }
         else if (goldTheme.isSelected()) {
             PlafOptions.setCurrentTheme(GOLD);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "gold");
-            clearWindow();
+            //clearWindow();
         }
         else if (silverTheme.isSelected()) {
             PlafOptions.setCurrentTheme(SILVER);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "silver");
-            clearWindow();
+            //clearWindow();
         }
         else if (rubyTheme.isSelected()) {
             PlafOptions.setCurrentTheme(RUBY);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "ruby");
-            clearWindow();
+            //clearWindow();
         }
         else if (darudeTheme.isSelected()) {
             PlafOptions.setCurrentTheme(DARUDE);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "darude");
-            clearWindow();
+            //clearWindow();
         }
         else if (yellowTheme.isSelected()) {
             PlafOptions.setCurrentTheme(YELLOW);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "yellow");
-            clearWindow();
+            //clearWindow();
         }
         else if (grayTheme.isSelected()) {
             PlafOptions.setCurrentTheme(GRAY);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "gray");
-            clearWindow();
+            //clearWindow();
         }
         else if (winTheme.isSelected()) {
             PlafOptions.setCurrentTheme(WIN);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "win");
-            clearWindow();
+            //clearWindow();
         }
         else if (charcoalTheme.isSelected()) {
             PlafOptions.setCurrentTheme(CHARCOAL);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             propFile.setProperty("theme", "charcoal");
-            clearWindow();
+            //clearWindow();
         }
     }
         
@@ -2091,7 +2156,8 @@ public class MainMenu extends JFrame implements ActionListener {
                 Stats.showStats(THIS);
             }
             else if (selection.equals("Everyone")) {
-                new JTempFrame(THIS, DBHPInterface.getListOfPeopleByLastName());
+                //new JTempFrame(THIS, DBHPInterface.getListOfPeopleByLastName());
+                showPeopleList(DBHPInterface.getListOfPeopleByLastName());
             }
             else if (selection.equals("Edit Profile")) {
                 if (currentPerson != null) {
@@ -2102,7 +2168,10 @@ public class MainMenu extends JFrame implements ActionListener {
                 quickAdd();
             }
             else if (selection.equals("About")) {
-                About.showAboutWindow(THIS);
+                About.showAboutWindow(THIS, hpVersion);
+            }
+            else if (selection.equals("Print")) {
+                EnvelopeBox.showEnvelopeBox(THIS);
             }
             else if (selection.equals("Birthdays")) {
                 new JTempFrame(THIS, DBHPInterface.getBirthdaysThisMonth());
