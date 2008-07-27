@@ -4,6 +4,12 @@
 * print addresses of groups to envelopes (ie. mail merge)
 
 
+Ideas:
+Left/Right arrow keys in viewProfile go to previous/next profile.
+jlist + expandable = jexpandable (http://swing-fx.blogspot.com/2008/07/jlist-expandable-jexpandlist.html)
+rounded corner tooltip bubble on mouseover in view everyone jlist
+
+
 [logo]
 
 what is it
