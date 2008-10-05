@@ -35,6 +35,10 @@ public class Export extends JFrame implements ActionListener {
     private JPanel groupPanel;
     private JPanel fieldPanel;
     private JPanel buttonPanel;
+    private JPanel optionPanel;
+    
+    private JCheckBox st509Check;
+    
     
     public Export(MainMenu parent) {
         this.parent = parent;
@@ -43,9 +47,11 @@ public class Export extends JFrame implements ActionListener {
         southPanel = new JPanel();
         groupPanel = new JPanel();
         fieldPanel = new JPanel();
+        optionPanel = new JPanel();
         buttonPanel = new JPanel();
         groupListModel = new DefaultListModel();
         fieldListModel = new DefaultListModel();
+        st509Check = new JCheckBox("Samsung SGH-T509");
         btnExport = new JButton("Export");
         btnExit = new JButton("Done");
         btnExport.addActionListener(this);
@@ -62,6 +68,7 @@ public class Export extends JFrame implements ActionListener {
         instrPanel.setBorder(BorderFactory.createTitledBorder(""));
         northPanel.setBorder(BorderFactory.createTitledBorder("Choose"));
         southPanel.setBorder(BorderFactory.createTitledBorder("Export"));
+        optionPanel.setBorder(BorderFactory.createTitledBorder("Phones"));
         
         Container cp = this.getContentPane();
         cp.setLayout(new BorderLayout());
@@ -109,9 +116,11 @@ public class Export extends JFrame implements ActionListener {
         northPanel.add(groupPanel);
         northPanel.add(fieldPanel);
         southPanel.add(buttonPanel);
+        optionPanel.add(st509Check);
         
         cp.add(instrPanel, BorderLayout.NORTH);
         cp.add(northPanel, BorderLayout.CENTER);
+        cp.add(optionPanel, BorderLayout.LINE_START);
         cp.add(southPanel, BorderLayout.SOUTH);
         
         this.pack();
@@ -137,7 +146,7 @@ public class Export extends JFrame implements ActionListener {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setDialogTitle("Export People to Excel");
                 chooser.setFileSelectionMode(0);
-                chooser.setSelectedFile(new File("People.xls"));
+                chooser.setSelectedFile(new File("People.csv"));
                 int doit = chooser.showSaveDialog(this);
                 if (doit == JFileChooser.APPROVE_OPTION) {
                     filePath = chooser.getSelectedFile().getAbsolutePath();
@@ -148,7 +157,14 @@ public class Export extends JFrame implements ActionListener {
                 Debug.print(e.getMessage());
             }
             ExcelExporter exporter = new ExcelExporter();
-            exporter.exportCategory(groupList.getSelectedValue(), fieldList.getSelectedValues(), filePath);
+            
+
+            if (st509Check.isSelected()) {
+                exporter.exportT509(groupList.getSelectedValue(), "SIM", filePath);
+            }
+            else {
+                exporter.exportCategory(groupList.getSelectedValue(), fieldList.getSelectedValues(), filePath);
+            }
             JOptionPane.showMessageDialog(this, "Success!");
         }
         else if (pressedButton == btnExit) {
