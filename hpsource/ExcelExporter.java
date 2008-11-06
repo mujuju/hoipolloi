@@ -64,6 +64,9 @@ public class ExcelExporter {
         // Construct People to Export
         ArrayList people = DBHPInterface.getPeopleInCategory(categoryID);
         
+        Object[] cols;
+        cols = null;
+        
         // Construct Column Names for use in SQL Query
         ArrayList cNames = new ArrayList();
         for(Object c : cols) {
@@ -128,6 +131,7 @@ public class ExcelExporter {
             Debug.print(e.getMessage());
         }       
     }
+    
     
     /**
      * Export a Category of People to CSV format.

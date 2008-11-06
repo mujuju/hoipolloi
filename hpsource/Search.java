@@ -2,7 +2,6 @@ package hoipolloi;
 
 import java.util.*;
 import java.sql.*;
-import org.sqlite.JDBC;
 
 /**
  * A Class to Perform Text Searches on the Hoi Polloi Database.
