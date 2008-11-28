@@ -1442,6 +1442,7 @@ public class MainMenu extends JFrame implements ActionListener {
         dobLabel.setFont(boldInfoFont);
         JLabel personDobLabel = new JLabel(dob);
         personDobLabel.setFont(infoFont);
+        personDobLabel.setToolTipText(person.getTimeToNextBirthday());
         JPanel dobPanel = new JPanel();
         dobPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         dobPanel.add(dobLabel);

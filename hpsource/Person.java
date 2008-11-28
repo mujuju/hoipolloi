@@ -790,6 +790,16 @@ public class Person implements Comparable {
     }
     
     /**
+     * Gets the textual amount of time until the person's next birthday.
+     * 
+     * @return How many days, hours, minutes and seconds.
+     */
+    protected String getTimeToNextBirthday() {
+        // Need to implement this.
+        return "234 Days, 16 Hours, 33 Minutes and 29 Seconds";
+    }
+    
+    /**
      * Gets the Person's current Age.
      * All times are relative to the user's machine.
      *
