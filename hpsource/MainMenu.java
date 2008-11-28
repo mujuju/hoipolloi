@@ -15,7 +15,7 @@ import java.io.*;
  *
  * @author  Brandon Buck
  * @author  Brandon Tanner
- * @version 0.17 (Dec 18, 2007)
+ * @version 0.18 (Nov 27, 2008)
  * @since   November 10, 2006
  */
 public class MainMenu extends JFrame implements ActionListener {
@@ -859,7 +859,7 @@ public class MainMenu extends JFrame implements ActionListener {
             yearBox  . setSelectedItem(bYear);
             monthBox . setSelectedIndex(bMonth-1);
             
-            Debug.print(bYear+"-"+bMonth+"-"+bDay);
+            Debug.print("EP:REGEX: "+bYear+"-"+bMonth+"-"+bDay);
         }  
         
         JPanel dobPanel = new JPanel();
@@ -1963,6 +1963,7 @@ public class MainMenu extends JFrame implements ActionListener {
                                 // Unavoidable Defaults
                                 newPerson.setDemonym(new KeyValue(193, "Unknown"));
                                 newPerson.setBirthday("1970-01-01");
+                                
                                 
                                 boolean success = newPerson.saveToDatabase();
                                 

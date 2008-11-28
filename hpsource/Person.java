@@ -5,12 +5,13 @@ import javax.swing.*;
 import java.util.*;
 import java.text.*;
 import java.io.*;
+import java.util.regex.*;
 
 /**
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99r March 8, 2008
+ * @version 0.99s Nov 27, 2008
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -448,7 +449,7 @@ public class Person implements Comparable {
      * @param height The Person's Height
      */
     public void setHeight(String height) {
-        this.height = height.replaceAll("\"", "");
+        this.height = height.replaceAll("\"", "\"");
     }
     
     /**
@@ -467,7 +468,22 @@ public class Person implements Comparable {
      * @param birthday The Person's Birthday
      */
     public void setBirthday(String birthday) {
-        this.birthday = birthday;
+        // need to verify what we are setting
+        // format should be YYYY-MM-DD with leading zeroes.
+        // use some regex
+        if (birthday.length() != 10) {
+            Debug.print("In setBirthday, the given Birthday lenght is NOT 10.");
+            System.exit(1);
+        }
+        Pattern p = Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}");
+        Matcher m = p.matcher(birthday);
+        if (m.matches()) {
+            this.birthday = birthday;
+        }
+        else {
+            Debug.print("Birthday Regex Failed to Match");
+            System.exit(1);
+        }
     }
     
     /**
@@ -648,7 +664,13 @@ public class Person implements Comparable {
      * @return The Person's Birthday (YYYY-MM-DD)
      */
     public String getBirthday() {
-        return this.birthday;
+        if (this.birthday.isEmpty() || this.birthday.equals("") || this.birthday == null || this.birthday.equals("0000-00-00")) {
+            Debug.print("Birthday in DB is Empty, returning default");
+            return "1970-01-01";
+        }
+        else {
+            return this.birthday;
+        }
     }
     
     /**

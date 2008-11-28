@@ -8,7 +8,7 @@ import java.sql.*;
  * A class with various static methods to interact with the database.
  *
  * @author  Brandon Tanner
- * @version 1.3 (Jan 07, 2008)
+ * @version 1.4 (Nov 27, 2008)
  * @since   December 12, 2006
  */
 public class DBHPInterface {
@@ -22,7 +22,7 @@ public class DBHPInterface {
      * @return      The month number (01, 02 ... etc)
      */
     protected static String getMonthNumber(String month) {
-        if (month.equals("Jan")) {
+        if (month.equals("January")) {
             return "01";
         }
         else if (month.equals("February")) {
