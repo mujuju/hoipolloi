@@ -15,7 +15,7 @@ import java.io.*;
  *
  * @author  Brandon Buck
  * @author  Brandon Tanner
- * @version 0.18 (Nov 27, 2008)
+ * @version 0.18a (Nov 28, 2008)
  * @since   November 10, 2006
  */
 public class MainMenu extends JFrame implements ActionListener {
@@ -1742,14 +1742,15 @@ public class MainMenu extends JFrame implements ActionListener {
                 
                 JLabel city  = new JLabel(addressCity+", ");
                 JLabel state = new JLabel(addressState);
-                JLabel zip   = new JLabel(addressZip);
+                JLabel zip   = new JLabel(" "+addressZip);
                 city.setFont(addressFont);
                 state.setFont(addressFont);
                 zip.setFont(addressFont);
-                JPanel CityStateZip = new JPanel(new BorderLayout());
-                CityStateZip.add(city, BorderLayout.WEST);
-                CityStateZip.add(state, BorderLayout.CENTER);
-                CityStateZip.add(zip, BorderLayout.EAST);
+                JPanel CityStateZip = new JPanel();
+                CityStateZip.setLayout(new BoxLayout(CityStateZip, BoxLayout.X_AXIS));
+                CityStateZip.add(city);
+                CityStateZip.add(state);
+                CityStateZip.add(zip);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 4;
