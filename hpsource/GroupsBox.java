@@ -13,6 +13,9 @@ import java.util.*;
 /**
  * A window to Add/Edit/Remove a Person from a Category/Group.
  * 
+ * Should be better to use:
+ * http://www.java-forums.org/awt-swing/3030-help-drag-drop-jlist.html
+ * 
  * @author Brandon Tanner
  */
 public class GroupsBox extends JFrame implements ActionListener {
