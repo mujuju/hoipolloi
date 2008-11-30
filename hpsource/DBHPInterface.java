@@ -8,7 +8,7 @@ import java.sql.*;
  * A class with various static methods to interact with the database.
  *
  * @author  Brandon Tanner
- * @version 1.4 (Nov 27, 2008)
+ * @version 1.4a (Nov 30, 2008)
  * @since   December 12, 2006
  */
 public class DBHPInterface {
@@ -392,7 +392,7 @@ public class DBHPInterface {
      * @return WINDOWS or UNIX.
      */
     public static String getOS() {
-        if (System.getProperty("os.name").toUpperCase().equals("WINDOWS")) {
+        if (System.getProperty("os.name").startsWith("Windows")) {
             return "WINDOWS";
         }
         else {

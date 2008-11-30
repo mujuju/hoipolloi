@@ -65,12 +65,12 @@ public class GroupsBox extends JFrame implements ActionListener {
         
         //Populate dragGroupsList
         for (Object value : DBHPInterface.getListOfCategories()) {
-            dragGroupsList.
+            //dragGroupsList.
         }
         
         //Populate dropGroupsList
         for (Object value : person.getCategories()) {
-            dropGroupsList.addItem(value);
+            //dropGroupsList.addItem(value);
         }
         
         groupsPanel.add(dragGroupsList, BorderLayout.WEST);
