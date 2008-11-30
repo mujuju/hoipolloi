@@ -7,7 +7,7 @@ public class CategoryBox extends JFrame {
     
     ReportingListTransferHandler arrayListHandler = new ReportingListTransferHandler();
 
-    public ListDnD(JFrame owner, Person person) {
+    public CategoryBox(JFrame owner, Person person) {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getContentPane().add(this.getContent());
         this.setSize(400,200);
