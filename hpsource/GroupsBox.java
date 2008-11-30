@@ -8,7 +8,7 @@ package hoipolloi;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+
 
 /**
  * A window to Add/Edit/Remove a Person from a Category/Group.

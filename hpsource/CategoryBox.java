@@ -1,14 +1,21 @@
 package hoipolloi;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
 
-public class ListDnD {
+public class CategoryBox extends JFrame {
     
     ReportingListTransferHandler arrayListHandler = new ReportingListTransferHandler();
 
+    public ListDnD(JFrame owner, Person person) {
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.getContentPane().add(this.getContent());
+        this.setSize(400,200);
+        this.setLocationRelativeTo(null);
+        this.setResizable(false);
+        this.pack();
+        this.setVisible(true);
+    }
     private JPanel getContent() {
         JPanel panel = new JPanel(new GridLayout(1,0));
         panel.add(getListComponent("left"));
@@ -28,12 +35,4 @@ public class ListDnD {
         return new JScrollPane(list);
     }
 
-    public static void main(String[] args) {
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.getContentPane().add(new ListDnD().getContent());
-        f.setSize(400,200);
-        f.setLocationRelativeTo(null);
-        f.setVisible(true);
-    }
 }

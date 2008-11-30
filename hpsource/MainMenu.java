@@ -1207,7 +1207,7 @@ public class MainMenu extends JFrame implements ActionListener {
         
         btnGroups.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new GroupsBox(THIS, p);
+                new CategoryBox(THIS, p);
             }
         });
         
