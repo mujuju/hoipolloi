@@ -1,9 +1,7 @@
 package hoipolloi;
 
 import java.sql.*;
-import javax.swing.*;
 import java.util.*;
-import java.text.*;
 import java.io.*;
 import java.util.regex.*;
 
@@ -11,7 +9,7 @@ import java.util.regex.*;
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99s Nov 27, 2008
+ * @version 0.99t Dec 1, 2008
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -611,6 +609,15 @@ public class Person implements Comparable {
      */
     public String getMaidenName() {
         return this.maidenName;
+    }
+
+    /**
+     * Gets the First and Last Name separated by a space.
+     *
+     * @return The First and Last Name
+     */
+    public String getFirstLastName() {
+        return this.firstName+" "+this.getLastName();
     }
     
     /**

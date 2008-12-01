@@ -3,7 +3,6 @@ package hoipolloi;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 
 /**
  * An entry form box to add/edit an address for a profile.
@@ -38,8 +37,7 @@ public class AddressBox extends JFrame implements ActionListener {
             this.p = person;
         }
         else {
-            Debug.turnOn();
-            Debug.print("No Person Supplied to Add/Edit Address For, exiting app.");
+            Debug.print("No Person Supplied to Add/Edit Addresses For, exiting app.");
             System.exit(0);
         }
         
