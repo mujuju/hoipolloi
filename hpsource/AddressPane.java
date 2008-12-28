@@ -17,6 +17,7 @@ public class AddressPane extends JTabbedPane implements MouseListener {
 
     public AddressPane() {
         super();
+        this.addMouseListener(this);
     }
 
     private void tabRightClick(MouseEvent e) {
@@ -25,26 +26,15 @@ public class AddressPane extends JTabbedPane implements MouseListener {
 
     public void mouseClicked(MouseEvent e) {
         // Detect Right Click
+        Debug.print("Mouse Clicked");
         if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
             tabRightClick(e);
         }
     }
-
-    public void mousePressed(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void mouseReleased(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void mouseEntered(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void mouseExited(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public void mousePressed(MouseEvent e) { }
+    public void mouseReleased(MouseEvent e) { }
+    public void mouseEntered(MouseEvent e) { }
+    public void mouseExited(MouseEvent e) { }
 
 
 }
