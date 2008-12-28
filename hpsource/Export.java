@@ -52,6 +52,7 @@ public class Export extends JFrame implements ActionListener {
         groupListModel = new DefaultListModel();
         fieldListModel = new DefaultListModel();
         st509Check = new JCheckBox("Samsung SGH-T509");
+        st509Check.addActionListener(this);
         btnExport = new JButton("Export");
         btnExit = new JButton("Done");
         btnExport.addActionListener(this);
@@ -160,7 +161,7 @@ public class Export extends JFrame implements ActionListener {
             
 
             if (st509Check.isSelected()) {
-                exporter.exportT509(groupList.getSelectedValue(), "SIM", filePath);
+                exporter.exportT509All(filePath);
             }
             else {
                 exporter.exportCategory(groupList.getSelectedValue(), fieldList.getSelectedValues(), filePath);
@@ -170,6 +171,37 @@ public class Export extends JFrame implements ActionListener {
         else if (pressedButton == btnExit) {
             this.dispose();
         }
+        else if (pressedButton == st509Check) {
+            //JOptionPane.showMessageDialog(this, "test");
+            //JOptionPane.showMessageDialog(this, st509Check.isSelected());
+            if (st509Check.isSelected()) {
+                groupList.setEnabled(false);
+                fieldList.setEnabled(false);
+                groupSP.setEnabled(false);
+                fieldSP.setEnabled(false);
+            } else {
+                groupList.setEnabled(true);
+                fieldList.setEnabled(true);
+                groupSP.setEnabled(true);
+                fieldSP.setEnabled(true);
+            }
+
+                
+            
+        }
     }
+
+    // enable (or disable) all children of a component
+    private void enableChildren(Container container, boolean isEnabled)
+    {
+        // get an arry of all the components in this container
+        Component[] components = container.getComponents();
+        // for each element in the container enable/disable it
+        for (int i = 0; i < components.length; i++)
+        {
+            components[i].setEnabled(isEnabled);
+        }
+    }
+
     
 }

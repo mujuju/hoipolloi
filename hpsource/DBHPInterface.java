@@ -8,7 +8,7 @@ import java.sql.*;
  * A class with various static methods to interact with the database.
  *
  * @author  Brandon Tanner
- * @version 1.4a (Nov 30, 2008)
+ * @version 1.4b (Dec 10, 2008)
  * @since   December 12, 2006
  */
 public class DBHPInterface {
@@ -62,6 +62,30 @@ public class DBHPInterface {
             return "00";
         }
     }
+
+    /**
+     * Gets a List of people sorted by First Name.
+     *
+     * @return An ArrayList of KeyValue pairs of the people in the database.
+     */
+    protected static ArrayList getListOfPeopleByFirstName() {
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
+        String sql = "SELECT * FROM pmp_people ORDER BY psnFirstName ASC";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt = db.getDBStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                people.add( new KeyValue( rs.getInt("psnPersonID"), rs.getString("psnLastName")+", "+rs.getString("psnFirstName") ) );
+            }
+            return people;
+
+        }
+        catch (Exception e) { return null; }
+        finally {
+            db.closeConnection();
+        }
+    }
     
     /**
      * Gets a List of people sorted by Last Name.
@@ -81,6 +105,9 @@ public class DBHPInterface {
             return people;
         }
         catch (Exception e) { return null; }
+        finally {
+            db.closeConnection();
+        }
     }
     
     protected static ArrayList getListOfCategories() {

@@ -49,6 +49,28 @@ public class ExcelExporter {
         out.close(); 
         Debug.print("write out to: " + file); 
     }
+
+    /**
+     * Export EVERYONE to Samsung SGH-T509 Phone Format.
+     *
+     * @param path The file path of the CSV file.
+     */
+    public void exportT509All(String path) {
+        // "Name","FirstName","Phone No.","Home Tel.","Office Tel.","Fax No","Other Tel.","E-Mail","URL","Memo"
+        ArrayList people = DBHPInterface.getListOfPeopleByFirstName();
+        Person workingPerson;
+        for (Object o : people) {
+            int pid = ((KeyValue)o).getKey();
+            try {
+                workingPerson = new Person(pid);
+                Debug.print(workingPerson.getContacts());
+            }
+            catch (Exception e) {
+                Debug.print(e.getMessage());
+            }
+        }
+
+    }
     
     /**
      * Export a Category of People to Samsung SGH-T509 Phone Format.
