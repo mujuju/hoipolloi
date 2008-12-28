@@ -21,7 +21,10 @@ import java.io.*;
 public class MainMenu extends JFrame implements ActionListener {
     
     // Data members for the JFrame
-    private WatermarkPanel contentPane;
+    private JPanel contentPane;
+    private JPanel profileListPane;
+    private JPanel listPane;
+    private WatermarkPanel splitPanel;
     private MainMenu THIS;
     
     /** The Properties File */
@@ -73,6 +76,7 @@ public class MainMenu extends JFrame implements ActionListener {
     private JButton btnDelContact;
     private JButton btnDelProfile;
     private JButton btnUpdateProfile;
+    private JButton filterListButton;
     
     
     /** Creates a new instance of MainMenu */
@@ -82,15 +86,30 @@ public class MainMenu extends JFrame implements ActionListener {
         
         this.currentPerson = null;
         
-        contentPane = new WatermarkPanel("wtlogo.png");
-        contentPane.setLayout(new BorderLayout());
-        contentPane.setOpaque(false);
+        contentPane = new JPanel();
+        profileListPane = new JPanel();
+        profileListPane.setLayout(new GridLayout(2, 1));
+        filterListButton = new JButton("Filter List");
         
+        JPanel filterButtonPanel = new JPanel();
+        filterButtonPanel.setLayout(new GridLayout(1, 1));
+        filterButtonPanel.add(filterListButton);
+        profileListPane.add(filterButtonPanel);
+        
+        listPane = new JPanel();
+        listPane.setLayout(new GridLayout(1, 1));
+        profileListPane.add(listPane);
+        
+        splitPanel = new WatermarkPanel(JSplitPane.HORIZONTAL_SPLIT, profileListPane, contentPane, "wtlogo.png");
+        splitPanel.setDividerLocation(180);
+        splitPanel.setOpaque(false);
+        splitPanel.setOneTouchExpandable(true);
+
         setTitle("Hoi Polloi");
         ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("group.png"));
         setIconImage(icon.getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocation(contentPane.getLocation());
+        setLocation(splitPanel.getLocation());
         addWindowListener(new HPWindowListener());
         addComponentListener(new HPComponentListener());
         
@@ -457,7 +476,7 @@ public class MainMenu extends JFrame implements ActionListener {
         cancelButton.addActionListener(this);
         // Buttons - End
         
-        // Contact Info Table (is this being used?)
+        // Contact Info Table (is this being used?) (BB-12/08: Don't think so, don't even remember what it's for)
         ctnTable = new JTable(0, 2);
         
         loadPropertyFile();
@@ -472,12 +491,13 @@ public class MainMenu extends JFrame implements ActionListener {
         // Center the Main Menu and Set Size to 80% of Screen Width/Height
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         //setSize((int)(screenSize.getWidth() * .8), (int)(screenSize.getHeight() * .8));
-        setSize(900, 600); // Goal
+        setSize(1080, 600); // Goal
         setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));       
         
         // Show the Main Menu
-        getContentPane().add(contentPane);
+        getContentPane().add(splitPanel);
         //pack();
+        showPeopleList(DBHPInterface.getListOfPeopleByLastName());
         setVisible(true);
     }
     
@@ -1670,7 +1690,6 @@ public class MainMenu extends JFrame implements ActionListener {
         // Address Box
         westPanel.add(getAddressPane(person));
         
-        
         contentPane.setLayout(new BorderLayout());
         contentPane.add(topPanel,    BorderLayout.NORTH  );
         contentPane.add(eastPanel,   BorderLayout.EAST   );
@@ -1687,7 +1706,7 @@ public class MainMenu extends JFrame implements ActionListener {
      * @param peeps The People to Put in the JLIst
      */
     public void showPeopleList(ArrayList peeps) {
-        contentPane.removeAll();
+        //contentPane.removeAll();
         Object[] people = peeps.toArray();
         
         final JList list = new JList();
@@ -1720,14 +1739,15 @@ public class MainMenu extends JFrame implements ActionListener {
         
         JScrollPane listScroller = new JScrollPane(list);
         listScroller.setPreferredSize(new Dimension(220, getContentPane().getHeight()));
-        JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScroller, null);
+        //JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScroller, null);
         
         
-        jsp.setOneTouchExpandable(true);
-        jsp.setDividerLocation(150);
+        //jsp.setOneTouchExpandable(true);
+        //jsp.setDividerLocation(150);
         
-        contentPane.setLayout(new BorderLayout());
-        contentPane.add(jsp, BorderLayout.WEST);
+        //contentPane.setLayout(new BorderLayout());
+        listPane.removeAll();
+        listPane.add(listScroller);
         updateWindow();
     }
     
