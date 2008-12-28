@@ -15,26 +15,42 @@ import java.awt.event.*;
  */
 public class AddressPane extends JTabbedPane implements MouseListener {
 
+    JPopupMenu rightClickMenu;
+
     public AddressPane() {
         super();
         this.addMouseListener(this);
+        
+        rightClickMenu = new JPopupMenu();
+        JMenuItem addAddress = new JMenuItem("Add");
+        JMenuItem editAddress = new JMenuItem("Edit");
+        JMenuItem delAddress = new JMenuItem("Delete");
+        JMenuItem title = new JMenuItem("Address Actions");
+        title.setEnabled(false);
+        rightClickMenu.add(title);
+        rightClickMenu.addSeparator();
+        rightClickMenu.add(addAddress);
+        rightClickMenu.add(editAddress);
+        rightClickMenu.add(delAddress);
+        rightClickMenu.addSeparator();
+        rightClickMenu.add(new JMenuItem("Google Maps"));
+        rightClickMenu.add(new JMenuItem("Mapquest"));
     }
 
-    private void tabRightClick(MouseEvent e) {
-        Debug.print("right click detected");
+    private void showRightClickMenu(MouseEvent e) {
+        rightClickMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 
     public void mouseClicked(MouseEvent e) {
         // Detect Right Click
-        Debug.print("Mouse Clicked");
         if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
-            tabRightClick(e);
+            showRightClickMenu(e);
         }
     }
-    public void mousePressed(MouseEvent e) { }
-    public void mouseReleased(MouseEvent e) { }
-    public void mouseEntered(MouseEvent e) { }
-    public void mouseExited(MouseEvent e) { }
 
+    public void mousePressed(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
 
 }
