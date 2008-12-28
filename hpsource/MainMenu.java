@@ -59,6 +59,9 @@ public class MainMenu extends JFrame implements ActionListener {
     private JRadioButtonMenuItem silverTheme;
     private JRadioButtonMenuItem charcoalTheme;
     private JRadioButtonMenuItem darudeTheme;
+    private JRadioButtonMenuItem metalTheme;
+    private JRadioButtonMenuItem nimbusTheme;
+    private JRadioButtonMenuItem oceanTheme;
     
     // All of the Buttons
     private JButton quickAddButton;
@@ -231,9 +234,18 @@ public class MainMenu extends JFrame implements ActionListener {
         charcoalTheme.addActionListener(this);
         darudeTheme = new JRadioButtonMenuItem("Darude");
         darudeTheme.addActionListener(this);
+        metalTheme = new JRadioButtonMenuItem("Metal");
+        metalTheme.addActionListener(this);
+        nimbusTheme = new JRadioButtonMenuItem("Nimbus");
+        nimbusTheme.addActionListener(this);
+        oceanTheme = new JRadioButtonMenuItem("Ocean");
+        oceanTheme.addActionListener(this);
 
         ButtonGroup themeGroup = new ButtonGroup();
         themeGroup.add(defaultTheme);
+        themeGroup.add(metalTheme);
+        themeGroup.add(nimbusTheme);
+        themeGroup.add(oceanTheme);
         themeGroup.add(rubyTheme);
         themeGroup.add(yellowTheme);
         themeGroup.add(grayTheme);
@@ -253,6 +265,9 @@ public class MainMenu extends JFrame implements ActionListener {
         themeMenu.add(dummyItem);
         themeMenu.addSeparator();
         themeMenu.add(defaultTheme);
+        themeMenu.add(metalTheme);
+        themeMenu.add(nimbusTheme);
+        themeMenu.add(oceanTheme);
         themeMenu.add(charcoalTheme);
         themeMenu.add(goldTheme);
         themeMenu.add(silverTheme);
@@ -530,54 +545,92 @@ public class MainMenu extends JFrame implements ActionListener {
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             defaultTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
         }
         else if (theme.equalsIgnoreCase("gray")) {
             PlafOptions.setCurrentTheme(GRAY);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             grayTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
         }
         else if (theme.equalsIgnoreCase("yellow")) {
             PlafOptions.setCurrentTheme(YELLOW);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             yellowTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
         }
         else if (theme.equalsIgnoreCase("ruby")) {
             PlafOptions.setCurrentTheme(RUBY);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             rubyTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equals("darude")) {
+        else if (theme.equalsIgnoreCase("darude")) {
             PlafOptions.setCurrentTheme(DARUDE);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             darudeTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equals("win")) {
+        else if (theme.equalsIgnoreCase("win")) {
             PlafOptions.setCurrentTheme(WIN);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             winTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equals("silver")) {
+        else if (theme.equalsIgnoreCase("silver")) {
             PlafOptions.setCurrentTheme(SILVER);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             silverTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equals("gold")) {
+        else if (theme.equalsIgnoreCase("gold")) {
             PlafOptions.setCurrentTheme(GOLD);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             goldTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equals("charcoal")) {
+        else if (theme.equalsIgnoreCase("charcoal")) {
             PlafOptions.setCurrentTheme(CHARCOAL);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             charcoalTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
+        }
+        else if (theme.equalsIgnoreCase("metal")) {
+            // Set the Hoi Polloi theme to the java default "Metal" look and feel.
+            try {
+                javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new javax.swing.plaf.metal.DefaultMetalTheme());
+                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                SwingUtilities.updateComponentTreeUI(THIS);
+            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }
+            metalTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
+        }
+        else if (theme.equalsIgnoreCase("ocean")) {
+            // Set the Hoi Polloi theme to the java OceanTheme "Metal" look and feel.
+            try {
+                javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new javax.swing.plaf.metal.OceanTheme());
+                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+                SwingUtilities.updateComponentTreeUI(THIS);
+            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }
+            oceanTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
+        }
+        else if (theme.equalsIgnoreCase("nimbus")) {
+            // Set the Hoi Polloi theme to the java "Nimbus" look and feel.
+            try {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+                SwingUtilities.updateComponentTreeUI(THIS);
+            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }
+            nimbusTheme.setSelected(true);
+            Debug.print("Set theme: " + theme.toUpperCase());
         }
         
     }
@@ -2077,67 +2130,61 @@ public class MainMenu extends JFrame implements ActionListener {
         
         // Theme Buttons
         if (defaultTheme.isSelected()) {
-            PlafOptions.setCurrentTheme(DEFAULT);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
+            setTheme("DEFAULT");
             propFile.setProperty("theme", "default");
             //clearWindow();
         }
         else if (goldTheme.isSelected()) {
-            PlafOptions.setCurrentTheme(GOLD);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
+            setTheme("GOLD");
             propFile.setProperty("theme", "gold");
             //clearWindow();
         }
         else if (silverTheme.isSelected()) {
-            PlafOptions.setCurrentTheme(SILVER);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
+            setTheme("SILVER");
             propFile.setProperty("theme", "silver");
             //clearWindow();
         }
         else if (rubyTheme.isSelected()) {
-            PlafOptions.setCurrentTheme(RUBY);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
+            setTheme("RUBY");
             propFile.setProperty("theme", "ruby");
             //clearWindow();
         }
         else if (darudeTheme.isSelected()) {
-            PlafOptions.setCurrentTheme(DARUDE);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
+            setTheme("DARUDE");
             propFile.setProperty("theme", "darude");
             //clearWindow();
         }
         else if (yellowTheme.isSelected()) {
-            PlafOptions.setCurrentTheme(YELLOW);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
+            setTheme("YELLOW");
             propFile.setProperty("theme", "yellow");
             //clearWindow();
         }
         else if (grayTheme.isSelected()) {
-            PlafOptions.setCurrentTheme(GRAY);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
+            setTheme("GRAY");
             propFile.setProperty("theme", "gray");
             //clearWindow();
         }
         else if (winTheme.isSelected()) {
-            PlafOptions.setCurrentTheme(WIN);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
+            setTheme("WIN");
             propFile.setProperty("theme", "win");
             //clearWindow();
         }
         else if (charcoalTheme.isSelected()) {
-            PlafOptions.setCurrentTheme(CHARCOAL);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
+            setTheme("CHARCOAL");
             propFile.setProperty("theme", "charcoal");
             //clearWindow();
+        }
+        else if (metalTheme.isSelected()) {
+            setTheme("METAL");
+            propFile.setProperty("theme", "metal");
+        }
+        else if (nimbusTheme.isSelected()) {
+            setTheme("NIMBUS");
+            propFile.setProperty("theme", "nimbus");
+        }
+        else if (oceanTheme.isSelected()) {
+            setTheme("OCEAN");
+            propFile.setProperty("theme", "ocean");
         }
     }
         
