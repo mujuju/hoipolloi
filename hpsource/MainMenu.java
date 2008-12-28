@@ -1747,9 +1747,9 @@ public class MainMenu extends JFrame implements ActionListener {
      * @param person The Target Person
      * @return A JTabbedPane showing Addresses for the Target Person
      */
-    public JTabbedPane getAddressPane(Person person) {
+    public AddressPane getAddressPane(Person person) {
         // Address Box *******************************************************
-        JTabbedPane addressPane = new JTabbedPane();
+        AddressPane addressPane = new AddressPane();
         ArrayList <Address> addressList = person.getAddresses();
         
         // Loop to Create Tabs
