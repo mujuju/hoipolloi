@@ -174,8 +174,7 @@ public class DBHPInterface {
             return rs.getInt("catCategoryID");
         }
         catch (Exception e) {
-            Debug.print("Error: getIDOfCategory Failed.");
-            Debug.print("The Exception Error is "+e.getMessage());
+            // Not really an error, just can't find the category, so returns -1 to indicate that.
             return -1;
         }
         finally {
@@ -217,7 +216,7 @@ public class DBHPInterface {
         DBConnection db = new DBConnection();
         try {
             int possibleIDOfCategory = getIDOfCategory(cat);
-            if (possibleIDOfCategory != 0) {
+            if (possibleIDOfCategory > 0) {
                 // This Category already exists, just return its ID
                 return possibleIDOfCategory;
             }
