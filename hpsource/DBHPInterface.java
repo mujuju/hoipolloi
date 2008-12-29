@@ -64,13 +64,13 @@ public class DBHPInterface {
     }
 
     /**
-     * Gets a List of people sorted by First Name.
+     * Gets a List of all people sorted by First Name.
      *
      * @return An ArrayList of KeyValue pairs of the people in the database.
      */
     protected static ArrayList getListOfPeopleByFirstName() {
         ArrayList <KeyValue> people = new ArrayList<KeyValue>();
-        String sql = "SELECT * FROM pmp_people ORDER BY psnFirstName ASC";
+        String sql = "SELECT psnPersonID, psnLastName, psnFirstName FROM pmp_people ORDER BY psnFirstName ASC";
         DBConnection db = new DBConnection();
         try {
             Statement stmt = db.getDBStatement();
@@ -88,13 +88,13 @@ public class DBHPInterface {
     }
     
     /**
-     * Gets a List of people sorted by Last Name.
+     * Gets a List of all people sorted by Last Name.
      *
      * @return An ArrayList of KeyValue pairs of the people in the database.
      */
     protected static ArrayList getListOfPeopleByLastName() {
         ArrayList <KeyValue> people = new ArrayList<KeyValue>();
-        String sql = "SELECT * FROM pmp_people ORDER BY psnLastName ASC";
+        String sql = "SELECT psnPersonID, psnLastName, psnFirstName FROM pmp_people ORDER BY psnLastName ASC";
         DBConnection db = new DBConnection();
         try {
             Statement stmt  = db.getDBStatement();
@@ -235,9 +235,7 @@ public class DBHPInterface {
     
     /**
      * Finds the ID of a given Category Name in the Database.
-     * Mostly used as a helper method for other methods.
      *
-     * @since December 11, 2006
      * @param categoryQuery The category to find the ID for.
      * @return              The ID of the queried category.
      */
@@ -283,7 +281,6 @@ public class DBHPInterface {
      * If the new category already exists, it simply returns the primary
      * key of the existing category.
      *
-     * @since December 11, 2006
      * @param cat The new category to add.
      * @return    The primary key ID of the newly added category.
      */
@@ -370,6 +367,19 @@ public class DBHPInterface {
     protected static ArrayList getBirthdaysThisMonth() {
         return getBirthdaysInMonth("current");
     }
+
+    /**
+     * Gets a list of people with birthdays last month.
+     *
+     * @return The List of People sorted by last name.
+     */
+    protected static ArrayList getBirthdaysPrevMonth() {
+        // Figure Out Last Month in two digit format MM
+        GregorianCalendar d = new GregorianCalendar();
+        int curMonth        = d.get(Calendar.MONTH)+1; // Calendar Months are 0-11
+        String prevMonth    = (curMonth > 1) ? String.valueOf(curMonth-1) : "12";
+        return getBirthdaysInMonth(prevMonth);
+    }
     
     /**
      * Gets the list of people with birthdays in the given month.
@@ -405,9 +415,9 @@ public class DBHPInterface {
     }
     
     /**
-     * Gets a List of Countries
+     * Gets a List of All Countries.
      *
-     * @return A List of Countries
+     * @return A List of All Countries.
      */
     public static ArrayList getListOfCountries() {
         ArrayList <KeyValue> countries = new ArrayList<KeyValue>();
@@ -451,7 +461,7 @@ public class DBHPInterface {
     }
     
     /**
-     * Gets a List of Demonyms.
+     * Gets a List of All Demonyms.
      * 
      * @return A List of Demonyms sorted alphabetically
      */
