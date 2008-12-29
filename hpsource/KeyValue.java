@@ -100,7 +100,7 @@ public class KeyValue implements Comparable {
      * @return True if both keys and values match, otherwise false.
      */
     public boolean equals(Object o) {
-        if (this.key == ((KeyValue)o).getKey() && this.value.equals(((KeyValue)o).getValue()))
+        if (this.value.equals(((KeyValue)o).getValue()))
             return true;
         else
             return false;

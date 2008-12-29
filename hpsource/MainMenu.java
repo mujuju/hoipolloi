@@ -18,7 +18,7 @@ import java.io.*;
  * @version 0.18a (Nov 28, 2008)
  * @since   November 10, 2006
  */
-public class MainMenu extends JFrame implements ActionListener {
+public class MainMenu extends JFrame implements ActionListener, KeyEventDispatcher {
 
     // Data members for the JFrame
     private JPanel contentPane;
@@ -105,14 +105,16 @@ public class MainMenu extends JFrame implements ActionListener {
         splitPanel.setOpaque(false);
         splitPanel.setOneTouchExpandable(true);
 
-        setTitle("Hoi Polloi");
+        this.setTitle("Hoi Polloi");
         ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("group.png"));
-        setIconImage(icon.getImage());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocation(splitPanel.getLocation());
-        addWindowListener(new HPWindowListener());
-        addComponentListener(new HPComponentListener());
+        this.setIconImage(icon.getImage());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLocation(splitPanel.getLocation());
+        this.addWindowListener(new HPWindowListener());
+        this.addComponentListener(new HPComponentListener());
 
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
+                
         // JMenuBar - Start
         ImageIcon blankIcon = new ImageIcon(getClass().getClassLoader().getResource("blank.png"));
         ImageIcon newIcon = new ImageIcon(getClass().getClassLoader().getResource("group_add.png"));
@@ -2207,6 +2209,44 @@ public class MainMenu extends JFrame implements ActionListener {
             propFile.setProperty("theme", "ocean");
         }
     }
+
+
+    public boolean dispatchKeyEvent(KeyEvent e) {
+        if (e.getID() == KeyEvent.KEY_RELEASED) {
+            Debug.print("Key pressed");
+
+            String personName = currentPerson.getLastName() + ", " + currentPerson.getFirstName();
+            java.awt.Toolkit defaultToolkit = java.awt.Toolkit.getDefaultToolkit();
+            boolean numLockOn = defaultToolkit.getLockingKeyState(KeyEvent.VK_NUM_LOCK);
+
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT || (!numLockOn && (e.getKeyCode() == KeyEvent.VK_NUMPAD6))) {
+                ArrayList<KeyValue> listOfPeople = DBHPInterface.getListOfPeopleByLastName();
+                int nextPerson = listOfPeople.indexOf(new KeyValue(0, personName)) + 1;
+
+                if (nextPerson >= listOfPeople.size())
+                    nextPerson = 0;
+
+                try {
+                    showProfile(new Person(listOfPeople.get(nextPerson).getKey()));
+                } catch (Exception exc) { }
+            }
+
+            if (e.getKeyCode() == KeyEvent.VK_LEFT || (!numLockOn && (e.getKeyCode() == KeyEvent.VK_NUMPAD4))) {
+                ArrayList<KeyValue> listOfPeople = DBHPInterface.getListOfPeopleByLastName();
+                int previousPerson = listOfPeople.indexOf(new KeyValue(0, personName)) - 1;
+
+                if (previousPerson < 0)
+                    previousPerson = listOfPeople.size() - 1;
+
+                try {
+                    showProfile(new Person(listOfPeople.get(previousPerson).getKey()));
+                } catch (Exception exc) { }
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     class MenuAction extends AbstractAction {
         public MenuAction(String n) {
