@@ -77,7 +77,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     private JButton btnUpdateProfile;
     private JButton filterListButton;
 
-
     /** Creates a new instance of MainMenu */
     public MainMenu() {
         // Basic Information
@@ -1359,7 +1358,10 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JLabel picLabel = new JLabel();
         //Looks for file file starting inside the jar
         //picLabel.setIcon(new ImageIcon(getClass().getClassLoader().getResource(fileName)));
-        picLabel.setIcon(new ImageIcon(fileName));
+        try {
+            picLabel.setIcon(new ImageIcon(javax.imageio.ImageIO.read(new java.io.File(fileName))));
+        } catch (Exception exc) { }
+
         picLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 0, Color.BLACK));
 
         JPanel picPanel = new JPanel();
@@ -1668,6 +1670,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     /** Clears the main application window screen and shows the HP logo in the center.*/
     public void removeAllComponents() {
         contentPane.removeAll();
+    }
+
+    public void revalidate() {
+        this.validate();
+        this.validateTree();
     }
 
     public void updateWindow() {
