@@ -2197,36 +2197,38 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
     public boolean dispatchKeyEvent(KeyEvent e) {
         if (e.getID() == KeyEvent.KEY_RELEASED) {
-            Debug.print("Key pressed");
+            if (currentPerson != null) {
+                String personName = currentPerson.getLastName() + ", " + currentPerson.getFirstName();
 
-            String personName = currentPerson.getLastName() + ", " + currentPerson.getFirstName();
-            java.awt.Toolkit defaultToolkit = java.awt.Toolkit.getDefaultToolkit();
-            boolean numLockOn = defaultToolkit.getLockingKeyState(KeyEvent.VK_NUM_LOCK);
+                java.awt.Toolkit defaultToolkit = java.awt.Toolkit.getDefaultToolkit();
+                boolean numLockOn = defaultToolkit.getLockingKeyState(KeyEvent.VK_NUM_LOCK);
 
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT || (!numLockOn && (e.getKeyCode() == KeyEvent.VK_NUMPAD6))) {
-                ArrayList<KeyValue> listOfPeople = DBHPInterface.getListOfPeopleByLastName();
-                int nextPerson = listOfPeople.indexOf(new KeyValue(0, personName)) + 1;
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT || (!numLockOn && (e.getKeyCode() == KeyEvent.VK_NUMPAD6))) {
+                    ArrayList<KeyValue> listOfPeople = DBHPInterface.getListOfPeopleByLastName();
+                    int nextPerson = listOfPeople.indexOf(new KeyValue(0, personName)) + 1;
 
-                if (nextPerson >= listOfPeople.size())
-                    nextPerson = 0;
+                    if (nextPerson >= listOfPeople.size())
+                        nextPerson = 0;
 
-                try {
-                    showProfile(new Person(listOfPeople.get(nextPerson).getKey()));
-                } catch (Exception exc) { }
+                    try {
+                        showProfile(new Person(listOfPeople.get(nextPerson).getKey()));
+                    } catch (Exception exc) { }
+                }
+
+                if (e.getKeyCode() == KeyEvent.VK_LEFT || (!numLockOn && (e.getKeyCode() == KeyEvent.VK_NUMPAD4))) {
+                    ArrayList<KeyValue> listOfPeople = DBHPInterface.getListOfPeopleByLastName();
+                    int previousPerson = listOfPeople.indexOf(new KeyValue(0, personName)) - 1;
+
+                    if (previousPerson < 0)
+                        previousPerson = listOfPeople.size() - 1;
+
+                    try {
+                        showProfile(new Person(listOfPeople.get(previousPerson).getKey()));
+                    } catch (Exception exc) { }
+                }
+                return true;
             }
-
-            if (e.getKeyCode() == KeyEvent.VK_LEFT || (!numLockOn && (e.getKeyCode() == KeyEvent.VK_NUMPAD4))) {
-                ArrayList<KeyValue> listOfPeople = DBHPInterface.getListOfPeopleByLastName();
-                int previousPerson = listOfPeople.indexOf(new KeyValue(0, personName)) - 1;
-
-                if (previousPerson < 0)
-                    previousPerson = listOfPeople.size() - 1;
-
-                try {
-                    showProfile(new Person(listOfPeople.get(previousPerson).getKey()));
-                } catch (Exception exc) { }
-            }
-            return true;
+            return false;
         }
         return false;
     }
