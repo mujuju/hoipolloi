@@ -19,39 +19,39 @@ import java.io.*;
  * @since   November 10, 2006
  */
 public class MainMenu extends JFrame implements ActionListener {
-    
+
     // Data members for the JFrame
     private JPanel contentPane;
     private JPanel profileListPane;
     private JPanel listPane;
     private WatermarkPanel splitPanel;
     private MainMenu THIS;
-    
+
     /** The Properties File */
     private Properties propFile;
-      
+
     /** Contact Info Table */
     private JTable ctnTable;
-    
+
     /** The current person being viewed or edited */
     private Person currentPerson;
-    
+
     /** The Version of Hoi Polloi */
     private String hpVersion;
-    
-    
+
+
     // Themes
     // Need to install: https://pgslookandfeel.dev.java.net/
     private static final PgsTheme GRAY = ThemeFactory.createTheme("Gray", new Color(0x7997D1), new Color(0xABABAB), Color.GRAY);
     private static final PgsTheme YELLOW = ThemeFactory.createTheme("Yellow", new Color(0xCCAA53), new Color(0xABABAB), Color.BLACK);
-    private static final PgsTheme GOLD = ThemeFactory.createTheme("Gold", new Color(0xFFDB29));   
+    private static final PgsTheme GOLD = ThemeFactory.createTheme("Gold", new Color(0xFFDB29));
     private static final PgsTheme WIN  = new PgsTheme("Win", new Color(0x6080AC), new Color(0xFFCF31), new Color(0xF9E089), new Color(0x666554), new Color(0xDCDBCB), new Color(0xF1F0E3), Color.black, Color.white, getWinCustomEntries());
     private static final VistaTheme DEFAULT = new VistaTheme();
     private static final SilverTheme SILVER = new SilverTheme();
     private static final CharcoalTheme CHARCOAL = new CharcoalTheme();
     private static final RubyTheme RUBY = new RubyTheme();
     private static final DarudeTheme DARUDE = new DarudeTheme();
-    
+
     // Theme buttons
     private JRadioButtonMenuItem grayTheme;
     private JRadioButtonMenuItem yellowTheme;
@@ -65,7 +65,7 @@ public class MainMenu extends JFrame implements ActionListener {
     private JRadioButtonMenuItem metalTheme;
     private JRadioButtonMenuItem nimbusTheme;
     private JRadioButtonMenuItem oceanTheme;
-    
+
     // All of the Buttons
     private JButton quickAddButton;
     private JButton addIndButton;
@@ -77,29 +77,29 @@ public class MainMenu extends JFrame implements ActionListener {
     private JButton btnDelProfile;
     private JButton btnUpdateProfile;
     private JButton filterListButton;
-    
-    
+
+
     /** Creates a new instance of MainMenu */
     public MainMenu() {
         // Basic Information
         THIS = this;
-        
+
         this.currentPerson = null;
-        
+
         contentPane = new JPanel();
         profileListPane = new JPanel();
         profileListPane.setLayout(new GridLayout(2, 1));
         filterListButton = new JButton("Filter List");
-        
+
         JPanel filterButtonPanel = new JPanel();
         filterButtonPanel.setLayout(new GridLayout(1, 1));
         filterButtonPanel.add(filterListButton);
         profileListPane.add(filterButtonPanel);
-        
+
         listPane = new JPanel();
         listPane.setLayout(new GridLayout(1, 1));
         profileListPane.add(listPane);
-        
+
         splitPanel = new WatermarkPanel(JSplitPane.HORIZONTAL_SPLIT, profileListPane, contentPane, "wtlogo.png");
         splitPanel.setDividerLocation(180);
         splitPanel.setOpaque(false);
@@ -112,7 +112,7 @@ public class MainMenu extends JFrame implements ActionListener {
         setLocation(splitPanel.getLocation());
         addWindowListener(new HPWindowListener());
         addComponentListener(new HPComponentListener());
-        
+
         // JMenuBar - Start
         ImageIcon blankIcon = new ImageIcon(getClass().getClassLoader().getResource("blank.png"));
         ImageIcon newIcon = new ImageIcon(getClass().getClassLoader().getResource("group_add.png"));
@@ -137,7 +137,7 @@ public class MainMenu extends JFrame implements ActionListener {
         ImageIcon editProfileIcon = new ImageIcon(getClass().getClassLoader().getResource("user_edit.png"));
         ImageIcon birthdayIcon = new ImageIcon(getClass().getClassLoader().getResource("birthday.png"));
         ImageIcon timeIcon = new ImageIcon(getClass().getClassLoader().getResource("time.png"));
-        
+
         // File Menu - Start
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
@@ -233,7 +233,7 @@ public class MainMenu extends JFrame implements ActionListener {
         JMenuItem addCorpItem = new JMenuItem(new MenuAction("Add Business"));
         addCorpItem.setIcon(addCorpIcon);
         addCorpItem.setMnemonic('B');
-                
+
         // Theme Menu - Start
         defaultTheme = new JRadioButtonMenuItem("Default");
         defaultTheme.addActionListener(this);
@@ -296,7 +296,7 @@ public class MainMenu extends JFrame implements ActionListener {
         themeMenu.add(grayTheme);
         themeMenu.add(darudeTheme);
         // Theme Menu - End
-                
+
         JMenuItem settingsItem = new JMenuItem(new MenuAction("Settings"));
         settingsItem.setIcon(settingsIcon);
         //settingsItem.setMnemonic('');
@@ -333,25 +333,25 @@ public class MainMenu extends JFrame implements ActionListener {
         //JMenuItem typeItem = new JMenuItem(new MenuAction("By Type"));
         //typeItem.setMnemonic('T');
         //typeItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
-        
+
         // *********** Begin Dynamic Menus from Database Data **********************/
-        
+
         JMenu categoryMenu = new JMenu("Categories");
         JMenu locationMenu = new JMenu("Locations");
         JMenu recentMenu   = new JMenu("Recently Added");
-        
+
         ButtonGroup categoryGroup = new ButtonGroup();
         ButtonGroup locationGroup = new ButtonGroup();
         ButtonGroup recentGroup   = new ButtonGroup();
-        
+
         JMenuItem dummyCategory = new JMenuItem("Choose A Category...");
         dummyCategory.setFont(new Font(categoryMenu.getFont().getFamily(), Font.BOLD, categoryMenu.getFont().getSize()));
         dummyCategory.setEnabled(false); // set to false to not allow clicking
-        
+
         JMenuItem dummyLocation = new JMenuItem("Choose A Location...");
         dummyLocation.setFont(new Font(locationMenu.getFont().getFamily(), Font.BOLD, locationMenu.getFont().getSize()));
         dummyLocation.setEnabled(false); // set to false to not allow clicking
-        
+
         // Category Submenu
         categoryMenu.add(dummyCategory);
         categoryMenu.addSeparator();
@@ -363,7 +363,7 @@ public class MainMenu extends JFrame implements ActionListener {
             categoryGroup.add(item);
             categoryMenu.add(item);
         }
-        
+
         // Locations (City) Submenu
         locationMenu.add(dummyLocation);
         locationMenu.addSeparator();
@@ -375,7 +375,7 @@ public class MainMenu extends JFrame implements ActionListener {
             locationGroup.add(item);
             locationMenu.add(item);
         }
-        
+
         // 10 Most Recently Added People Submenu
         ArrayList newfish = DBHPInterface.getMostRecentlyAdded(10);
         for (Object c : newfish) {
@@ -385,8 +385,8 @@ public class MainMenu extends JFrame implements ActionListener {
             recentGroup.add(item);
             recentMenu.add(item);
         }
-        
-        
+
+
         // End Dynamic Menus **************************************************
 
         viewMenu.add(everyoneItem);
@@ -394,7 +394,7 @@ public class MainMenu extends JFrame implements ActionListener {
         viewMenu.add(categoryMenu);
         viewMenu.add(locationMenu);
         viewMenu.add(recentMenu);
-        
+
         //viewMenu.add(typeItem);
         // View Menu - End
 
@@ -421,17 +421,17 @@ public class MainMenu extends JFrame implements ActionListener {
         JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays"));
         birthdayItem.setIcon(birthdayIcon);
         birthdayItem.setMnemonic('B');
-        
+
         JMenuItem timeItem = new JMenuItem(new MenuAction("World Clocks"));
         timeItem.setIcon(timeIcon);
         timeItem.setMnemonic('T');
-        
+
 
         infoMenu.add(statItem);
         infoMenu.add(birthdayItem);
         infoMenu.add(timeItem);
         // Info Menu - End
-                
+
         // Help Menu - Start
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
@@ -461,7 +461,7 @@ public class MainMenu extends JFrame implements ActionListener {
 
         setJMenuBar(menuBar);
         // JMenuBar - End
-        
+
         // Buttons - Start
         addIndButton = new JButton("Add Individual");
         addIndButton.addActionListener(this);
@@ -475,35 +475,35 @@ public class MainMenu extends JFrame implements ActionListener {
         cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(this);
         // Buttons - End
-        
+
         // Contact Info Table (is this being used?) (BB-12/08: Don't think so, don't even remember what it's for)
         ctnTable = new JTable(0, 2);
-        
+
         loadPropertyFile();
-        
-        
-        
-            
+
+
+
+
         // Frame Content - Start
 
         // Frame Content - End
-        
+
         // Center the Main Menu and Set Size to 80% of Screen Width/Height
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         //setSize((int)(screenSize.getWidth() * .8), (int)(screenSize.getHeight() * .8));
         setSize(1080, 600); // Goal
-        setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));       
-        
+        setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));
+
         // Show the Main Menu
         getContentPane().add(splitPanel);
         //pack();
         showPeopleList(DBHPInterface.getListOfPeopleByLastName());
         setVisible(true);
     }
-    
+
     /**
      * Loads the Hoi Polloi properties file.
-     * 
+     *
      * The filename is hp.properties
      */
     private void loadPropertyFile() {
@@ -515,18 +515,18 @@ public class MainMenu extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(THIS, "Error loading property file!\nShutting down program.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
-        
+
         setTheme(propFile.getProperty("theme"));
-        
+
         // Get the Hoi Polloi Version
         if (propFile.getProperty("version") == null) {
             propFile.setProperty("version", "0.004A");
             this.hpVersion = "0.004A";
-        } 
+        }
         else {
             this.hpVersion = propFile.getProperty("version");
         }
-        
+
         // Show the Last Profile Viewed
         if (!propFile.getProperty("lastprofile").equals("-1")) {
             try {
@@ -538,10 +538,10 @@ public class MainMenu extends JFrame implements ActionListener {
             }
         }
     }
-    
+
     /**
      * Saves the Hoi Polloi properties file.
-     * 
+     *
      * The filename is hp.properties
      */
     private void savePropertyFile() {
@@ -553,10 +553,10 @@ public class MainMenu extends JFrame implements ActionListener {
                     + "settings then they have not been saved.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * Sets the theme for Hoi Polloi.
-     * 
+     *
      * @param theme The name of the theme to set.
      */
     private void setTheme(String theme) {
@@ -652,12 +652,12 @@ public class MainMenu extends JFrame implements ActionListener {
             nimbusTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        
+
     }
-    
+
     /**
      * What the hell does this do brandon?
-     * 
+     *
      * @return Some kind of object array?
      */
     private static Object[] getWinCustomEntries() {
@@ -682,7 +682,7 @@ public class MainMenu extends JFrame implements ActionListener {
 
     /**
      * A window listener sub-class for Hoi Polloi.
-     * 
+     *
      * @author Brandon Buck
      */
     class HPWindowListener implements WindowListener {
@@ -691,15 +691,15 @@ public class MainMenu extends JFrame implements ActionListener {
         public void windowDeiconified(WindowEvent evt) { }
         public void windowIconified(WindowEvent evt) { }
         public void windowClosed(WindowEvent evt) { }
-        public void windowClosing(WindowEvent evt) { 
+        public void windowClosing(WindowEvent evt) {
             savePropertyFile();
         }
         public void windowOpened(WindowEvent evt) { }
     }
- 
+
     /**
      * A component listener sub-class for Hoi Polloi.
-     * 
+     *
      * @author Brandon Buck
      */
     class HPComponentListener implements ComponentListener {
@@ -708,12 +708,12 @@ public class MainMenu extends JFrame implements ActionListener {
         public void componentMoved(ComponentEvent evt) { }
         public void componentResized(ComponentEvent evt) { }
     }
-    
+
     /**
      * Formats a date from YYYY-MM-DD into Month day, Year.
-     * 
+     *
      * Eg. Takes in 1979-12-12 and spits out Dec 12, 1979.
-     * 
+     *
      * @param dateString The date string as YYYY-MM-DD
      * @return The date formatted by Month day, Year
      */
@@ -722,19 +722,19 @@ public class MainMenu extends JFrame implements ActionListener {
         java.sql.Date dateObject = java.sql.Date.valueOf(dateString);
         return format.format(dateObject);
     }
-    
+
     /**
      * A test approach for editing a profile.
-     * 
+     *
      * Probably won't use this approach, someone make a better idea.
-     * 
+     *
      * @param person The Person's Profile to Edit.
      */
     public void editProfile(Person person) {
         removeAllComponents();
-               
+
         String prefix     = person.getPrefix();
-        String firstName  = person.getFirstName();       
+        String firstName  = person.getFirstName();
         String middleName = person.getMiddleName();
         String lastName   = person.getLastName();
         String suffix     = person.getSuffix();
@@ -748,21 +748,21 @@ public class MainMenu extends JFrame implements ActionListener {
         String gender     = person.getGender();
         KeyValue demonym  = person.getDemonym();
 
-        
+
         String desc = person.getDescription();
         if (desc == null || desc.equals(""))
             desc = "You have not entered a description for this person yet!";
-        
+
         String fileName = person.getPhotoFileName();
         if (fileName == null || fileName.equals(""))
-            fileName = "pictures/unknown.jpg";      
-        
+            fileName = "pictures/unknown.jpg";
+
         String lastUpdate = person.getLastUpdate();
         if (lastUpdate == null || lastUpdate.equals("") || lastUpdate.equals("0000-00-00"))
             lastUpdate = "Never";
         else
             lastUpdate = convertDate(lastUpdate);
-        
+
         ArrayList cats = person.getCategories();
         String categories = "";
         if (cats == null || cats.isEmpty())
@@ -776,19 +776,19 @@ public class MainMenu extends JFrame implements ActionListener {
                     categories += temp.getValue() + ", ";
             }
         }
-        
+
         final JTextField psnPrefixBox     = new JTextField(prefix);
         final JTextField psnFirstNameBox  = new JTextField(firstName);
         final JTextField psnMiddleNameBox = new JTextField(middleName);
         final JTextField psnLastNameBox   = new JTextField(lastName);
         final JTextField psnSuffixBox     = new JTextField(suffix);
-        
+
         psnPrefixBox.setColumns(5);
         psnFirstNameBox.setColumns(5);
         psnMiddleNameBox.setColumns(5);
         psnLastNameBox.setColumns(5);
         psnSuffixBox.setColumns(5);
-        
+
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         namePanel.add(psnPrefixBox);
@@ -796,38 +796,38 @@ public class MainMenu extends JFrame implements ActionListener {
         namePanel.add(psnMiddleNameBox);
         namePanel.add(psnLastNameBox);
         namePanel.add(psnSuffixBox);
-        
+
         btnUpdateProfile = new JButton("Update Profile");
-        btnDelProfile    = new JButton("Delete Profile"); 
+        btnDelProfile    = new JButton("Delete Profile");
         JButton btnAddAddress = new JButton("Add Address");
         JButton btnGroups = new JButton("Groups");
-      
+
         namePanel.add(btnUpdateProfile);
         namePanel.add(btnDelProfile);
         namePanel.add(btnAddAddress);
         namePanel.add(btnGroups);
-        
+
 
         final JTextField nickLabel = new JTextField(nickName);
         nickLabel.setColumns(5);
-        
+
         JPanel nickLabelPanel = new JPanel();
         nickLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         nickLabelPanel.add(nickLabel);
-        
+
         JPanel nickPanel = new JPanel();
         nickPanel.setLayout(new BorderLayout());
         nickPanel.add(nickLabelPanel, BorderLayout.SOUTH);
-        
+
         // Add Picture
         JLabel picLabel = new JLabel();
         picLabel.setIcon(new ImageIcon(fileName));
         picLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 0, Color.BLACK));
-        
+
         JPanel picPanel = new JPanel();
         picPanel.setLayout(new BorderLayout());
         picPanel.add(picLabel, BorderLayout.EAST);
-        
+
         // Add description
         final JTextArea descArea = new JTextArea();
         descArea.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
@@ -839,23 +839,23 @@ public class MainMenu extends JFrame implements ActionListener {
         descArea.setCaretPosition(desc.length());
         JScrollPane descScroller = new JScrollPane(descArea);
         descScroller.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
-        
+
         //picPanel.add(descScroller, BorderLayout.CENTER);
-        
+
         // Add Information
         Font boldInfoFont = new Font("Arial", Font.BOLD, 12);
-        
+
         JLabel eyeLabel = new JLabel("Eye Color:");
         eyeLabel.setFont(boldInfoFont);
-        
+
         final JTextField personEyeLabel = new JTextField(eyeColor);
         personEyeLabel.setColumns(5);
-        
+
         JPanel eyePanel = new JPanel();
         eyePanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         eyePanel.add(eyeLabel);
         eyePanel.add(personEyeLabel);
-        
+
         JLabel hairLabel = new JLabel("Hair Color:");
         hairLabel.setFont(boldInfoFont);
         //JLabel personHairLabel = new JLabel(hairColor);
@@ -866,7 +866,7 @@ public class MainMenu extends JFrame implements ActionListener {
         hairPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         hairPanel.add(hairLabel);
         hairPanel.add(personHairLabel);
-        
+
         JLabel heightLabel = new JLabel("Height:");
         heightLabel.setFont(boldInfoFont);
         //JLabel personHeightLabel = new JLabel(height);
@@ -877,7 +877,7 @@ public class MainMenu extends JFrame implements ActionListener {
         heightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         heightPanel.add(heightLabel);
         heightPanel.add(personHeightLabel);
-        
+
         JLabel weightLabel = new JLabel("Weight:");
         weightLabel.setFont(boldInfoFont);
         //JLabel personWeightLabel = new JLabel(weight);
@@ -887,29 +887,29 @@ public class MainMenu extends JFrame implements ActionListener {
         JPanel weightPanel = new JPanel();
         weightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         weightPanel.add(weightLabel);
-        weightPanel.add(personWeightLabel);   
-        
+        weightPanel.add(personWeightLabel);
+
         JLabel dobLabel = new JLabel("DOB:");
         dobLabel.setFont(boldInfoFont);
         //JLabel personDobLabel = new JLabel(dob);
         //personDobLabel.setFont(infoFont);
-        
+
         final JComboBox monthBox = new JComboBox();
         monthBox.setFont(new Font("Arial", Font.PLAIN, 11));
         final JComboBox dayBox   = new JComboBox();
         dayBox.setFont(new Font("Arial", Font.PLAIN, 11));
         final JComboBox yearBox  = new JComboBox();
         yearBox.setFont(new Font("Arial", Font.PLAIN, 11));
-        
+
         String months[] = {"January", "February", "March", "April",
                      "May", "June", "July", "August", "September",
                      "October", "November", "December"};
 
         int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-        
+
         Calendar cal = new GregorianCalendar();
         int yearNow = cal.get(Calendar.YEAR);
-        
+
         for (int x=1; x < 10; x++)
             dayBox.addItem("0"+x);
         for (int i=0; i < 12; i++)
@@ -918,7 +918,7 @@ public class MainMenu extends JFrame implements ActionListener {
             dayBox.addItem(j);
         for (int k=yearNow; k >= yearNow-100; k--)
             yearBox.addItem(k);
-        
+
         // If the DOB is of the form YYYY-MM-DD
         if (dob.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")) {
             int bYear  = Integer.parseInt(dob.substring(0,4));
@@ -933,17 +933,17 @@ public class MainMenu extends JFrame implements ActionListener {
             }
             yearBox  . setSelectedItem(bYear);
             monthBox . setSelectedIndex(bMonth-1);
-            
+
             Debug.print("EP:REGEX: "+bYear+"-"+bMonth+"-"+bDay);
-        }  
-        
+        }
+
         JPanel dobPanel = new JPanel();
         dobPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         dobPanel.add(dobLabel);
         dobPanel.add(monthBox);
         dobPanel.add(dayBox);
         dobPanel.add(yearBox);
-        
+
         JLabel maidenLabel = new JLabel("Maiden Name:");
         maidenLabel.setFont(boldInfoFont);
         final JTextField personMaidenLabel = new JTextField(maidenName);
@@ -952,26 +952,26 @@ public class MainMenu extends JFrame implements ActionListener {
         maidenPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         maidenPanel.add(maidenLabel);
         maidenPanel.add(personMaidenLabel);
-        
+
         JLabel genderLabel = new JLabel("Gender:");
         genderLabel.setFont(boldInfoFont);
         final JComboBox personGenderLabel = new JComboBox();
         personGenderLabel.addItem("Male");
         personGenderLabel.addItem("Female");
-        
+
         if (gender.equals("Male"))
             personGenderLabel.setSelectedItem("Male");
         else if (gender.equals("Female"))
             personGenderLabel.setSelectedItem("Female");
         else
             personGenderLabel.setSelectedItem("Male");
-        
+
         JPanel genderPanel = new JPanel();
         genderPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         genderPanel.add(genderLabel);
         genderPanel.add(personGenderLabel);
-        
-        
+
+
         JLabel demonymLabel = new JLabel("Demonym:");
         demonymLabel.setFont(boldInfoFont);
         final JComboBox demonymBox = new JComboBox();
@@ -987,8 +987,8 @@ public class MainMenu extends JFrame implements ActionListener {
         demonymPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         demonymPanel.add(demonymLabel);
         demonymPanel.add(demonymBox);
-        
-        
+
+
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new GridLayout(8, 1));
         infoPanel.add(eyePanel);
@@ -999,47 +999,47 @@ public class MainMenu extends JFrame implements ActionListener {
         infoPanel.add(maidenPanel);
         infoPanel.add(genderPanel);
         infoPanel.add(demonymPanel);
-        
+
         picPanel.add(infoPanel, BorderLayout.WEST);
-        
+
         // Lastupdate/Categories
         Font bottomFont = new Font("Arial", Font.PLAIN, 10);
-        
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
         bottomPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
-        
+
         JLabel lastUpdateLabel = new JLabel("  Last Udated: " + lastUpdate + "  ");
         lastUpdateLabel.setFont(bottomFont);
         lastUpdateLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
-        
+
         JLabel categoryLabel = new JLabel(categories);
         categoryLabel.setFont(bottomFont);
-        
+
         bottomPanel.add(categoryLabel, BorderLayout.WEST);
         bottomPanel.add(lastUpdateLabel, BorderLayout.EAST);
-        
+
         // Add to Frame
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
         topPanel.add(namePanel, BorderLayout.WEST);
         topPanel.add(nickPanel, BorderLayout.EAST);
         topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.BLACK));
-        
+
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BorderLayout());
         //centerPanel.add(infoPanel, BorderLayout.EAST);
         //centerPanel.add(descScroller, BorderLayout.CENTER);
-        
+
         JPanel eastPanel = new JPanel();
         eastPanel.setLayout(new BorderLayout());
         eastPanel.add(picPanel, BorderLayout.NORTH);
         eastPanel.add(descScroller, BorderLayout.CENTER);
-        
+
         // West Panel -- BT
         JPanel westPanel = new JPanel();
         westPanel.setLayout(new BorderLayout());
-        
+
 
         // Contacts Box
         JPanel ctnPanel = new JPanel();
@@ -1049,26 +1049,26 @@ public class MainMenu extends JFrame implements ActionListener {
         ArrayList contacts = person.getContacts();
         final DefaultTableModel model = new DefaultTableModel();
         ctnTable = new JTable(model);
-        
+
         model.addColumn("Contact Type");
         model.addColumn("Contact Name");
-        
+
         ctnTable.setPreferredScrollableViewportSize(new Dimension(150, 150));
         ctnTable.setGridColor(Color.LIGHT_GRAY);
-        
+
         // Loop to Populate Contacts Table
         for (int i = 0; i < contacts.size(); i++) {
             Contact ctn = (Contact)contacts.get(i);
             model.addRow(new Object[] {ctn.getContactType(), ctn.getContact()});
         }
-        
+
         // Set Col Widths based on Content
         ColumnResizer.adjustColumnPreferredWidths(ctnTable);
-        
+
         // Add Table to ScrollPane
         JScrollPane ctnScrollPane = new JScrollPane(ctnTable);
         ctnPanel.add(ctnScrollPane, BorderLayout.NORTH);
-        
+
         ctnTable.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 // Select first with left mouse button, then middle click.
@@ -1077,7 +1077,7 @@ public class MainMenu extends JFrame implements ActionListener {
                     int row       = target.getSelectedRow();
                     String type   = (String)target.getValueAt(row, 0);
                     String data   = (String)target.getValueAt(row, 1);
-                    
+
                     try {
                         if (type.equals("URL")) {
                             BrowserLauncher.openURL(data);
@@ -1114,50 +1114,50 @@ public class MainMenu extends JFrame implements ActionListener {
                 }
             }
         });
-        
-        
+
+
         // New Contact Stuff ***********************************
         JPanel newContactPanel = new JPanel();
         newContactPanel.setLayout(new FlowLayout());
-        
+
         final JComboBox ctnTypeComboBox = new JComboBox();
         ctnTypeComboBox.setRenderer(new HPCellRenderer());
-        
+
         ArrayList ctnTypes = Contact.getContactTypes();
 
         // Populate the JComboBox (Contact Types)
         for (Object value : ctnTypes) {
             ctnTypeComboBox.addItem(value);
         }
-        
+
         // todo: need to not use absolute width somehow
         final JTextField ctnText = new JTextField(10);
-        
+
         // not sure, but inner class needs this to be final, so i create a copy
         final Person noob = person;
-        
+
         // Action of Add Contact
         btnAddContact = new JButton("Add");
         btnAddContact.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {               
+            public void actionPerformed(ActionEvent e) {
                 // do stuff for add new contact
                 if (ctnText != null && !ctnText.equals("")) {
                     // Contact Type ID (in Database)
                     int ctnTypeID = ((KeyValue)ctnTypeComboBox.getSelectedItem()).getKey();
-                                 
+
                     noob.addContact(ctnTypeID, ctnText.getText());
                     noob.saveToDatabase();
-                    
+
                     //JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
-                    
+
                     // Update the contacts table
                     model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
                     ctnText.setText(null);
                     ctnTypeComboBox.setSelectedIndex(0);
-                }               
+                }
             }
         });
-        
+
         // Action of Delete Contact
         btnDelContact = new JButton("-");
         btnDelContact.addActionListener(new ActionListener() {
@@ -1178,7 +1178,7 @@ public class MainMenu extends JFrame implements ActionListener {
                 }
             }
         });
-        
+
         ctnText.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent evt) {
                 if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -1202,31 +1202,31 @@ public class MainMenu extends JFrame implements ActionListener {
             public void keyReleased(KeyEvent evt) {}
             public void keyTyped(KeyEvent evt) {}
         });
-        
+
         newContactPanel.add(ctnTypeComboBox);
         newContactPanel.add(ctnText);
         newContactPanel.add(btnAddContact);
         newContactPanel.add(btnDelContact);
-        
-               
+
+
         ctnPanel.add(newContactPanel, BorderLayout.SOUTH);
-        
+
         // End New Contact Stuff **********************************
-        
+
         // Contacts Box
         westPanel.add(ctnPanel, BorderLayout.NORTH);
-        
+
         // Address Box
         westPanel.add(getAddressPane(person));
-        
-        
+
+
         contentPane.setLayout(new BorderLayout());
         contentPane.add(topPanel,    BorderLayout.NORTH  );
         contentPane.add(eastPanel,   BorderLayout.EAST   );
         contentPane.add(centerPanel, BorderLayout.CENTER );
         contentPane.add(bottomPanel, BorderLayout.SOUTH  );
         contentPane.add(westPanel,   BorderLayout.WEST   );
-        
+
         // Setup Action for Update Profile Button
         final Person p = person;
         btnUpdateProfile.addActionListener(new ActionListener() {
@@ -1247,13 +1247,13 @@ public class MainMenu extends JFrame implements ActionListener {
                 KeyValue d = new KeyValue();
                 d.setKey(DBHPInterface.getIDOfDemonym((String)demonymBox.getSelectedItem()));
                 d.setValue((String)demonymBox.getSelectedItem());
-                p.setDemonym(d);                  
+                p.setDemonym(d);
                 p.setDescription(descArea.getText());
                 p.saveToDatabase();
                 showProfile(p);
             }
         });
-        
+
         btnDelProfile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 ImageIcon deathIcon = new ImageIcon(getClass().getClassLoader().getResource("death.gif"));
@@ -1271,46 +1271,46 @@ public class MainMenu extends JFrame implements ActionListener {
                 }
             }
         });
-        
+
         btnAddAddress.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new AddressBox(THIS, p, false);
             }
         });
-        
+
         btnGroups.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new CategoryBox(THIS, p);
             }
         });
-        
+
         updateWindow();
-        
+
     }
-    
+
     /**
      * Gets the current person.
-     * 
+     *
      * @return The Current Person being Viewed.
      */
     public Person getCurrentPerson() {
         return currentPerson;
     }
-    
-    /** 
+
+    /**
      * Displays a Family's Profile.
      *
      * @param family The Family whose profile to display.
      */
     public void showProfile(Family family) {}
-    
-    /** 
+
+    /**
      * Displays a Business's Profile.
-     * 
+     *
      * @param business The Business whose profile to display.
      */
     public void showProfile(Business business) {}
-    
+
     /**
      * Display a Person's Profile.
      *
@@ -1318,33 +1318,33 @@ public class MainMenu extends JFrame implements ActionListener {
      */
     public void showProfile(Person person) {
         this.currentPerson = person;
-        
+
         removeAllComponents();
-        
+
         Debug.print("Getting information on person with ID #: "+person.getPersonID());
-        
+
         propFile.setProperty("lastprofile", person.getPersonID()+"");
-        
+
         String prefix = person.getPrefix() + " ";
         if (prefix.equals("null ") || prefix.equals(" "))
             prefix = "";
-        
+
         String firstName =  person.getFirstName();
         if (firstName == null || firstName.equals(""))
             firstName = "";
-        
+
         String middleName = " " + person.getMiddleName();
         if (middleName.equals(" null") || middleName.equals(" "))
             middleName = "";
-        
+
         String lastName = " " + person.getLastName();
         if (lastName.equals(" null") || lastName.equals(" "))
             lastName = "";
-        
+
         String suffix = " " + person.getSuffix();
         if (suffix.equals(" null") || suffix.equals(" "))
             suffix = "";
-        
+
         String name = prefix + firstName + middleName + lastName + suffix;
         Debug.print("Name = "+person.getPersonID());
         if (name == null || name.equals(""))
@@ -1353,56 +1353,56 @@ public class MainMenu extends JFrame implements ActionListener {
         String nickName = "\"" + person.getNickName() + "\"";
         if (nickName.equals("\"null\"") || nickName.equals("\"\""))
             nickName = "";
-        
+
         String eyeColor = person.getEyeColor();
         if (eyeColor == null || eyeColor.equals(""))
             eyeColor = "Unknown";
-        
+
         String hairColor = person.getHairColor();
         if (hairColor == null || hairColor.equals(""))
             hairColor = "Unknown";
-        
+
         String height = person.getHeight();
         if (height == null || height.equals(""))
             height = "Unknown";
-        
+
         String weight = person.getWeight();
         if (weight == null || weight.equals(""))
             weight = "Unknown";
-        
+
         String dob = person.getBirthday();
         if (dob == null || dob.equals("") || dob.equals("0000-00-00"))
             dob = "Unknown";
         else
             dob = convertDate(dob)+" ("+person.getCurrentAge()+")";
-        
+
         String maidenName = person.getMaidenName();
         if (maidenName == null || maidenName.equals(""))
             maidenName = "Unknown";
-        
+
         String gender = person.getGender();
         if (gender == null || gender.equals(""))
             gender = "Unknown";
-        
+
         String demonym = person.getDemonymText();
         if (demonym == null || demonym.equals(""))
             demonym = "Unknown";
-        
+
         String desc = person.getDescription();
         if (desc == null || desc.equals(""))
             desc = "You have not entered a description for this person yet!";
-        
+
         String fileName = person.getPhotoFileName();
         Debug.print(fileName); //show filename debug
         if (fileName == null || fileName.equals(""))
-            fileName = "pictures/unknown.jpg";      
-        
+            fileName = "pictures/unknown.jpg";
+
         String lastUpdate = person.getLastUpdate();
         if (lastUpdate == null || lastUpdate.equals("") || lastUpdate.equals("0000-00-00"))
             lastUpdate = "Never";
         else
             lastUpdate = convertDate(lastUpdate);
-        
+
         ArrayList cats = person.getCategories();
         String categories = "";
         if (cats == null || cats.isEmpty())
@@ -1416,42 +1416,42 @@ public class MainMenu extends JFrame implements ActionListener {
                     categories += temp.getValue() + ", ";
             }
         }
-        
+
         Debug.print("Done getting info for this person:");
-            
+
         // Name
         // Prefix, First, Middle, Last, Suffix
         JLabel nameLabel = new JLabel(name);
         nameLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        
+
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         namePanel.add(nameLabel);
-        
+
         // Nick Name
         JLabel nickLabel = new JLabel(nickName);
         nickLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         nickLabel.setForeground(Color.GRAY);
-        
+
         JPanel nickLabelPanel = new JPanel();
         nickLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         nickLabelPanel.add(nickLabel);
-        
+
         JPanel nickPanel = new JPanel();
         nickPanel.setLayout(new BorderLayout());
         nickPanel.add(nickLabelPanel, BorderLayout.SOUTH);
-        
+
         // Add Picture
         JLabel picLabel = new JLabel();
         //Looks for file file starting inside the jar
         //picLabel.setIcon(new ImageIcon(getClass().getClassLoader().getResource(fileName)));
         picLabel.setIcon(new ImageIcon(fileName));
         picLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 0, Color.BLACK));
-        
+
         JPanel picPanel = new JPanel();
         picPanel.setLayout(new BorderLayout());
         picPanel.add(picLabel, BorderLayout.EAST);
-        
+
         picLabel.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -1461,9 +1461,9 @@ public class MainMenu extends JFrame implements ActionListener {
             public void mousePressed(MouseEvent e) {}
             public void mouseReleased(MouseEvent e) {}
             public void mouseEntered(MouseEvent e) {}
-            public void mouseExited(MouseEvent e) {}      
+            public void mouseExited(MouseEvent e) {}
         });
-        
+
         // Add description
         JTextArea descArea = new JTextArea();
         descArea.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
@@ -1476,13 +1476,13 @@ public class MainMenu extends JFrame implements ActionListener {
         descArea.setCaretPosition(0);
         JScrollPane descScroller = new JScrollPane(descArea);
         descScroller.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
-        
+
         //picPanel.add(descScroller, BorderLayout.CENTER);
-        
+
         // Add Information
         Font infoFont = new Font("Arial", Font.PLAIN, 12);
         Font boldInfoFont = new Font("Arial", Font.BOLD, 12);
-        
+
         JLabel eyeLabel = new JLabel("Eye Color:");
         eyeLabel.setFont(boldInfoFont);
         JLabel personEyeLabel = new JLabel(eyeColor);
@@ -1491,7 +1491,7 @@ public class MainMenu extends JFrame implements ActionListener {
         eyePanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         eyePanel.add(eyeLabel);
         eyePanel.add(personEyeLabel);
-        
+
         JLabel hairLabel = new JLabel("Hair Color:");
         hairLabel.setFont(boldInfoFont);
         JLabel personHairLabel = new JLabel(hairColor);
@@ -1500,7 +1500,7 @@ public class MainMenu extends JFrame implements ActionListener {
         hairPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         hairPanel.add(hairLabel);
         hairPanel.add(personHairLabel);
-        
+
         JLabel heightLabel = new JLabel("Height:");
         heightLabel.setFont(boldInfoFont);
         JLabel personHeightLabel = new JLabel(height);
@@ -1509,7 +1509,7 @@ public class MainMenu extends JFrame implements ActionListener {
         heightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         heightPanel.add(heightLabel);
         heightPanel.add(personHeightLabel);
-        
+
         JLabel weightLabel = new JLabel("Weight:");
         weightLabel.setFont(boldInfoFont);
         JLabel personWeightLabel = new JLabel(weight);
@@ -1517,8 +1517,8 @@ public class MainMenu extends JFrame implements ActionListener {
         JPanel weightPanel = new JPanel();
         weightPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         weightPanel.add(weightLabel);
-        weightPanel.add(personWeightLabel);   
-        
+        weightPanel.add(personWeightLabel);
+
         JLabel dobLabel = new JLabel("DOB:");
         dobLabel.setFont(boldInfoFont);
         JLabel personDobLabel = new JLabel(dob);
@@ -1528,7 +1528,7 @@ public class MainMenu extends JFrame implements ActionListener {
         dobPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         dobPanel.add(dobLabel);
         dobPanel.add(personDobLabel);
-        
+
         JLabel maidenLabel = new JLabel("Maiden Name:");
         maidenLabel.setFont(boldInfoFont);
         JLabel personMaidenLabel = new JLabel(maidenName);
@@ -1537,7 +1537,7 @@ public class MainMenu extends JFrame implements ActionListener {
         maidenPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         maidenPanel.add(maidenLabel);
         maidenPanel.add(personMaidenLabel);
-        
+
         JLabel genderLabel = new JLabel("Gender:");
         genderLabel.setFont(boldInfoFont);
         JLabel personGenderLabel = new JLabel(gender);
@@ -1546,7 +1546,7 @@ public class MainMenu extends JFrame implements ActionListener {
         genderPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         genderPanel.add(genderLabel);
         genderPanel.add(personGenderLabel);
-        
+
         JLabel demonymLabel = new JLabel("Demonym:");
         demonymLabel.setFont(boldInfoFont);
         JLabel personDemonymLabel = new JLabel(demonym);
@@ -1555,7 +1555,7 @@ public class MainMenu extends JFrame implements ActionListener {
         demonymPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         demonymPanel.add(demonymLabel);
         demonymPanel.add(personDemonymLabel);
-        
+
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new GridLayout(8, 1));
         infoPanel.add(eyePanel);
@@ -1568,76 +1568,76 @@ public class MainMenu extends JFrame implements ActionListener {
         }
         infoPanel.add(genderPanel);
         infoPanel.add(demonymPanel);
-        
+
         picPanel.add(infoPanel, BorderLayout.WEST);
-        
+
         // Lastupdate/Categories
         Font bottomFont = new Font("Arial", Font.PLAIN, 10);
-        
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
         bottomPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
-        
+
         JLabel lastUpdateLabel = new JLabel("  Last Udated: " + lastUpdate + "  ");
         lastUpdateLabel.setFont(bottomFont);
         lastUpdateLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
-        
+
         JLabel categoryLabel = new JLabel(categories);
         categoryLabel.setFont(bottomFont);
-        
+
         bottomPanel.add(categoryLabel, BorderLayout.WEST);
         bottomPanel.add(lastUpdateLabel, BorderLayout.EAST);
-        
+
         // Add to Frame
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout());
         topPanel.add(namePanel, BorderLayout.WEST);
         topPanel.add(nickPanel, BorderLayout.EAST);
         topPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.BLACK));
-        
+
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BorderLayout());
         //centerPanel.add(infoPanel, BorderLayout.EAST);
         //centerPanel.add(descScroller, BorderLayout.CENTER);
-        
+
         JPanel eastPanel = new JPanel();
         eastPanel.setLayout(new BorderLayout());
         eastPanel.add(picPanel, BorderLayout.NORTH);
         eastPanel.add(descScroller, BorderLayout.CENTER);
-        
+
         // West Panel -- BT
         JPanel westPanel = new JPanel();
         westPanel.setLayout(new BorderLayout());
-        
+
         // Contacts Box
         JPanel ctnPanel = new JPanel();
         ctnPanel.setLayout(new BorderLayout());
         ctnPanel.setBorder(BorderFactory.createTitledBorder("Contact Info"));
-        
+
         // Create Table
         ArrayList contacts = person.getContacts();
         final DefaultTableModel model = new DefaultTableModel();
         ctnTable = new JTable(model);
-        
+
         model.addColumn("Contact Type");
         model.addColumn("Contact Name");
-        
+
         ctnTable.setPreferredScrollableViewportSize(new Dimension(350, 200));
         ctnTable.setGridColor(Color.LIGHT_GRAY);
-        
+
         // Loop to Populate Contacts Table
         for (int i = 0; i < contacts.size(); i++) {
             Contact ctn = (Contact)contacts.get(i);
             model.addRow(new Object[] {ctn.getContactType(), ctn.getContact()});
         }
-        
+
         // Set Col Widths based on Content
         ColumnResizer.adjustColumnPreferredWidths(ctnTable);
-        
+
         // Add Table to ScrollPane
         JScrollPane ctnScrollPane = new JScrollPane(ctnTable);
         ctnPanel.add(ctnScrollPane, BorderLayout.NORTH);
-        
+
         ctnTable.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 // Select first with left mouse button, then middle click.
@@ -1646,7 +1646,7 @@ public class MainMenu extends JFrame implements ActionListener {
                     int row       = target.getSelectedRow();
                     String type   = (String)target.getValueAt(row, 0);
                     String data   = (String)target.getValueAt(row, 1);
-                    
+
                     try {
                         if (type.equals("URL")) {
                             BrowserLauncher.openURL(data);
@@ -1683,36 +1683,36 @@ public class MainMenu extends JFrame implements ActionListener {
                 }
             }
         });
-              
+
         // Contacts Box
         westPanel.add(ctnPanel, BorderLayout.NORTH);
-        
+
         // Address Box
         westPanel.add(getAddressPane(person));
-        
+
         contentPane.setLayout(new BorderLayout());
         contentPane.add(topPanel,    BorderLayout.NORTH  );
         contentPane.add(eastPanel,   BorderLayout.EAST   );
         contentPane.add(centerPanel, BorderLayout.CENTER );
         contentPane.add(bottomPanel, BorderLayout.SOUTH  );
         contentPane.add(westPanel,   BorderLayout.WEST   );
-        
+
         updateWindow();
     }
-    
+
     /**
      * Shows a JList of People on the Left Side of the Application.
-     * 
+     *
      * @param peeps The People to Put in the JLIst
      */
     public void showPeopleList(ArrayList peeps) {
         //contentPane.removeAll();
         Object[] people = peeps.toArray();
-        
+
         final JList list = new JList();
         list.setCellRenderer(new HPCellRenderer());
         list.setListData(people);
-        
+
         list.addMouseListener(new MouseListener() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -1734,44 +1734,44 @@ public class MainMenu extends JFrame implements ActionListener {
             public void mousePressed(MouseEvent e) {}
             public void mouseReleased(MouseEvent e) {}
             public void mouseEntered(MouseEvent e) {}
-            public void mouseExited(MouseEvent e) {}      
+            public void mouseExited(MouseEvent e) {}
         });
-        
+
         JScrollPane listScroller = new JScrollPane(list);
         listScroller.setPreferredSize(new Dimension(220, getContentPane().getHeight()));
         //JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScroller, null);
-        
-        
+
+
         //jsp.setOneTouchExpandable(true);
         //jsp.setDividerLocation(150);
-        
+
         //contentPane.setLayout(new BorderLayout());
         listPane.removeAll();
         listPane.add(listScroller);
         updateWindow();
     }
-    
+
     /** Clears the main application window screen and shows the HP logo in the center.*/
     public void removeAllComponents() {
         contentPane.removeAll();
     }
-    
+
     public void updateWindow() {
         update(getGraphics());
         setVisible(true);
     }
-    
+
     /**
      * Gets a JTabbedPane showing addresses for a given person.
-     * 
+     *
      * @param person The Target Person
      * @return A JTabbedPane showing Addresses for the Target Person
      */
     public AddressPane getAddressPane(Person person) {
         // Address Box *******************************************************
-        AddressPane addressPane = new AddressPane();
+        AddressPane addressPane = new AddressPane(THIS, person);
         ArrayList <Address> addressList = person.getAddresses();
-        
+
         // Loop to Create Tabs
         if (addressList != null && !addressList.isEmpty()) {
             for (Address address : addressList) {
@@ -1786,41 +1786,41 @@ public class MainMenu extends JFrame implements ActionListener {
                 String addressZip      = address.getAddressZip();
                 String addressCountry  = address.getAddressCountry().getValue();
                 String addressDistrict = address.getAddressDistrict();
-                
+
                 // Make Panel to Display Address (should really make our own component for this)
                 JPanel addressPanel = new JPanel();
                 addressPanel.setLayout(new GridBagLayout());
                 GridBagConstraints c = new GridBagConstraints();
                 Font addressFont = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
-                
+
                 JLabel label = new JLabel(addressLabel);
                 label.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 0;
                 addressPanel.add(label, c);
-                
+
                 JLabel a1 = new JLabel(addressLine1);
                 a1.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 1;
                 addressPanel.add(a1, c);
-                
+
                 JLabel a2 = new JLabel(addressLine2);
                 a2.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 2;
                 addressPanel.add(a2, c);
-                
+
                 JLabel a3 = new JLabel(addressLine3);
                 a3.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 3;
                 addressPanel.add(a3, c);
-                
+
                 JLabel city  = new JLabel(addressCity+", ");
                 JLabel state = new JLabel(addressState);
                 JLabel zip   = new JLabel(" "+addressZip);
@@ -1836,67 +1836,67 @@ public class MainMenu extends JFrame implements ActionListener {
                 c.gridx = 0;
                 c.gridy = 4;
                 addressPanel.add(CityStateZip, c);
-                
+
                 JLabel district = new JLabel(addressDistrict);
                 district.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 5;
                 addressPanel.add(district, c);
-                
+
                 JLabel country = new JLabel(addressCountry);
                 country.setFont(addressFont);
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 6;
                 addressPanel.add(country, c);
-                
+
                 JPanel mapPanel = new JPanel(new FlowLayout());
                 ButtonGroup maps = new ButtonGroup();
-                
+
                 JButton googlemaps = new JButton("Google Maps");
                 googlemaps.setToolTipText("View this Address in Google Maps");
-                
+
                 JButton mapquest = new JButton("MapQuest");
                 mapquest.setToolTipText("MapQuest this Address");
-                
+
                 maps.add(googlemaps);
                 maps.add(mapquest);
-                
+
                 mapPanel.add(googlemaps);
                 mapPanel.add(mapquest);
-                
-                
-                
+
+
+
                 final Address a = address;
                 googlemaps.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
-                        try { 
-                            BrowserLauncher.openURL(a.getGoogleMapsURL()); 
-                        } 
+                        try {
+                            BrowserLauncher.openURL(a.getGoogleMapsURL());
+                        }
                         catch (Exception e) {
                             Debug.print(e.getMessage());
                         }
                     }
                 });
-                
+
                 mapquest.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
-                        try { 
-                            BrowserLauncher.openURL(a.getMapquestURL()); 
-                        } 
+                        try {
+                            BrowserLauncher.openURL(a.getMapquestURL());
+                        }
                         catch (Exception e) {
                             Debug.print(e.getMessage());
                         }
                     }
                 });
-                
-                
+
+
                 c.fill  = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
                 c.gridy = 7;
-                addressPanel.add(mapPanel, c);                                
-                
+                addressPanel.add(mapPanel, c);
+
                 addressPane.addTab(addressType, addressPanel);
             }
         }
@@ -1906,10 +1906,10 @@ public class MainMenu extends JFrame implements ActionListener {
             addressPane.addTab("Address", noAddressPanel);
         }
         // End Address Box ***************************************************
-        
+
         return addressPane;
     }
-    
+
     /**
      * Clears and updates the main application window.
      */
@@ -1918,38 +1918,38 @@ public class MainMenu extends JFrame implements ActionListener {
         removeAllComponents();
         updateWindow();
     }
-    
+
     class FocusSelectAll implements FocusListener {
-        public void focusGained(FocusEvent e) { 
+        public void focusGained(FocusEvent e) {
             JTextField source = (JTextField)(e.getSource());
-            
+
             source.select(0, source.getText().length());
         }
-        
+
         public void focusLost(FocusEvent e) { }
     }
-    
+
     /** The Profile Quick-add Feature */
     public void quickAdd() {
-        
+
         // Since they are no longer viewing somebody, set this to null.
         this.currentPerson = null;
-                
+
         removeAllComponents();
-        
+
         contentPane.setLayout(new BorderLayout());
-        
+
         JPanel addPanel = new JPanel();
         addPanel.setLayout(new BorderLayout());
         JPanel comboPanel = new JPanel();
         JPanel quickAddInfo = new JPanel();
         JPanel buttonPanel = new JPanel();
-        
+
         JComboBox categoryBox = new JComboBox();
         categoryBox.addItem("Select Category");
         categoryBox.addItem("New Category");
         categoryBox.addItem("----------------");
-        
+
         JTextField firstNameField = new JTextField(15);
         firstNameField.addFocusListener(new FocusSelectAll());
         JTextField lastNameField = new JTextField(15);
@@ -1964,7 +1964,7 @@ public class MainMenu extends JFrame implements ActionListener {
             }
         }
         JTextArea descArea = new JTextArea(5, 20);
-        
+
         final JPanel INFO_PANEL_REF = quickAddInfo;
         final JPanel BUTTON_PANEL_REF = buttonPanel;
         final JTextField FIRST_NAME_REF = firstNameField;
@@ -1972,7 +1972,7 @@ public class MainMenu extends JFrame implements ActionListener {
         final JTextField NEWCAT_TEXT_REF = newCatField;
         final JComboBox CAT_COMBO_REF = categoryBox;
         final JTextArea DESC_REF = descArea;
-        
+
         JComboBox comboBox = new JComboBox();
         comboBox.addItem("Select Profile Type");
         comboBox.addItem("--------------------");
@@ -1985,15 +1985,15 @@ public class MainMenu extends JFrame implements ActionListener {
                 JPanel buttonPanel = BUTTON_PANEL_REF;
 
                 String selected = (String)(e.getItem());
-                
+
                 if (selected.equals("Individual")) {
                     inputPanel.removeAll();
                     buttonPanel.removeAll();
-                    
+
                     JTextField firstName = FIRST_NAME_REF;
                     JTextField lastName = LAST_NAME_REF;
                     JTextArea descArea = DESC_REF;
-                    
+
                     JComboBox catCombo = CAT_COMBO_REF;
                     catCombo.addItemListener(new ItemListener() {
                         public void itemStateChanged(ItemEvent e) {
@@ -2003,21 +2003,21 @@ public class MainMenu extends JFrame implements ActionListener {
                                 NEWCAT_TEXT_REF.setEditable(false);
                         }
                     });
-                    
+
                     JTextField newCatField = NEWCAT_TEXT_REF;
                     newCatField.setEditable(false);
-                    
+
                     JButton addButton = new JButton("Add Profile");
                     addButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             boolean canAdd = true;
-                            
+
                             String firstName = FIRST_NAME_REF.getText().trim();
                             String lastName = LAST_NAME_REF.getText().trim();
                             String catAdd = (String)(CAT_COMBO_REF.getSelectedItem());
                             String newCatName = NEWCAT_TEXT_REF.getText().trim();
                             String description = DESC_REF.getText().trim();
-                            
+
                             if (firstName == null || firstName.equals(""))
                                 canAdd = false;
                             if (lastName == null || lastName.equals(""))
@@ -2026,7 +2026,7 @@ public class MainMenu extends JFrame implements ActionListener {
                                 canAdd = false;
                             if (catAdd.equals("New Category") && (newCatName == null || newCatName.equals("")))
                                 canAdd = false;
-                            
+
                             if (canAdd) {
                                 Person newPerson = new Person();
                                 KeyValue category;
@@ -2037,21 +2037,21 @@ public class MainMenu extends JFrame implements ActionListener {
                                 else {
                                     catID = DBHPInterface.getIDOfCategory(catAdd);
                                 }
-                                
+
 
                                 newPerson.setFirstName(firstName);
                                 newPerson.setLastName(lastName);
                                 newPerson.setDescription(description);
-                                
+
                                 // Unavoidable Defaults
                                 newPerson.setDemonym(new KeyValue(193, "Unknown"));
                                 newPerson.setBirthday("1970-01-01");
-                                
-                                
+
+
                                 boolean success = newPerson.saveToDatabase();
-                                
+
                                 newPerson.addCategory(catID);
-                                
+
                                 if (success) {
                                     //JOptionPane.showMessageDialog(THIS, firstName + " " + lastName + " was added to the database!", "Success!", JOptionPane.INFORMATION_MESSAGE);
                                     showProfile(newPerson);
@@ -2080,55 +2080,55 @@ public class MainMenu extends JFrame implements ActionListener {
                             THIS.clearWindow();
                         }
                     });
-                    
+
                     JPanel newCatPanel = new JPanel();
                     newCatPanel.setLayout(new VerticalFlowLayout());
                     newCatPanel.add(catCombo);
                     newCatPanel.add(newCatField);
-                    
+
                     JPanel firstNamePanel = new JPanel();
                     firstNamePanel.add(new JLabel("First Name:"));
                     firstNamePanel.add(firstName);
-                    
+
                     JPanel lastNamePanel = new JPanel();
                     lastNamePanel.add(new JLabel("Last Name:"));
                     lastNamePanel.add(lastName);
-                    
+
                     JPanel namePanel = new JPanel();
                     namePanel.setLayout(new VerticalFlowLayout());
                     namePanel.add(firstNamePanel);
                     namePanel.add(lastNamePanel);
-                    
+
                     JPanel descPanel = new JPanel();
                     descPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK), "Description:"));
                     JScrollPane descScroller = new JScrollPane(descArea);
                     descPanel.add(descScroller);
-                   
+
                     inputPanel.setLayout(new VerticalFlowLayout());
                     inputPanel.add(namePanel);
                     inputPanel.add(newCatPanel);
                     inputPanel.add(descPanel);
-                    
+
                     buttonPanel.add(addButton);
                     buttonPanel.add(clearButton);
                     buttonPanel.add(exitButton);
-                    
+
                     updateWindow();
                 }
             }
         });
-        
+
         comboPanel.add(comboBox);
-        
+
         addPanel.add(comboPanel, BorderLayout.NORTH);
         addPanel.add(quickAddInfo, BorderLayout.CENTER);
         addPanel.add(buttonPanel, BorderLayout.SOUTH);
-        
+
         contentPane.add(addPanel, BorderLayout.NORTH);
-        
+
         updateWindow();
     }
-    
+
     public void actionPerformed(ActionEvent evt) {
         boolean button = true;
         Component source = null;
@@ -2137,7 +2137,7 @@ public class MainMenu extends JFrame implements ActionListener {
         } catch (Exception e) {
             button = false;
         }
-        
+
         if (button) {
             // Button Pressed
             if (source == cancelButton) {
@@ -2145,9 +2145,9 @@ public class MainMenu extends JFrame implements ActionListener {
                 THIS.setVisible(true);
             }
         }
-        
-        
-        
+
+
+
         // Theme Buttons
         if (defaultTheme.isSelected()) {
             setTheme("DEFAULT");
@@ -2207,15 +2207,15 @@ public class MainMenu extends JFrame implements ActionListener {
             propFile.setProperty("theme", "ocean");
         }
     }
-        
+
     class MenuAction extends AbstractAction {
         public MenuAction(String n) {
             super(n);
         }
-        
+
         public void actionPerformed(ActionEvent evt) {
             String selection = (String)getValue(Action.NAME);
-            
+
             if (selection.equals("Exit")) {
                 savePropertyFile();
                 System.exit(0);
