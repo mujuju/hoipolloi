@@ -1222,10 +1222,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         DefaultMutableTreeNode subNode0 = new DefaultMutableTreeNode("Everyone");
         DefaultMutableTreeNode subNode1 = new DefaultMutableTreeNode("Category");
         DefaultMutableTreeNode subNode2 = new DefaultMutableTreeNode("District");
-        DefaultMutableTreeNode subNode3 = new DefaultMutableTreeNode("City");
+        DefaultMutableTreeNode subNode3 = new DefaultMutableTreeNode("Cities");
         DefaultMutableTreeNode subNode4 = new DefaultMutableTreeNode("Countries");
-        DefaultMutableTreeNode subNode5 = new DefaultMutableTreeNode("Search");
-        DefaultMutableTreeNode subNode6 = new DefaultMutableTreeNode("Recent");
+        DefaultMutableTreeNode subNode5 = new DefaultMutableTreeNode("Recent");
+        DefaultMutableTreeNode subNode6 = new DefaultMutableTreeNode("Birthdays");
+        DefaultMutableTreeNode subNode7 = new DefaultMutableTreeNode("Search");
 
         // Populate Categories Sub-Tree
         ArrayList <KeyValue> categories = DBHPInterface.getListOfCategories();
@@ -1252,9 +1253,14 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         }
 
         // Populate Recent Sub-Tree
-        subNode6.add(new DefaultMutableTreeNode(new KeyValue(25, "Most Recent 25")));
-        subNode6.add(new DefaultMutableTreeNode(new KeyValue(50, "Most Recent 50")));
-        subNode6.add(new DefaultMutableTreeNode(new KeyValue(100, "Most Recent 100")));
+        subNode5.add(new DefaultMutableTreeNode(new KeyValue(25, "Most Recent 25")));
+        subNode5.add(new DefaultMutableTreeNode(new KeyValue(50, "Most Recent 50")));
+        subNode5.add(new DefaultMutableTreeNode(new KeyValue(100, "Most Recent 100")));
+
+        // Populate Birthdays Sub-Tree
+        subNode6.add(new DefaultMutableTreeNode("Last Month"));
+        subNode6.add(new DefaultMutableTreeNode("This Month"));
+        subNode6.add(new DefaultMutableTreeNode("Next Month"));
 
         top.add(subNode0);
         top.add(subNode1);
@@ -1263,9 +1269,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         top.add(subNode4);
         top.add(subNode5);
         top.add(subNode6);
+        top.add(subNode7);
 
         JTree tree = new JTree(top);
         tree.addTreeSelectionListener(new FilterTreeSelectionListener());
+        tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         JScrollPane treeView = new JScrollPane(tree);
         return treeView;
@@ -2238,14 +2246,53 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             
             TreePath selectionPath = source.getSelectionPath();
             DefaultMutableTreeNode parentNode;
-
-            if (selectionPath.getParentPath() != null) {
+            
+            if (selectionPath != null && selectionPath.getParentPath() != null) {
                 parentNode = (DefaultMutableTreeNode)(selectionPath.getParentPath().getLastPathComponent());
 
-                if (parentNode.toString().equals("Category")) {
-                    Debug.print("Selected a Category!");
+                if (selectionPath.getLastPathComponent().toString().equals("Everyone")) {
+                    showPeopleList(DBHPInterface.getListOfPeopleByLastName());
+                }
+                else if (parentNode.toString().equals("Category")) {
+                    DefaultMutableTreeNode catNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                    KeyValue catValue = (KeyValue)(catNode.getUserObject());
+
+                    showPeopleList(DBHPInterface.getPeopleInCategory(catValue.getKey()));
+                }
+                else if (parentNode.toString().equals("District")) {
+                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                    showPeopleList(DBHPInterface.getPeopleInDistrict(filterNode.toString()));
+                }
+                else if (parentNode.toString().equals("Cities")) {
+                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                    showPeopleList(DBHPInterface.getPeopleInCity(filterNode.toString()));
+                }
+                else if (parentNode.toString().equals("Countries")) {
+                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                    KeyValue countryValue = (KeyValue)(filterNode.getUserObject());
+                    showPeopleList(DBHPInterface.getPeopleInCountry(countryValue.getKey()));
+                }
+                else if (parentNode.toString().equals("Recent")) {
+                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                    KeyValue recentValue = (KeyValue)(filterNode.getUserObject());
+
+                    showPeopleList(DBHPInterface.getMostRecentlyAdded(recentValue.getKey()));
+                }
+                else if (parentNode.toString().equals("Birthdays")) {
+                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+
+                    if (filterNode.toString().equals("Last Month"))
+                        showPeopleList(DBHPInterface.getBirthdaysPrevMonth());
+                    else if (filterNode.toString().equals("This Month"))
+                        showPeopleList(DBHPInterface.getBirthdaysThisMonth());
+                    else if (filterNode.toString().equals("Next Month"))
+                        showPeopleList(DBHPInterface.getBirthdaysNextMonth());
+                }
+                else if (selectionPath.getLastPathComponent().toString().equals("Search")) {
+                    
                 }
             }
+            
         }
     }
 
