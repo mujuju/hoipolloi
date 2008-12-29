@@ -158,7 +158,7 @@ public class DBHPInterface {
     }
 
     /**
-     * Gets a list of people in a district.
+     * Gets a list of people in a district sorted by lastname.
      *
      * @param district The District
      * @return The List of People sorted by last name.
@@ -177,6 +177,60 @@ public class DBHPInterface {
         }
         catch (Exception e) {
             // Nobody Found in Given District
+            return null;
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    /**
+     * Gets a list of people in a city sorted by lastname.
+     *
+     * @param city The City.
+     * @return     The List of People that have addresses in the given city sorted by lastname.
+     */
+    protected static ArrayList getPeopleInCity(String city) {
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
+        String sql = "SELECT psnPersonID, psnLastName, psnFirstName FROM pmp_people, pmp_addresses WHERE (adrPersonID = psnPersonID) AND (adrCity = '"+city+"') ORDER BY psnLastName ASC";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt  = db.getDBStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+            while (rs.next()) {
+                people.add( new KeyValue( rs.getInt("psnPersonID"), rs.getString("psnLastName")+", "+rs.getString("psnFirstName") ) );
+            }
+            return people;
+        }
+        catch (Exception e) {
+            // Nobody Found in Given City
+            return null;
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    /**
+     * Gets the list of people in a given country sorted by lastname.
+     *
+     * @param countryID The ID of the Country.
+     * @return          The List of People in the Country sorted by lastname.
+     */
+    protected static ArrayList getPeopleInCountry(int countryID) {
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
+        String sql = "SELECT psnPersonID, psnLastName, psnFirstName FROM pmp_people, pmp_addresses WHERE (adrPersonID = psnPersonID) AND (adrCountryID = '"+countryID+"') ORDER BY psnLastName ASC";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt  = db.getDBStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+            while (rs.next()) {
+                people.add( new KeyValue( rs.getInt("psnPersonID"), rs.getString("psnLastName")+", "+rs.getString("psnFirstName") ) );
+            }
+            return people;
+        }
+        catch (Exception e) {
+            // Nobody Found in Given Country
             return null;
         }
         finally {
