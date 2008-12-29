@@ -9,6 +9,7 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 import com.pagosoft.plaf.*;
 import com.pagosoft.plaf.themes.*;
+import javax.swing.event.*;
 
 /**
  * Draws the main application interface.
@@ -76,7 +77,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     private JButton btnDelContact;
     private JButton btnDelProfile;
     private JButton btnUpdateProfile;
-    private JButton filterListButton;
     private JScrollPane filterListTree;
 
     /** Creates a new instance of MainMenu */
@@ -89,7 +89,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         contentPane = new JPanel();
         profileListPane = new JPanel();
         profileListPane.setLayout(new GridLayout(2, 1));
-        filterListButton = new JButton("Filter List");
         filterListTree = this.getFilterListTree();
 
         JPanel filterButtonPanel = new JPanel();
@@ -1220,10 +1219,13 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
      */
     public JScrollPane getFilterListTree() {
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("Filter the Hoi Polloi by ...");
+        DefaultMutableTreeNode subNode0 = new DefaultMutableTreeNode("Everyone");
         DefaultMutableTreeNode subNode1 = new DefaultMutableTreeNode("Category");
         DefaultMutableTreeNode subNode2 = new DefaultMutableTreeNode("District");
         DefaultMutableTreeNode subNode3 = new DefaultMutableTreeNode("City");
-        DefaultMutableTreeNode subNode4 = new DefaultMutableTreeNode("Recent");
+        DefaultMutableTreeNode subNode4 = new DefaultMutableTreeNode("Countries");
+        DefaultMutableTreeNode subNode5 = new DefaultMutableTreeNode("Search");
+        DefaultMutableTreeNode subNode6 = new DefaultMutableTreeNode("Recent");
 
         // Populate Categories Sub-Tree
         ArrayList <KeyValue> categories = DBHPInterface.getListOfCategories();
@@ -1236,13 +1238,35 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         for (Object c: districts) {
             subNode2.add(new DefaultMutableTreeNode(c));
         }
-        
+
+        // Populate Cities Sub-Tree
+        ArrayList cities = DBHPInterface.getCitiesPeopleAreIn();
+        for (Object o: cities) {
+            subNode3.add(new DefaultMutableTreeNode(o));
+        }
+
+        // Populate Countries Sub-Tree
+        ArrayList countries = DBHPInterface.getCountriesPeopleAreIn();
+        for (Object o: countries) {
+            subNode4.add(new DefaultMutableTreeNode(o));
+        }
+
+        // Populate Recent Sub-Tree
+        subNode6.add(new DefaultMutableTreeNode(new KeyValue(25, "Most Recent 25")));
+        subNode6.add(new DefaultMutableTreeNode(new KeyValue(50, "Most Recent 50")));
+        subNode6.add(new DefaultMutableTreeNode(new KeyValue(100, "Most Recent 100")));
+
+        top.add(subNode0);
         top.add(subNode1);
         top.add(subNode2);
         top.add(subNode3);
         top.add(subNode4);
+        top.add(subNode5);
+        top.add(subNode6);
 
         JTree tree = new JTree(top);
+        tree.addTreeSelectionListener(new FilterTreeSelectionListener());
+
         JScrollPane treeView = new JScrollPane(tree);
         return treeView;
     }
@@ -1876,7 +1900,9 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         removeAllComponents();
         updateWindow();
     }
-
+    /* Class for text fields so that when given focus automatically select all
+     * text inside.
+     */
     class FocusSelectAll implements FocusListener {
         public void focusGained(FocusEvent e) {
             JTextField source = (JTextField)(e.getSource());
@@ -2013,6 +2039,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                                 if (success) {
                                     //JOptionPane.showMessageDialog(THIS, firstName + " " + lastName + " was added to the database!", "Success!", JOptionPane.INFORMATION_MESSAGE);
                                     showProfile(newPerson);
+                                    showPeopleList(DBHPInterface.getListOfPeopleByLastName());
                                 }
                                 else {
                                     JOptionPane.showMessageDialog(THIS, "There was a problem saving this person to the database, please try again.", "Failure", JOptionPane.ERROR_MESSAGE);
@@ -2205,6 +2232,22 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         return false;
     }
 
+    class FilterTreeSelectionListener implements TreeSelectionListener {
+        public void valueChanged(TreeSelectionEvent e) {
+            JTree source = (JTree)e.getSource();
+            
+            TreePath selectionPath = source.getSelectionPath();
+            DefaultMutableTreeNode parentNode;
+
+            if (selectionPath.getParentPath() != null) {
+                parentNode = (DefaultMutableTreeNode)(selectionPath.getParentPath().getLastPathComponent());
+
+                if (parentNode.toString().equals("Category")) {
+                    Debug.print("Selected a Category!");
+                }
+            }
+        }
+    }
 
     class MenuAction extends AbstractAction {
         public MenuAction(String n) {
