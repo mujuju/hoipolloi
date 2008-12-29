@@ -8,7 +8,6 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 import com.pagosoft.plaf.*;
 import com.pagosoft.plaf.themes.*;
-import java.io.*;
 
 /**
  * Draws the main application interface.
@@ -324,80 +323,8 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         everyoneItem.setMnemonic('E');
         everyoneItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem categoryItem = new JMenuItem(new MenuAction("By Category"));
-        categoryItem.setMnemonic('C');
-        categoryItem.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem locationItem = new JMenuItem(new MenuAction("By Location"));
-        locationItem.setMnemonic('L');
-        locationItem.setAccelerator(KeyStroke.getKeyStroke('L', InputEvent.CTRL_DOWN_MASK));
-
-        //JMenuItem typeItem = new JMenuItem(new MenuAction("By Type"));
-        //typeItem.setMnemonic('T');
-        //typeItem.setAccelerator(KeyStroke.getKeyStroke('T', InputEvent.CTRL_DOWN_MASK));
-
-        // *********** Begin Dynamic Menus from Database Data **********************/
-
-        JMenu categoryMenu = new JMenu("Categories");
-        JMenu locationMenu = new JMenu("Locations");
-        JMenu recentMenu   = new JMenu("Recently Added");
-
-        ButtonGroup categoryGroup = new ButtonGroup();
-        ButtonGroup locationGroup = new ButtonGroup();
-        ButtonGroup recentGroup   = new ButtonGroup();
-
-        JMenuItem dummyCategory = new JMenuItem("Choose A Category...");
-        dummyCategory.setFont(new Font(categoryMenu.getFont().getFamily(), Font.BOLD, categoryMenu.getFont().getSize()));
-        dummyCategory.setEnabled(false); // set to false to not allow clicking
-
-        JMenuItem dummyLocation = new JMenuItem("Choose A Location...");
-        dummyLocation.setFont(new Font(locationMenu.getFont().getFamily(), Font.BOLD, locationMenu.getFont().getSize()));
-        dummyLocation.setEnabled(false); // set to false to not allow clicking
-
-        // Category Submenu
-        categoryMenu.add(dummyCategory);
-        categoryMenu.addSeparator();
-        ArrayList cats = DBHPInterface.getListOfCategories();
-        for (Object c : cats) {
-            String catName = ((KeyValue)c).getValue();
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(catName);
-            item.addActionListener(this);
-            categoryGroup.add(item);
-            categoryMenu.add(item);
-        }
-
-        // Locations (City) Submenu
-        locationMenu.add(dummyLocation);
-        locationMenu.addSeparator();
-        ArrayList cities = DBHPInterface.getCitiesPeopleAreIn();
-        for (Object c : cities) {
-            String cityName = (String)c;
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(cityName);
-            item.addActionListener(this);
-            locationGroup.add(item);
-            locationMenu.add(item);
-        }
-
-        // 10 Most Recently Added People Submenu
-        ArrayList newfish = DBHPInterface.getMostRecentlyAdded(10);
-        for (Object c : newfish) {
-            String label = (String)c;
-            JRadioButtonMenuItem item = new JRadioButtonMenuItem(label);
-            item.addActionListener(this);
-            recentGroup.add(item);
-            recentMenu.add(item);
-        }
-
-
-        // End Dynamic Menus **************************************************
-
         viewMenu.add(everyoneItem);
-        viewMenu.addSeparator();
-        viewMenu.add(categoryMenu);
-        viewMenu.add(locationMenu);
-        viewMenu.add(recentMenu);
 
-        //viewMenu.add(typeItem);
         // View Menu - End
 
         // Search Menu - Start
@@ -1262,6 +1189,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                         propFile.setProperty("lastprofile", "-1");
                         savePropertyFile();
                         clearWindow();
+                        showPeopleList(DBHPInterface.getListOfPeopleByLastName());
                     }
                     else {
                         Debug.print("Failed to Purge this Person");

@@ -12,8 +12,8 @@
  * 
  * @author  Brandon Tanner (Engine/Design/Database)
  * @author  Brandon Buck   (Interface/Design/Layout)
- * @since   November 2006
- * @version 1.97           (December 27, 2007)
+ * @since   October 2006
+ * @version 1.98           (December 28, 2008)
  * 
  */
 package hoipolloi;
