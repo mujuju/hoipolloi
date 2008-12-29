@@ -8,6 +8,11 @@ import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 import javax.swing.*;
 
+/**
+ * Used by CategoryBox for Drag/Drop.
+ * 
+ * @author Unknown
+ */
 public class ReportingListTransferHandler extends TransferHandler {
     DataFlavor localArrayListFlavor, serialArrayListFlavor;
     String localArrayListType = DataFlavor.javaJVMLocalObjectMimeType +

@@ -12,6 +12,8 @@ import java.awt.event.*;
 
 /**
  * A window to Add/Edit/Remove a Person from a Category/Group.
+ *
+ * Not sure if this is used anymore - BCT 12/29/08
  * 
  * Should be better to use:
  * http://www.java-forums.org/awt-swing/3030-help-drag-drop-jlist.html

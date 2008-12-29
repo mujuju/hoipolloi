@@ -175,15 +175,24 @@ public class SearchWindow extends JFrame implements ActionListener {
             bar.searchAddresses(false);
         }
         ArrayList people = bar.performSearch(searchQuery.getText());
-        if (people.size() == 1) {
+        if (people.size() == 0) {
+            JOptionPane.showMessageDialog(this, "No Search Results!");
+        }
+        else if (people.size() == 1) {
             try {
                 Person singlePerson = new Person(((KeyValue)people.get(0)).getKey());
                 parent.showProfile(singlePerson);
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                Debug.print(e.getMessage());
+            }
         }
         else {
-            new JTempFrame(parent, people);
+            // Show Search Results in Filter Tree
+            parent.showPeopleList(people);
+
+            // Old way...
+            //new JTempFrame(parent, people);
         }
         
         Debug.printListToStdout(people);

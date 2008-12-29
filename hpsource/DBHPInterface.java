@@ -548,14 +548,14 @@ public class DBHPInterface {
         if (count < 1) {
             count = 1;
         }
-        ArrayList <String> newfish = new ArrayList <String>();
+        ArrayList <KeyValue> newfish = new ArrayList <KeyValue>();
         String sql = "SELECT psnFirstName, psnLastName FROM pmp_people ORDER BY psnPersonID DESC LIMIT "+count;
         DBConnection db = new DBConnection();
         try {
             Statement stmt = db.getDBStatement();
             ResultSet rs   = stmt.executeQuery(sql);
             while (rs.next()) {
-                newfish.add(rs.getString("psnFirstName")+" "+rs.getString("psnLastName"));
+                newfish.add(new KeyValue(rs.getInt("psnPersonID"), rs.getString("psnLastName")+", "+rs.getString("psnFirstName")));
             }
             return newfish;
         }
