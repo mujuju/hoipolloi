@@ -9,7 +9,7 @@ import java.util.*;
  * Shows a search window for searching the Hoi Polloi database.
  *
  * @author  Brandon Tanner
- * @version 1.1 (Dec 23, 2007)
+ * @version 1.2 (Dec 29, 2008)
  * @since   Dec 22, 2007
  */
 public class SearchWindow extends JFrame implements ActionListener {
@@ -186,7 +186,7 @@ public class SearchWindow extends JFrame implements ActionListener {
             new JTempFrame(parent, people);
         }
         
-        DBHPInterface.printListOfPeopleByLastNameToStdout(people);
+        Debug.printListToStdout(people);
         this.dispose();
     }
     

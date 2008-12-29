@@ -7,7 +7,7 @@ import java.sql.*;
  * A Class to Perform Text Searches on the Hoi Polloi Database.
  *
  * @author  Brandon Tanner
- * @version 2.1 (Dec 28, 2006)
+ * @version 2.2 (Dec 29, 2008)
  * @since   December 12, 2006
  */
 public class Search {
@@ -314,6 +314,6 @@ public class Search {
         //bar.searchContacts(false);
         ArrayList people = bar.performSearch("23262 CR 181 Bullard Texas TX USA");
         Debug.print(people.size());
-        DBHPInterface.printListOfPeopleByLastNameToStdout(people);
+        Debug.printListToStdout(people);
     }
 }

@@ -1,13 +1,17 @@
 package hoipolloi;
 
+import java.util.ArrayList;
+
 /**
  * This class was made to display to the default output device if set to on.
  * 
  * Debug makes it easier to have println statements in your program that you
  * can turn on and off from one location in any program.
  *
- * @author Brandon Buck
- * @since  Sep 19, 2006
+ * @author  Brandon Buck
+ * @author  Brandon Tanner
+ * @version 1.1 (Dec 29, 2008)
+ * @since   Sep 19, 2006
  */
 public class Debug  {
     /** Holds the state of this object */
@@ -48,5 +52,21 @@ public class Debug  {
     public static void print(Object o) {
         if (on)
             System.out.println(o.toString());
+    }
+
+    /**
+     * Prints Given List to STDOUT.
+     *
+     * @param list The Given ArrayList.
+     */
+    public static void printListToStdout(ArrayList list) {
+        if (list != null && list.size() > 0) {
+            for (Object item: list) {
+                Debug.print(item);
+            }
+        }
+        else {
+            Debug.print("There is nothing to Print.");
+        }
     }
 }

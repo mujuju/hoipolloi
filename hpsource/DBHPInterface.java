@@ -109,10 +109,15 @@ public class DBHPInterface {
             db.closeConnection();
         }
     }
-    
+
+    /**
+     * Gets a list of all categories in the database.
+     *
+     * @return List of Categories.
+     */
     protected static ArrayList getListOfCategories() {
         ArrayList <KeyValue> categories = new ArrayList<KeyValue>();
-        String sql = "SELECT * FROM pmp_categories";
+        String sql = "SELECT catCategoryID, catCategoryName FROM pmp_categories";
         DBConnection db = new DBConnection();
         try {
             Statement stmt  = db.getDBStatement();
@@ -123,17 +128,7 @@ public class DBHPInterface {
             return categories;
         }
         catch (Exception e) { return null; }
-    }
-    
-    protected static void printListOfPeopleByLastNameToStdout(ArrayList list) {
-        if (list != null && list.size() > 0) {
-            for (Object item: list) {
-                System.out.println(item);
-            }
-        }
-        else {
-            System.out.println("There is nothing to Print.");
-        }
+        finally { db.closeConnection(); }
     }
     
     /**
@@ -353,7 +348,12 @@ public class DBHPInterface {
             return false;
         }
     }
-    
+
+    /**
+     * Gets a list of people with birthdays next month.
+     *
+     * @return The List of People sorted by last name.
+     */
     protected static ArrayList getBirthdaysNextMonth() {
         // Figure Out Next Month in two digit format MM
         GregorianCalendar d = new GregorianCalendar();
@@ -361,7 +361,12 @@ public class DBHPInterface {
         String nextMonth    = (curMonth < 12) ? String.valueOf(curMonth+1) : "01";
         return getBirthdaysInMonth(nextMonth);
     }
-    
+
+    /**
+     * Gets a list of people with birthdays this month.
+     *
+     * @return The List of People sorted by last name.
+     */
     protected static ArrayList getBirthdaysThisMonth() {
         return getBirthdaysInMonth("current");
     }
