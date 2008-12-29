@@ -8,7 +8,7 @@ import java.sql.*;
  * A class with various static methods to interact with the database.
  *
  * @author  Brandon Tanner
- * @version 1.4b (Dec 10, 2008)
+ * @version 1.5 (Dec 29, 2008)
  * @since   December 12, 2006
  */
 public class DBHPInterface {
@@ -334,6 +334,29 @@ public class DBHPInterface {
                 countries.add( new KeyValue( rs.getInt("ctyCountryID"), rs.getString("ctyCountryName") ) );
             }
             return countries;
+        }
+        catch (Exception e) { return null; }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    /**
+     * Gets a list of Districts people are in.
+     *
+     * @return ArrayList of Districts.
+     */
+    public static ArrayList getListOfDistricts() {
+        ArrayList districts = new ArrayList();
+        String sql = "SELECT DISTINCT adrDistrict FROM pmp_addresses";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt  = db.getDBStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+            while (rs.next()) {
+                districts.add(rs.getString("adrDistrict"));
+            }
+            return districts;
         }
         catch (Exception e) { return null; }
         finally {

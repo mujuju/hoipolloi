@@ -2,6 +2,7 @@ package hoipolloi;
 
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -14,7 +15,7 @@ import com.pagosoft.plaf.themes.*;
  *
  * @author  Brandon Buck
  * @author  Brandon Tanner
- * @version 0.18a (Nov 28, 2008)
+ * @version 0.18b (Dec 29, 2008)
  * @since   November 10, 2006
  */
 public class MainMenu extends JFrame implements ActionListener, KeyEventDispatcher {
@@ -76,6 +77,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     private JButton btnDelProfile;
     private JButton btnUpdateProfile;
     private JButton filterListButton;
+    private JScrollPane filterListTree;
 
     /** Creates a new instance of MainMenu */
     public MainMenu() {
@@ -88,10 +90,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         profileListPane = new JPanel();
         profileListPane.setLayout(new GridLayout(2, 1));
         filterListButton = new JButton("Filter List");
+        filterListTree = this.getFilterListTree();
 
         JPanel filterButtonPanel = new JPanel();
         filterButtonPanel.setLayout(new GridLayout(1, 1));
-        filterButtonPanel.add(filterListButton);
+        filterButtonPanel.add(filterListTree);
         profileListPane.add(filterButtonPanel);
 
         listPane = new JPanel();
@@ -1208,6 +1211,40 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
      */
     public Person getCurrentPerson() {
         return currentPerson;
+    }
+
+    /**
+     * Gets the filter list JTree.
+     *
+     * @return The Filter List JTree.
+     */
+    public JScrollPane getFilterListTree() {
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode("Filter the Hoi Polloi by ...");
+        DefaultMutableTreeNode subNode1 = new DefaultMutableTreeNode("Category");
+        DefaultMutableTreeNode subNode2 = new DefaultMutableTreeNode("District");
+        DefaultMutableTreeNode subNode3 = new DefaultMutableTreeNode("City");
+        DefaultMutableTreeNode subNode4 = new DefaultMutableTreeNode("Recent");
+
+        // Populate Categories Sub-Tree
+        ArrayList <KeyValue> categories = DBHPInterface.getListOfCategories();
+        for (KeyValue c: categories) {
+            subNode1.add(new DefaultMutableTreeNode(c));
+        }
+
+        // Populate Districts Sub-Tree
+        ArrayList districts = DBHPInterface.getListOfDistricts();
+        for (Object c: districts) {
+            subNode2.add(new DefaultMutableTreeNode(c));
+        }
+        
+        top.add(subNode1);
+        top.add(subNode2);
+        top.add(subNode3);
+        top.add(subNode4);
+
+        JTree tree = new JTree(top);
+        JScrollPane treeView = new JScrollPane(tree);
+        return treeView;
     }
 
     /**
