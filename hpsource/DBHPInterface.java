@@ -173,7 +173,11 @@ public class DBHPInterface {
             ResultSet rs    = stmt.executeQuery(sql);
             return rs.getInt("catCategoryID");
         }
-        catch (Exception e) {return -1;}
+        catch (Exception e) {
+            Debug.print("Error: getIDOfCategory Failed.");
+            Debug.print("The Exception Error is "+e.getMessage());
+            return -1;
+        }
         finally {
             db.closeConnection();
         }
@@ -218,6 +222,7 @@ public class DBHPInterface {
                 return possibleIDOfCategory;
             }
             else {
+                Debug.print("here here here");
                 // The Category doesn't exist, so Add it.
                 Statement stmt  = db.getDBStatement();
                 ResultSet rs    = stmt.executeQuery(sql);
@@ -231,8 +236,14 @@ public class DBHPInterface {
                 }
             }
         }
-        catch (Exception e) { Debug.print(e.getMessage()); return -1; }
-        finally { db.closeConnection(); }
+        catch (Exception e) {
+            Debug.print("Error: Add New Category to the Database");
+            Debug.print(e.getMessage());
+            return -1;
+        }
+        finally {
+            db.closeConnection();
+        }
     }
     
     /**

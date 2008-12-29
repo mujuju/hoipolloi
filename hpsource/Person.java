@@ -861,7 +861,7 @@ public class Person implements Comparable {
      */
     protected boolean addCategory(int categoryTypeID) {
         if (categoryTypeID < 1) {
-            Debug.print("The Category Type ID was less than 1.");
+            Debug.print("Error: The Category Type ID was less than 1.");
             return false;
         }
         else if (this.personID < 1) {

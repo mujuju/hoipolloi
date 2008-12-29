@@ -801,13 +801,9 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
         btnUpdateProfile = new JButton("Update Profile");
         btnDelProfile    = new JButton("Delete Profile");
-        JButton btnAddAddress = new JButton("Add Address");
-        JButton btnGroups = new JButton("Groups");
 
         namePanel.add(btnUpdateProfile);
         namePanel.add(btnDelProfile);
-        namePanel.add(btnAddAddress);
-        namePanel.add(btnGroups);
 
 
         final JTextField nickLabel = new JTextField(nickName);
@@ -1274,18 +1270,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             }
         });
 
-        btnAddAddress.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new AddressBox(THIS, p, false);
-            }
-        });
-
-        btnGroups.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new CategoryBox(THIS, p);
-            }
-        });
-
         updateWindow();
 
     }
@@ -1584,7 +1568,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         lastUpdateLabel.setFont(bottomFont);
         lastUpdateLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
 
-        JLabel categoryLabel = new JLabel(categories);
+        CategoryLabel categoryLabel = new CategoryLabel(categories, THIS, this.currentPerson);
         categoryLabel.setFont(bottomFont);
 
         bottomPanel.add(categoryLabel, BorderLayout.WEST);
@@ -2031,7 +2015,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
                             if (canAdd) {
                                 Person newPerson = new Person();
-                                KeyValue category;
+                                KeyValue category; // what is this for?
                                 int catID = -1;
                                 if (catAdd.equals("New Category")) {
                                     catID = DBHPInterface.addNewCategoryToDB(newCatName);
@@ -2039,7 +2023,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                                 else {
                                     catID = DBHPInterface.getIDOfCategory(catAdd);
                                 }
-
 
                                 newPerson.setFirstName(firstName);
                                 newPerson.setLastName(lastName);
@@ -2052,6 +2035,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
                                 boolean success = newPerson.saveToDatabase();
 
+                                // This method must be called after Person.saveToDatabase()
                                 newPerson.addCategory(catID);
 
                                 if (success) {
