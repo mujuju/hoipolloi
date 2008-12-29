@@ -549,7 +549,7 @@ public class DBHPInterface {
             count = 1;
         }
         ArrayList <KeyValue> newfish = new ArrayList <KeyValue>();
-        String sql = "SELECT psnFirstName, psnLastName FROM pmp_people ORDER BY psnPersonID DESC LIMIT "+count;
+        String sql = "SELECT psnPersonID, psnFirstName, psnLastName FROM pmp_people ORDER BY psnPersonID DESC LIMIT "+count;
         DBConnection db = new DBConnection();
         try {
             Statement stmt = db.getDBStatement();

@@ -190,9 +190,6 @@ public class SearchWindow extends JFrame implements ActionListener {
         else {
             // Show Search Results in Filter Tree
             parent.showPeopleList(people);
-
-            // Old way...
-            //new JTempFrame(parent, people);
         }
         
         Debug.printListToStdout(people);
