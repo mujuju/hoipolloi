@@ -8,7 +8,7 @@ import java.sql.*;
  * A class with various static methods to interact with the database.
  *
  * @author  Brandon Tanner
- * @version 1.5 (Dec 29, 2008)
+ * @version 1.5a (Dec 29, 2008)
  * @since   December 12, 2006
  */
 public class DBHPInterface {
@@ -140,7 +140,7 @@ public class DBHPInterface {
      * Gets a list of people in a category.
      *
      * @param CategoryID The Category ID to get the List of People in.
-     * @return           The list of people who are in the given category.
+     * @return           The list of people who are in the given category sorted by lastname.
      */
     protected static ArrayList getPeopleInCategory(int CategoryID) {
         ArrayList <KeyValue> people = new ArrayList<KeyValue>();
@@ -155,6 +155,33 @@ public class DBHPInterface {
             return people;
         }
         catch (Exception e) { return null; }
+    }
+
+    /**
+     * Gets a list of people in a district.
+     *
+     * @param district The District
+     * @return The List of People sorted by last name.
+     */
+    protected static ArrayList getPeopleInDistrict(String district) {
+        ArrayList <KeyValue> people = new ArrayList<KeyValue>();
+        String sql = "SELECT psnPersonID, psnLastName, psnFirstName FROM pmp_people, pmp_addresses WHERE (adrPersonID = psnPersonID) AND (adrDistrict = '"+district+"') ORDER BY psnLastName ASC";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt  = db.getDBStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+            while (rs.next()) {
+                people.add( new KeyValue( rs.getInt("psnPersonID"), rs.getString("psnLastName")+", "+rs.getString("psnFirstName") ) );
+            }
+            return people;
+        }
+        catch (Exception e) {
+            // Nobody Found in Given District
+            return null;
+        }
+        finally {
+            db.closeConnection();
+        }
     }
     
     /**
@@ -393,7 +420,7 @@ public class DBHPInterface {
     /**
      * Gets the list of cities people have addresses in.
      * 
-     * @return The City List
+     * @return The City List sorted Alphabetically.
      */
     public static ArrayList getCitiesPeopleAreIn() {
         ArrayList <String> locations = new ArrayList<String>();
@@ -406,6 +433,32 @@ public class DBHPInterface {
                 locations.add(rs.getString("adrCity"));
             }
             return locations;
+        }
+        catch (Exception e) {
+            Debug.print(e.getMessage());
+            return null;
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    /**
+     * Gets a list of countries people have addresses in.
+     *
+     * @return The List of Countries sorted Alphabetically.
+     */
+    public static ArrayList getCountriesPeopleAreIn() {
+        ArrayList <KeyValue> countries = new ArrayList<KeyValue>();
+        String sql = "SELECT DISTINCT ctyCountryID, ctyCountryName FROM pmp_countries, pmp_addresses WHERE (adrCountryID = ctyCountryID) ORDER BY ctyCountryName ASC";
+        DBConnection db = new DBConnection();
+        try {
+            Statement stmt = db.getDBStatement();
+            ResultSet rs   = stmt.executeQuery(sql);
+            while (rs.next()) {
+                countries.add(new KeyValue(rs.getInt("ctyCountryID"), rs.getString("ctyCountryName")));
+            }
+            return countries;
         }
         catch (Exception e) {
             Debug.print(e.getMessage());
