@@ -922,7 +922,10 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         infoPanel.add(heightPanel);
         infoPanel.add(weightPanel);
         infoPanel.add(dobPanel);
-        infoPanel.add(maidenPanel);
+        
+        if (!person.getGender().equals("Male"))
+            infoPanel.add(maidenPanel);
+        
         infoPanel.add(genderPanel);
         infoPanel.add(demonymPanel);
 
@@ -1548,9 +1551,10 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         infoPanel.add(heightPanel);
         infoPanel.add(weightPanel);
         infoPanel.add(dobPanel);
-        if (gender.equals("Female")) {
+
+        if (!gender.equals("Male"))
             infoPanel.add(maidenPanel);
-        }
+        
         infoPanel.add(genderPanel);
         infoPanel.add(demonymPanel);
 
