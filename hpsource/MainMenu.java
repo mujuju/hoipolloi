@@ -898,6 +898,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JLabel genderLabel = new JLabel("Gender:");
         genderLabel.setFont(boldInfoFont);
         final JComboBox personGenderLabel = new JComboBox();
+        personGenderLabel.addItem("Unknown");
         personGenderLabel.addItem("Male");
         personGenderLabel.addItem("Female");
 
@@ -906,7 +907,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         else if (gender.equals("Female"))
             personGenderLabel.setSelectedItem("Female");
         else
-            personGenderLabel.setSelectedItem("Male");
+            personGenderLabel.setSelectedItem("Unknown");
 
         JPanel genderPanel = new JPanel();
         genderPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -944,6 +945,9 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         
         infoPanel.add(genderPanel);
         infoPanel.add(demonymPanel);
+
+        // Functionality for hiding / showing maiden panel when gener is changed.
+        personGenderLabel.addActionListener(new GenderComboBoxActionListener(this, infoPanel, maidenPanel));
 
         picPanel.add(infoPanel, BorderLayout.WEST);
 
@@ -1176,26 +1180,30 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         final Person p = person;
         btnUpdateProfile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                p.setPrefix(psnPrefixBox.getText());
-                p.setFirstName(psnFirstNameBox.getText());
-                p.setMiddleName(psnMiddleNameBox.getText());
-                p.setLastName(psnLastNameBox.getText());
-                p.setSuffix(psnSuffixBox.getText());
-                p.setNickName(nickLabel.getText());
-                p.setEyeColor(personEyeLabel.getText());
-                p.setHairColor(personHairLabel.getText());
-                p.setHeight(personHeightLabel.getText());
-                p.setWeight(personWeightLabel.getText());
-                p.setBirthday(yearBox.getSelectedItem().toString()+"-"+DBHPInterface.getMonthNumber(monthBox.getSelectedItem().toString())+"-"+dayBox.getSelectedItem().toString());
-                p.setMaidenName(personMaidenLabel.getText());
-                p.setGender(personGenderLabel.getSelectedItem().toString());
-                KeyValue d = new KeyValue();
-                d.setKey(DBHPInterface.getIDOfDemonym((String)demonymBox.getSelectedItem()));
-                d.setValue((String)demonymBox.getSelectedItem());
-                p.setDemonym(d);
-                p.setDescription(descArea.getText());
-                p.saveToDatabase();
-                showProfile(p);
+                if (!personGenderLabel.getSelectedItem().toString().equals("Unknown")) {
+                    p.setPrefix(psnPrefixBox.getText());
+                    p.setFirstName(psnFirstNameBox.getText());
+                    p.setMiddleName(psnMiddleNameBox.getText());
+                    p.setLastName(psnLastNameBox.getText());
+                    p.setSuffix(psnSuffixBox.getText());
+                    p.setNickName(nickLabel.getText());
+                    p.setEyeColor(personEyeLabel.getText());
+                    p.setHairColor(personHairLabel.getText());
+                    p.setHeight(personHeightLabel.getText());
+                    p.setWeight(personWeightLabel.getText());
+                    p.setBirthday(yearBox.getSelectedItem().toString()+"-"+DBHPInterface.getMonthNumber(monthBox.getSelectedItem().toString())+"-"+dayBox.getSelectedItem().toString());
+                    p.setMaidenName(personMaidenLabel.getText());
+                    p.setGender(personGenderLabel.getSelectedItem().toString());
+                    KeyValue d = new KeyValue();
+                    d.setKey(DBHPInterface.getIDOfDemonym((String)demonymBox.getSelectedItem()));
+                    d.setValue((String)demonymBox.getSelectedItem());
+                    p.setDemonym(d);
+                    p.setDescription(descArea.getText());
+                    p.saveToDatabase();
+                    showProfile(p);
+                }
+                else
+                    JOptionPane.showMessageDialog(THIS, "Is this person a Male or Female?", "Select a Gender!", JOptionPane.QUESTION_MESSAGE);
             }
         });
 
