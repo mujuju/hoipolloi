@@ -23,7 +23,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
     // Data members for the JFrame
     private JPanel contentPane;
-    private JPanel profileListPane;
+    private JSplitPane profileListPane;
     private JPanel listPane;
     private WatermarkPanel splitPanel;
     private MainMenu THIS;
@@ -86,19 +86,22 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
         this.currentPerson = null;
 
-        contentPane = new JPanel();
-        profileListPane = new JPanel();
-        profileListPane.setLayout(new GridLayout(2, 1));
+        contentPane = new JPanel();       
         filterListTree = this.getFilterListTree();
 
-        JPanel filterButtonPanel = new JPanel();
-        filterButtonPanel.setLayout(new GridLayout(1, 1));
-        filterButtonPanel.add(filterListTree);
-        profileListPane.add(filterButtonPanel);
+        JPanel filterListPanel = new JPanel();
+        filterListPanel.setLayout(new GridLayout(1, 1));
+        filterListPanel.add(filterListTree);
 
         listPane = new JPanel();
         listPane.setLayout(new GridLayout(1, 1));
-        profileListPane.add(listPane);
+
+        profileListPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, filterListPanel, listPane);
+        //profileListPane.setDividerLocation(0.5);
+        profileListPane.setOneTouchExpandable(true);
+        //profileListPane.setLayout(new GridLayout(2, 1));
+        //profileListPane.add(filterButtonPanel);
+        //profileListPane.add(listPane);
 
         splitPanel = new WatermarkPanel(JSplitPane.HORIZONTAL_SPLIT, profileListPane, contentPane, "wtlogo.png");
         splitPanel.setDividerLocation(180);
@@ -287,7 +290,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         themeMenu.addSeparator();
         themeMenu.add(defaultTheme);
         themeMenu.add(metalTheme);
-        themeMenu.add(nimbusTheme);
+        //themeMenu.add(nimbusTheme);
         themeMenu.add(oceanTheme);
         themeMenu.add(charcoalTheme);
         themeMenu.add(goldTheme);
@@ -428,6 +431,10 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         getContentPane().add(splitPanel);
         //pack();
         showPeopleList(DBHPInterface.getListOfPeopleByLastName());
+
+        // Center the divider between the filter tree and the filtered list
+        profileListPane.setDividerLocation(profileListPane.getHeight() / 2);
+
         setVisible(true);
     }
 
@@ -555,30 +562,39 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         }
         else if (theme.equalsIgnoreCase("metal")) {
             // Set the Hoi Polloi theme to the java default "Metal" look and feel.
-            try {
+
+            PlafOptions.setCurrentTheme(new javax.swing.plaf.metal.DefaultMetalTheme());
+            PlafOptions.setAsLookAndFeel();
+            PlafOptions.updateAllUIs();
+            /*try {
                 javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new javax.swing.plaf.metal.DefaultMetalTheme());
                 UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(THIS);
-            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }
+            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }*/
             metalTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
         else if (theme.equalsIgnoreCase("ocean")) {
             // Set the Hoi Polloi theme to the java OceanTheme "Metal" look and feel.
-            try {
+
+            PlafOptions.setCurrentTheme(new javax.swing.plaf.metal.OceanTheme());
+            PlafOptions.setAsLookAndFeel();
+            PlafOptions.updateAllUIs();
+            /*try {
                 javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new javax.swing.plaf.metal.OceanTheme());
                 UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(THIS);
-            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }
+            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }*/
             oceanTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
         else if (theme.equalsIgnoreCase("nimbus")) {
             // Set the Hoi Polloi theme to the java "Nimbus" look and feel.
+
             try {
                 UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
                 SwingUtilities.updateComponentTreeUI(THIS);
-            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }
+            } catch (Exception exc) { Debug.print("EXCEPTION with theme change: " + exc.getMessage()); }
             nimbusTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
@@ -1277,6 +1293,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JTree tree = new JTree(top);
         tree.addTreeSelectionListener(new FilterTreeSelectionListener());
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        tree.addKeyListener(new FilterTreeKeyListener());
 
         JScrollPane treeView = new JScrollPane(tree);
         return treeView;
