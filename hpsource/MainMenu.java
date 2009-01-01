@@ -46,7 +46,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     private static final PgsTheme GRAY = ThemeFactory.createTheme("Gray", new Color(0x7997D1), new Color(0xABABAB), Color.GRAY);
     private static final PgsTheme YELLOW = ThemeFactory.createTheme("Yellow", new Color(0xCCAA53), new Color(0xABABAB), Color.BLACK);
     private static final PgsTheme GOLD = ThemeFactory.createTheme("Gold", new Color(0xFFDB29));
-    private static final PgsTheme WIN  = new PgsTheme("Win", new Color(0x6080AC), new Color(0xFFCF31), new Color(0xF9E089), new Color(0x666554), new Color(0xDCDBCB), new Color(0xF1F0E3), Color.black, Color.white, getWinCustomEntries());
     private static final VistaTheme DEFAULT = new VistaTheme();
     private static final SilverTheme SILVER = new SilverTheme();
     private static final CharcoalTheme CHARCOAL = new CharcoalTheme();
@@ -58,13 +57,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     private JRadioButtonMenuItem yellowTheme;
     private JRadioButtonMenuItem rubyTheme;
     private JRadioButtonMenuItem goldTheme;
-    private JRadioButtonMenuItem winTheme;
     private JRadioButtonMenuItem defaultTheme;
     private JRadioButtonMenuItem silverTheme;
     private JRadioButtonMenuItem charcoalTheme;
     private JRadioButtonMenuItem darudeTheme;
     private JRadioButtonMenuItem metalTheme;
-    private JRadioButtonMenuItem nimbusTheme;
     private JRadioButtonMenuItem oceanTheme;
 
     // All of the Buttons
@@ -77,295 +74,110 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     private JButton btnDelContact;
     private JButton btnDelProfile;
     private JButton btnUpdateProfile;
-    private JScrollPane filterListTree;
+    private JScrollPane filterListScrollPane;
 
     /** Creates a new instance of MainMenu */
     public MainMenu() {
-        // Basic Information
+        // Set global variables -- Eventually need to get rid of variable THIS
         THIS = this;
-
         this.currentPerson = null;
 
-        contentPane = new JPanel();       
-        filterListTree = this.getFilterListTree();
+        // Set frame settings
+        ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("hoipolloi.png"));
+
+        this.setTitle("Hoi Polloi");
+        this.setIconImage(icon.getImage());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.addWindowListener(new HPWindowListener(this));
+        this.setJMenuBar(this.getHPMenuBar());
+        this.setSize(1080, 600);
+        this.setHPContent();
+        this.initializeButtons();
+        this.getContentPane().add(splitPanel);
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
+
+        // Load the property file
+        loadPropertyFile();
+
+        // Center the Main Menu
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));
+
+        // Set the filtered list to display EVERYONE
+        showPeopleList(DBHPInterface.getListOfPeopleByLastName());
+
+        // Center the divider between the filter tree and the filtered list
+        profileListPane.setDividerLocation(profileListPane.getHeight() / 2);
+
+        setVisible(true);
+    }
+    /** Initializes all the buttons and adds action listeners to them.
+     * Initializes the buttons used by Hoi Polloi and then adds the proper
+     * actions listener to them.
+     */
+    private void initializeButtons() {
+        addIndButton = new JButton("Add Individual");
+        addIndButton.addActionListener(this);
+        addFamButton = new JButton("Add Family");
+        addFamButton.addActionListener(this);
+        addBusButton = new JButton("Add Business");
+        addBusButton.addActionListener(this);
+        quickAddButton = new JButton("Add");
+        quickAddButton.addActionListener(this);
+        cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(this);
+    }
+    /** Creats the panels and lays them out properly for all the visual items in Hoi Polli
+     * Creats the WatermarkPanel and adds the Cotenet and sort panes in their
+     * proper place. Also creates the split pane for the sorted list and filter
+     * tree.
+     */
+    private void setHPContent() {
+        contentPane = new JPanel();
+        contentPane.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK));
+        filterListScrollPane = this.getFilterListTree();
 
         JPanel filterListPanel = new JPanel();
         filterListPanel.setLayout(new GridLayout(1, 1));
-        filterListPanel.add(filterListTree);
+        filterListPanel.add(filterListScrollPane);
 
         listPane = new JPanel();
         listPane.setLayout(new GridLayout(1, 1));
 
         profileListPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, filterListPanel, listPane);
-        //profileListPane.setDividerLocation(0.5);
         profileListPane.setOneTouchExpandable(true);
-        //profileListPane.setLayout(new GridLayout(2, 1));
-        //profileListPane.add(filterButtonPanel);
-        //profileListPane.add(listPane);
 
         splitPanel = new WatermarkPanel(JSplitPane.HORIZONTAL_SPLIT, profileListPane, contentPane, "wtlogo.png");
         splitPanel.setDividerLocation(180);
         splitPanel.setOpaque(false);
         splitPanel.setOneTouchExpandable(true);
+    }
+    /** Gets the menu bar for Hoi Polloi and returns it.
+     * Builds the menu bar for Hoi Polloi using all the helper methods laid out
+     * to return each menu.
+     * @return The JMenuBar for the Hoi Polloi Application
+     */
+    private JMenuBar getHPMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(getFileMenu());
+        menuBar.add(getEditMenu());
+        menuBar.add(getSearchMenu());
+        menuBar.add(getInfoMenu());
+        menuBar.add(Box.createHorizontalGlue()); //Postion Next Item Far Right
+        menuBar.add(getHelpMenu());
 
-        this.setTitle("Hoi Polloi");
-        ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("group.png"));
-        this.setIconImage(icon.getImage());
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLocation(splitPanel.getLocation());
-        this.addWindowListener(new HPWindowListener());
-        this.addComponentListener(new HPComponentListener());
-
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
-                
-        // JMenuBar - Start
-        ImageIcon blankIcon = new ImageIcon(getClass().getClassLoader().getResource("blank.png"));
-        ImageIcon newIcon = new ImageIcon(getClass().getClassLoader().getResource("group_add.png"));
-        ImageIcon openIcon = new ImageIcon(getClass().getClassLoader().getResource("folder_user.png"));
-        ImageIcon closeIcon = new ImageIcon(getClass().getClassLoader().getResource("group_delete.png"));
-        ImageIcon saveIcon = new ImageIcon(getClass().getClassLoader().getResource("disk.png"));
+        return menuBar;
+    }
+    /** Builds this menu and then returns the completed object.
+     * Loads the images used by the this menu, creates and adds all menu items
+     * and sub menus that belong to this menu.
+     * @return The completed JMenu for the JMenuBar
+     */
+    private JMenu getHelpMenu() {
         ImageIcon helpIcon = new ImageIcon(getClass().getClassLoader().getResource("help.png"));
         ImageIcon infoIcon = new ImageIcon(getClass().getClassLoader().getResource("information.png"));
-        ImageIcon addIndIcon = new ImageIcon(getClass().getClassLoader().getResource("user_add.png"));
-        ImageIcon addFamIcon = new ImageIcon(getClass().getClassLoader().getResource("family.png"));
-        ImageIcon addCorpIcon = new ImageIcon(getClass().getClassLoader().getResource("business.png"));
-        ImageIcon quickAddIcon = new ImageIcon(getClass().getClassLoader().getResource("hourglass.png"));
-        ImageIcon searchIcon = new ImageIcon(getClass().getClassLoader().getResource("magnifier.png"));
-        ImageIcon exitIcon = new ImageIcon(getClass().getClassLoader().getResource("exit.png"));
-        ImageIcon reportIcon = new ImageIcon(getClass().getClassLoader().getResource("report.png"));
-        ImageIcon importIcon = new ImageIcon(getClass().getClassLoader().getResource("import.png"));
-        ImageIcon exportIcon = new ImageIcon(getClass().getClassLoader().getResource("export.png"));
-        ImageIcon everyoneIcon = new ImageIcon(getClass().getClassLoader().getResource("everyone.png"));
-        ImageIcon syncIcon = new ImageIcon(getClass().getClassLoader().getResource("sync.png"));
-        ImageIcon printIcon = new ImageIcon(getClass().getClassLoader().getResource("printer.png"));
-        ImageIcon settingsIcon = new ImageIcon(getClass().getClassLoader().getResource("settings.png"));
-        ImageIcon editProfileIcon = new ImageIcon(getClass().getClassLoader().getResource("user_edit.png"));
-        ImageIcon birthdayIcon = new ImageIcon(getClass().getClassLoader().getResource("birthday.png"));
-        ImageIcon timeIcon = new ImageIcon(getClass().getClassLoader().getResource("time.png"));
 
-        // File Menu - Start
-        JMenu fileMenu = new JMenu("File");
-        fileMenu.setMnemonic('F');
-
-        JMenuItem newItem = new JMenuItem(new MenuAction("New"));
-        newItem.setIcon(newIcon);
-        newItem.setMnemonic('N');
-        newItem.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem openItem = new JMenuItem(new MenuAction("Open"));
-        openItem.setIcon(openIcon);
-        openItem.setMnemonic('O');
-        openItem.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem closeItem = new JMenuItem(new MenuAction("Close"));
-        closeItem.setIcon(closeIcon);
-        closeItem.setMnemonic('C');
-        closeItem.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem saveItem = new JMenuItem(new MenuAction("Save"));
-        saveItem.setIcon(saveIcon);
-        saveItem.setMnemonic('S');
-        saveItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem saveAsItem = new JMenuItem(new MenuAction("Save As"));
-        saveAsItem.setIcon(saveIcon);
-        saveAsItem.setMnemonic('a');
-        saveAsItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.ALT_DOWN_MASK + InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem importItem = new JMenuItem(new MenuAction("Import"));
-        importItem.setIcon(importIcon);
-        importItem.setMnemonic('I');
-        importItem.setAccelerator(KeyStroke.getKeyStroke('I', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem exportItem = new JMenuItem(new MenuAction("Export"));
-        exportItem.setIcon(exportIcon);
-        exportItem.setMnemonic('E');
-        exportItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem syncItem = new JMenuItem(new MenuAction("Synchronize"));
-        syncItem.setIcon(syncIcon);
-        syncItem.setMnemonic('z');
-        syncItem.setAccelerator(KeyStroke.getKeyStroke('z', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem printItem = new JMenuItem(new MenuAction("Print"));
-        printItem.setIcon(printIcon);
-        printItem.setMnemonic('P');
-        printItem.setAccelerator(KeyStroke.getKeyStroke('P', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem exitItem = new JMenuItem(new MenuAction("Exit"));
-        exitItem.setIcon(exitIcon);
-        exitItem.setMnemonic('x');
-        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.CTRL_DOWN_MASK));
-
-        fileMenu.add(newItem);
-        fileMenu.addSeparator();
-        fileMenu.add(openItem);
-        fileMenu.add(closeItem);
-        fileMenu.addSeparator();
-        fileMenu.add(saveItem);
-        fileMenu.add(saveAsItem);
-        fileMenu.addSeparator();
-        fileMenu.add(importItem);
-        fileMenu.add(exportItem);
-        fileMenu.add(syncItem);
-        fileMenu.add(printItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitItem);
-        // File Menu - End
-
-        // Edit Menu - Start
-        JMenu editMenu = new JMenu("Edit");
-        editMenu.setMnemonic('E');
-
-        JMenuItem editProfileItem = new JMenuItem(new MenuAction("Edit Profile"));
-        editProfileItem.setIcon(editProfileIcon);
-        editProfileItem.setMnemonic('E');
-        editProfileItem.setAccelerator(KeyStroke.getKeyStroke('D', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem quickAddItem = new JMenuItem(new MenuAction("Quick Add"));
-        quickAddItem.setIcon(quickAddIcon);
-        quickAddItem.setMnemonic('Q');
-        quickAddItem.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
-
-        JMenuItem addIndItem = new JMenuItem(new MenuAction("Add Individual"));
-        addIndItem.setIcon(addIndIcon);
-        addIndItem.setMnemonic('I');
-
-        JMenuItem addFamItem = new JMenuItem(new MenuAction("Add Family"));
-        addFamItem.setIcon(addFamIcon);
-        addFamItem.setMnemonic('F');
-
-        JMenuItem addCorpItem = new JMenuItem(new MenuAction("Add Business"));
-        addCorpItem.setIcon(addCorpIcon);
-        addCorpItem.setMnemonic('B');
-
-        // Theme Menu - Start
-        defaultTheme = new JRadioButtonMenuItem("Default");
-        defaultTheme.addActionListener(this);
-        rubyTheme = new JRadioButtonMenuItem("Ruby");
-        rubyTheme.addActionListener(this);
-        yellowTheme = new JRadioButtonMenuItem("Yellow");
-        yellowTheme.addActionListener(this);
-        grayTheme = new JRadioButtonMenuItem("Gray");
-        grayTheme.addActionListener(this);
-        goldTheme = new JRadioButtonMenuItem("Gold");
-        goldTheme.addActionListener(this);
-        silverTheme = new JRadioButtonMenuItem("Silver");
-        silverTheme.addActionListener(this);
-        winTheme = new JRadioButtonMenuItem("Win");
-        winTheme.addActionListener(this);
-        charcoalTheme = new JRadioButtonMenuItem("Charcoal");
-        charcoalTheme.addActionListener(this);
-        darudeTheme = new JRadioButtonMenuItem("Darude");
-        darudeTheme.addActionListener(this);
-        metalTheme = new JRadioButtonMenuItem("Metal");
-        metalTheme.addActionListener(this);
-        nimbusTheme = new JRadioButtonMenuItem("Nimbus");
-        nimbusTheme.addActionListener(this);
-        oceanTheme = new JRadioButtonMenuItem("Ocean");
-        oceanTheme.addActionListener(this);
-
-        ButtonGroup themeGroup = new ButtonGroup();
-        themeGroup.add(defaultTheme);
-        themeGroup.add(metalTheme);
-        themeGroup.add(nimbusTheme);
-        themeGroup.add(oceanTheme);
-        themeGroup.add(rubyTheme);
-        themeGroup.add(yellowTheme);
-        themeGroup.add(grayTheme);
-        themeGroup.add(goldTheme);
-        themeGroup.add(silverTheme);
-        themeGroup.add(winTheme);
-        themeGroup.add(charcoalTheme);
-        themeGroup.add(darudeTheme);
-
-        JMenuItem dummyItem = new JMenuItem("Choose A Theme...");
-
-        JMenu themeMenu = new JMenu("Themes");
-
-        dummyItem.setFont(new Font(themeMenu.getFont().getFamily(), Font.ITALIC, themeMenu.getFont().getSize()));
-        dummyItem.setEnabled(true); // set to false to not allow clicking
-
-        themeMenu.add(dummyItem);
-        themeMenu.addSeparator();
-        themeMenu.add(defaultTheme);
-        themeMenu.add(metalTheme);
-        //themeMenu.add(nimbusTheme);
-        themeMenu.add(oceanTheme);
-        themeMenu.add(charcoalTheme);
-        themeMenu.add(goldTheme);
-        themeMenu.add(silverTheme);
-        themeMenu.add(rubyTheme);
-        themeMenu.add(winTheme);
-        themeMenu.add(yellowTheme);
-        themeMenu.add(grayTheme);
-        themeMenu.add(darudeTheme);
-        // Theme Menu - End
-
-        JMenuItem settingsItem = new JMenuItem(new MenuAction("Settings"));
-        settingsItem.setIcon(settingsIcon);
-        //settingsItem.setMnemonic('');
-
-        editMenu.add(editProfileItem);
-        editMenu.addSeparator();
-        editMenu.add(quickAddItem);
-        editMenu.addSeparator();
-        editMenu.add(addIndItem);
-        editMenu.add(addFamItem);
-        editMenu.add(addCorpItem);
-        editMenu.addSeparator();
-        editMenu.add(settingsItem);
-        editMenu.add(themeMenu);
-        // Edit Menu - End
-
-        // View Menu - Start
-        JMenu viewMenu = new JMenu("View");
-        viewMenu.setMnemonic('V');
-
-        JMenuItem everyoneItem = new JMenuItem(new MenuAction("Everyone"));
-        everyoneItem.setIcon(everyoneIcon);
-        everyoneItem.setMnemonic('E');
-        everyoneItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
-
-        viewMenu.add(everyoneItem);
-
-        // View Menu - End
-
-        // Search Menu - Start
-        JMenu searchMenu = new JMenu("Search");
-        searchMenu.setMnemonic('S');
-
-        JMenuItem searchItem = new JMenuItem(new MenuAction("Search"));
-        searchItem.setIcon(searchIcon);
-        searchItem.setMnemonic('e');
-        searchItem.setAccelerator(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK));
-
-        searchMenu.add(searchItem);
-        // Search Menu - End
-
-        // Info Menu - Start
-        JMenu infoMenu = new JMenu("Info");
-        infoMenu.setMnemonic('I');
-
-        JMenuItem statItem = new JMenuItem(new MenuAction("Statistics"));
-        statItem.setIcon(reportIcon);
-        statItem.setMnemonic('S');
-
-        JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays"));
-        birthdayItem.setIcon(birthdayIcon);
-        birthdayItem.setMnemonic('B');
-
-        JMenuItem timeItem = new JMenuItem(new MenuAction("World Clocks"));
-        timeItem.setIcon(timeIcon);
-        timeItem.setMnemonic('T');
-
-
-        infoMenu.add(statItem);
-        infoMenu.add(birthdayItem);
-        infoMenu.add(timeItem);
-        // Info Menu - End
-
-        // Help Menu - Start
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
 
@@ -381,63 +193,306 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         helpMenu.add(aboutItem);
         helpMenu.addSeparator();
         helpMenu.add(helpItem);
-        // Help Menu - End
 
-        JMenuBar menuBar = new JMenuBar();
-        menuBar.add(fileMenu);
-        menuBar.add(editMenu);
-        menuBar.add(viewMenu);
-        menuBar.add(searchMenu);
-        menuBar.add(infoMenu);
-        menuBar.add(Box.createHorizontalGlue()); //Postion Next Item Far Right
-        menuBar.add(helpMenu);
-
-        setJMenuBar(menuBar);
-        // JMenuBar - End
-
-        // Buttons - Start
-        addIndButton = new JButton("Add Individual");
-        addIndButton.addActionListener(this);
-        addFamButton = new JButton("Add Family");
-        addFamButton.addActionListener(this);
-        addBusButton = new JButton("Add Business");
-        addBusButton.addActionListener(this);
-        quickAddButton = new JButton("Add");
-        quickAddButton.addActionListener(this);
-
-        cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(this);
-        // Buttons - End
-
-        // Contact Info Table (is this being used?) (BB-12/08: Don't think so, don't even remember what it's for)
-        ctnTable = new JTable(0, 2);
-
-        loadPropertyFile();
-
-
-
-
-        // Frame Content - Start
-
-        // Frame Content - End
-
-        // Center the Main Menu and Set Size to 80% of Screen Width/Height
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        //setSize((int)(screenSize.getWidth() * .8), (int)(screenSize.getHeight() * .8));
-        setSize(1080, 600); // Goal
-        setLocation((int)(screenSize.getWidth() / 2) - (getWidth() / 2), (int)(screenSize.getHeight() / 2) - (getHeight() / 2));
-
-        // Show the Main Menu
-        getContentPane().add(splitPanel);
-        //pack();
-        showPeopleList(DBHPInterface.getListOfPeopleByLastName());
-
-        // Center the divider between the filter tree and the filtered list
-        profileListPane.setDividerLocation(profileListPane.getHeight() / 2);
-
-        setVisible(true);
+        return helpMenu;
     }
+    /** Builds this menu and then returns the completed object.
+     * Loads the images used by the this menu, creates and adds all menu items
+     * and sub menus that belong to this menu.
+     * @return The completed JMenu for the JMenuBar
+     */
+    private JMenu getInfoMenu() {
+        ImageIcon reportIcon = new ImageIcon(getClass().getClassLoader().getResource("report.png"));
+        ImageIcon birthdayIcon = new ImageIcon(getClass().getClassLoader().getResource("birthday.png"));
+        ImageIcon timeIcon = new ImageIcon(getClass().getClassLoader().getResource("time.png"));
 
+        JMenu infoMenu = new JMenu("Info");
+        infoMenu.setMnemonic('I');
+
+        JMenuItem statItem = new JMenuItem(new MenuAction("Statistics"));
+        statItem.setIcon(reportIcon);
+        statItem.setMnemonic('S');
+
+        JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays"));
+        birthdayItem.setIcon(birthdayIcon);
+        birthdayItem.setMnemonic('B');
+
+        JMenuItem timeItem = new JMenuItem(new MenuAction("World Clocks"));
+        timeItem.setIcon(timeIcon);
+        timeItem.setMnemonic('W');
+
+        infoMenu.add(statItem);
+        infoMenu.add(birthdayItem);
+        infoMenu.add(timeItem);
+
+        return infoMenu;
+    }
+    /** Builds this menu and then returns the completed object.
+     * Loads the images used by the this menu, creates and adds all menu items
+     * and sub menus that belong to this menu.
+     * @return The completed JMenu for the JMenuBar
+     */
+    private JMenu getSearchMenu() {
+        ImageIcon searchIcon = new ImageIcon(getClass().getClassLoader().getResource("magnifier.png"));
+
+        JMenu searchMenu = new JMenu("Search");
+        searchMenu.setMnemonic('S');
+
+        JMenuItem searchItem = new JMenuItem(new MenuAction("Search"));
+        searchItem.setIcon(searchIcon);
+        searchItem.setMnemonic('e');
+        searchItem.setAccelerator(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK));
+
+        searchMenu.add(searchItem);
+
+        return searchMenu;
+    }
+    /** Builds this menu and then returns the completed object.
+     * Loads the images used by the this menu, creates and adds all menu items
+     * and sub menus that belong to this menu.
+     * @return The completed JMenu for the JMenuBar
+     */
+    private JMenu getEditMenu() {
+        ImageIcon settingsIcon = new ImageIcon(getClass().getClassLoader().getResource("settings.png"));
+        ImageIcon editProfileIcon = new ImageIcon(getClass().getClassLoader().getResource("user_edit.png"));
+
+        /* Mneumonics/Accelerators used
+         *  E - Edit
+         *  d - Edit Profile    ctrl D
+         *  S - Settings
+         *  T - Themes
+         */
+
+        JMenu editMenu = new JMenu("Edit");
+        editMenu.setMnemonic('E');
+
+        JMenuItem editProfileItem = new JMenuItem(new MenuAction("Edit Profile"));
+        editProfileItem.setIcon(editProfileIcon);
+        editProfileItem.setMnemonic('d');
+        editProfileItem.setAccelerator(KeyStroke.getKeyStroke('D', InputEvent.CTRL_DOWN_MASK));
+
+        JMenuItem settingsItem = new JMenuItem(new MenuAction("Settings"));
+        settingsItem.setIcon(settingsIcon);
+        settingsItem.setMnemonic('S');
+
+        editMenu.add(editProfileItem);
+        editMenu.addSeparator();
+        editMenu.add(settingsItem);
+        editMenu.add(getThemeMenu());
+
+        return editMenu;
+    }
+    /** Builds this menu and then returns the completed object.
+     * Loads the images used by the this menu, creates and adds all menu items
+     * and sub menus that belong to this menu.
+     * @return The completed JMenu for the JMenuBar
+     */
+    private JMenu getThemeMenu() {
+        ImageIcon changeThemeIcon = new ImageIcon(getClass().getClassLoader().getResource("color_wheel.png"));
+
+        JMenu themeMenu = new JMenu("Themes");
+        themeMenu.setMnemonic('T');
+        themeMenu.setIcon(changeThemeIcon);
+
+        JMenuItem dummyItem = new JMenuItem("Choose A Theme...");
+        dummyItem.setFont(new Font(themeMenu.getFont().getFamily(), Font.ITALIC, themeMenu.getFont().getSize()));
+        dummyItem.setEnabled(false); // set to false to not allow clicking
+
+        setThemeButtonGroup();
+
+        themeMenu.add(dummyItem);
+        themeMenu.addSeparator();
+        themeMenu.add(defaultTheme);
+        themeMenu.add(metalTheme);
+        themeMenu.add(oceanTheme);
+        themeMenu.add(charcoalTheme);
+        themeMenu.add(goldTheme);
+        themeMenu.add(silverTheme);
+        themeMenu.add(rubyTheme);
+        themeMenu.add(yellowTheme);
+        themeMenu.add(grayTheme);
+        themeMenu.add(darudeTheme);
+
+        return themeMenu;
+    }
+    /** Initializes the theme variables and then adds them to a ButtonGroup
+     * Initializes the Theme radio button menu items and then adds them into
+     * a button group so that only one can be selected at a time.
+     */
+    private void setThemeButtonGroup() {
+        defaultTheme = new JRadioButtonMenuItem("Default");
+        defaultTheme.addActionListener(this);
+        rubyTheme = new JRadioButtonMenuItem("Ruby");
+        rubyTheme.addActionListener(this);
+        yellowTheme = new JRadioButtonMenuItem("Yellow");
+        yellowTheme.addActionListener(this);
+        grayTheme = new JRadioButtonMenuItem("Gray");
+        grayTheme.addActionListener(this);
+        goldTheme = new JRadioButtonMenuItem("Gold");
+        goldTheme.addActionListener(this);
+        silverTheme = new JRadioButtonMenuItem("Silver");
+        silverTheme.addActionListener(this);
+        charcoalTheme = new JRadioButtonMenuItem("Charcoal");
+        charcoalTheme.addActionListener(this);
+        darudeTheme = new JRadioButtonMenuItem("Darude");
+        darudeTheme.addActionListener(this);
+        metalTheme = new JRadioButtonMenuItem("Metal");
+        metalTheme.addActionListener(this);
+        oceanTheme = new JRadioButtonMenuItem("Ocean");
+        oceanTheme.addActionListener(this);
+
+        ButtonGroup themeGroup = new ButtonGroup();
+        themeGroup.add(defaultTheme);
+        themeGroup.add(metalTheme);
+        themeGroup.add(oceanTheme);
+        themeGroup.add(rubyTheme);
+        themeGroup.add(yellowTheme);
+        themeGroup.add(grayTheme);
+        themeGroup.add(goldTheme);
+        themeGroup.add(silverTheme);
+        themeGroup.add(charcoalTheme);
+        themeGroup.add(darudeTheme);
+    }
+    /** Builds this menu and then returns the completed object.
+     * Loads the images used by the this menu, creates and adds all menu items
+     * and sub menus that belong to this menu.
+     * @return The completed JMenu for the JMenuBar
+     */
+    private JMenu getFileMenu() {
+        ImageIcon backupIcon = new ImageIcon(getClass().getClassLoader().getResource("dbbackup.png"));
+        ImageIcon restoreIcon = new ImageIcon(getClass().getClassLoader().getResource("dbrestore.png"));
+        ImageIcon clearIcon = new ImageIcon(getClass().getClassLoader().getResource("bomb.png"));
+        ImageIcon exitIcon = new ImageIcon(getClass().getClassLoader().getResource("exit.png"));
+        ImageIcon importIcon = new ImageIcon(getClass().getClassLoader().getResource("import.png"));
+        ImageIcon exportIcon = new ImageIcon(getClass().getClassLoader().getResource("export.png"));
+        ImageIcon syncIcon = new ImageIcon(getClass().getClassLoader().getResource("sync.png"));
+        ImageIcon printIcon = new ImageIcon(getClass().getClassLoader().getResource("printer.png"));
+
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic('F');
+
+        /*
+         * Mnemonics/Accelerators used
+         *  F - File Menu
+         *  N - New Menu
+         *  R - Restore     ctrl r
+         *  B - Backup      ctrl b
+         *  C - Clear       ctrl c
+         *  I - Import      ctrl i
+         *  E - Export      ctrl e
+         *  S - Synchronize ctrl s
+         *  P - Print       ctrl p
+         *  x - Exit        alt f4
+         */
+
+        JMenuItem backupItem = new JMenuItem(new MenuAction("Backup"));
+        backupItem.setIcon(backupIcon);
+        backupItem.setMnemonic('B');
+        backupItem.setAccelerator(KeyStroke.getKeyStroke('B', InputEvent.CTRL_DOWN_MASK));
+
+        JMenuItem restoreItem = new JMenuItem(new MenuAction("Restore"));
+        restoreItem.setIcon(restoreIcon);
+        restoreItem.setMnemonic('R');
+        restoreItem.setAccelerator(KeyStroke.getKeyStroke('R', InputEvent.CTRL_DOWN_MASK));
+
+        JMenuItem clearItem = new JMenuItem(new MenuAction("Clear"));
+        clearItem.setIcon(clearIcon);
+        clearItem.setMnemonic('C');
+        clearItem.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
+
+        JMenuItem importItem = new JMenuItem(new MenuAction("Import"));
+        importItem.setIcon(importIcon);
+        importItem.setMnemonic('I');
+        importItem.setAccelerator(KeyStroke.getKeyStroke('I', InputEvent.CTRL_DOWN_MASK));
+
+        JMenuItem exportItem = new JMenuItem(new MenuAction("Export"));
+        exportItem.setIcon(exportIcon);
+        exportItem.setMnemonic('E');
+        exportItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
+
+        JMenuItem syncItem = new JMenuItem(new MenuAction("Synchronize"));
+        syncItem.setIcon(syncIcon);
+        syncItem.setMnemonic('S');
+        syncItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
+
+        JMenuItem printItem = new JMenuItem(new MenuAction("Print"));
+        printItem.setIcon(printIcon);
+        printItem.setMnemonic('P');
+        printItem.setAccelerator(KeyStroke.getKeyStroke('P', InputEvent.CTRL_DOWN_MASK));
+
+        JMenuItem exitItem = new JMenuItem(new MenuAction("Exit"));
+        exitItem.setIcon(exitIcon);
+        exitItem.setMnemonic('x');
+        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
+
+        fileMenu.add(getNewMenu());
+        fileMenu.addSeparator();
+        fileMenu.add(clearItem);
+        fileMenu.addSeparator();
+        fileMenu.add(backupItem);
+        fileMenu.add(restoreItem);
+        fileMenu.addSeparator();
+        fileMenu.add(importItem);
+        fileMenu.add(exportItem);
+        fileMenu.add(syncItem);
+        fileMenu.add(printItem);
+        fileMenu.addSeparator();
+        fileMenu.add(exitItem);
+
+        return fileMenu;
+    }
+    /** Builds this menu and then returns the completed object.
+     * Loads the images used by the this menu, creates and adds all menu items
+     * and sub menus that belong to this menu.
+     * @return The completed JMenu for the JMenuBar
+     */
+    private JMenu getNewMenu() {
+        ImageIcon newIcon = new ImageIcon(getClass().getClassLoader().getResource("add.png"));
+        ImageIcon addIndIcon = new ImageIcon(getClass().getClassLoader().getResource("user_add.png"));
+        ImageIcon addFamIcon = new ImageIcon(getClass().getClassLoader().getResource("family.png"));
+        ImageIcon addCorpIcon = new ImageIcon(getClass().getClassLoader().getResource("business.png"));
+        ImageIcon quickAddIcon = new ImageIcon(getClass().getClassLoader().getResource("hourglass.png"));
+
+        /* Mneumonics/Accelerators used
+         *  N - New Menu
+         *  Q - Quick Add       ctrl q
+         *  d - Add Individual  ctrl shift i
+         *  a - Add Family      ctrl shift f
+         *  u - Add Business    ctrl shift b
+         */
+
+        JMenuItem quickAddItem = new JMenuItem(new MenuAction("Quick Add"));
+        quickAddItem.setIcon(quickAddIcon);
+        quickAddItem.setMnemonic('Q');
+        quickAddItem.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
+
+        JMenuItem addIndItem = new JMenuItem(new MenuAction("Add Individual"));
+        addIndItem.setIcon(addIndIcon);
+        addIndItem.setMnemonic('d');
+        addIndItem.setAccelerator(KeyStroke.getKeyStroke('I', KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
+
+        JMenuItem addFamItem = new JMenuItem(new MenuAction("Add Family"));
+        addFamItem.setIcon(addFamIcon);
+        addFamItem.setMnemonic('a');
+        addFamItem.setAccelerator(KeyStroke.getKeyStroke('F', KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
+
+        JMenuItem addCorpItem = new JMenuItem(new MenuAction("Add Business"));
+        addCorpItem.setIcon(addCorpIcon);
+        addCorpItem.setMnemonic('u');
+        addCorpItem.setAccelerator(KeyStroke.getKeyStroke('B', KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
+
+        JMenu newMenu = new JMenu("New");
+        newMenu.setIcon(newIcon);
+        newMenu.setMnemonic('N');
+
+        newMenu.add(quickAddItem);
+        newMenu.addSeparator();
+        newMenu.add(addIndItem);
+        newMenu.add(addFamItem);
+        newMenu.add(addCorpItem);
+
+        return newMenu;
+    }
     /**
      * Loads the Hoi Polloi properties file.
      *
@@ -475,13 +530,12 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             }
         }
     }
-
     /**
      * Saves the Hoi Polloi properties file.
      *
      * The filename is hp.properties
      */
-    private void savePropertyFile() {
+    public void savePropertyFile() {
         try {
             propFile.store(new java.io.FileOutputStream(new java.io.File("hp.properties")), "Property File for Hoi Polloi");
         }
@@ -490,7 +544,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                     + "settings then they have not been saved.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     /**
      * Sets the theme for Hoi Polloi.
      *
@@ -530,13 +583,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             darudeTheme.setSelected(true);
-            Debug.print("Set theme: " + theme.toUpperCase());
-        }
-        else if (theme.equalsIgnoreCase("win")) {
-            PlafOptions.setCurrentTheme(WIN);
-            PlafOptions.setAsLookAndFeel();
-            PlafOptions.updateAllUIs();
-            winTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
         else if (theme.equalsIgnoreCase("silver")) {
@@ -588,73 +634,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             oceanTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("nimbus")) {
-            // Set the Hoi Polloi theme to the java "Nimbus" look and feel.
-
-            try {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-                SwingUtilities.updateComponentTreeUI(THIS);
-            } catch (Exception exc) { Debug.print("EXCEPTION with theme change: " + exc.getMessage()); }
-            nimbusTheme.setSelected(true);
-            Debug.print("Set theme: " + theme.toUpperCase());
-        }
-
     }
-
-    /**
-     * What the hell does this do brandon?
-     *
-     * @return Some kind of object array?
-     */
-    private static Object[] getWinCustomEntries() {
-            Color s2 = new Color(0xDCDBCB);
-            Color s3 = new Color(0xF1F0E3);
-            Color p2 = new Color(0xF9E089);
-            Color p3 = new Color(0xFFCF31);
-            return new Object[] {
-                    "Button.rolloverGradientStart", Color.white,
-                    "Button.rolloverGradientEnd", s2,
-
-                    "ToggleButton.rolloverGradientStart", Color.white,
-                    "ToggleButton.rolloverGradientEnd", s2,
-
-                    "ToolBar.gradientStart", s3,
-                    "ToolBar.gradientEnd", s2,
-
-                    "ToolBarButton.rolloverGradientStart", p3,
-                    "ToolBarButton.rolloverGradientEnd", p2
-            };
-    }
-
-    /**
-     * A window listener sub-class for Hoi Polloi.
-     *
-     * @author Brandon Buck
-     */
-    class HPWindowListener implements WindowListener {
-        public void windowDeactivated(WindowEvent evt) { }
-        public void windowActivated(WindowEvent evt) { }
-        public void windowDeiconified(WindowEvent evt) { }
-        public void windowIconified(WindowEvent evt) { }
-        public void windowClosed(WindowEvent evt) { }
-        public void windowClosing(WindowEvent evt) {
-            savePropertyFile();
-        }
-        public void windowOpened(WindowEvent evt) { }
-    }
-
-    /**
-     * A component listener sub-class for Hoi Polloi.
-     *
-     * @author Brandon Buck
-     */
-    class HPComponentListener implements ComponentListener {
-        public void componentHidden(ComponentEvent evt) { }
-        public void componentShown(ComponentEvent evt) { }
-        public void componentMoved(ComponentEvent evt) { }
-        public void componentResized(ComponentEvent evt) { }
-    }
-
     /**
      * Formats a date from YYYY-MM-DD into Month day, Year.
      *
@@ -668,7 +648,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         java.sql.Date dateObject = java.sql.Date.valueOf(dateString);
         return format.format(dateObject);
     }
-
     /**
      * A test approach for editing a profile.
      *
@@ -1200,6 +1179,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                     p.setDemonym(d);
                     p.setDescription(descArea.getText());
                     p.saveToDatabase();
+                    updateFilteredList();
                     showProfile(p);
                 }
                 else
@@ -1229,7 +1209,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         updateWindow();
 
     }
-
     /**
      * Gets the current person.
      *
@@ -1238,7 +1217,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     public Person getCurrentPerson() {
         return currentPerson;
     }
-
     /**
      * Gets the filter list JTree.
      *
@@ -1306,21 +1284,83 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JScrollPane treeView = new JScrollPane(tree);
         return treeView;
     }
+    /** Updates the filtered list to reflect changes in the database.
+     * Updates the filtered list to reflect changes in the database.
+     */
+    public void updateFilteredList() {
+        JTree filterTree = (JTree)((JViewport)filterListScrollPane.getComponent(0)).getComponent(0);
 
+        setFilteredInfo(filterTree);
+        
+    }
+    /** Sets the contents of the Filter list based on filter parameters from the given tree
+     * Using the already selected filter settings from the filter tree, or by
+     * default, showing everyone if no valid sort is selected.
+     * @param tree The tree to retrieve the filter parameters from.
+     */
+    public void setFilteredInfo(JTree tree) {
+        TreePath selectionPath = tree.getSelectionPath();
+        DefaultMutableTreeNode parentNode;
+
+        if (selectionPath != null && selectionPath.getParentPath() != null) {
+            parentNode = (DefaultMutableTreeNode)(selectionPath.getParentPath().getLastPathComponent());
+
+            if (parentNode.toString().equals("Category")) {
+                DefaultMutableTreeNode catNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                KeyValue catValue = (KeyValue)(catNode.getUserObject());
+
+                showPeopleList(DBHPInterface.getPeopleInCategory(catValue.getKey()));
+            }
+            else if (parentNode.toString().equals("District")) {
+                DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                showPeopleList(DBHPInterface.getPeopleInDistrict(filterNode.toString()));
+            }
+            else if (parentNode.toString().equals("Cities")) {
+                DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                showPeopleList(DBHPInterface.getPeopleInCity(filterNode.toString()));
+            }
+            else if (parentNode.toString().equals("Countries")) {
+                DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                KeyValue countryValue = (KeyValue)(filterNode.getUserObject());
+                showPeopleList(DBHPInterface.getPeopleInCountry(countryValue.getKey()));
+            }
+            else if (parentNode.toString().equals("Recent")) {
+                DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+                KeyValue recentValue = (KeyValue)(filterNode.getUserObject());
+
+                showPeopleList(DBHPInterface.getMostRecentlyAdded(recentValue.getKey()));
+            }
+            else if (parentNode.toString().equals("Birthdays")) {
+                DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
+
+                if (filterNode.toString().equals("Last Month"))
+                    showPeopleList(DBHPInterface.getBirthdaysPrevMonth());
+                else if (filterNode.toString().equals("This Month"))
+                    showPeopleList(DBHPInterface.getBirthdaysThisMonth());
+                else if (filterNode.toString().equals("Next Month"))
+                    showPeopleList(DBHPInterface.getBirthdaysNextMonth());
+            }
+            else if (selectionPath.getLastPathComponent().toString().equals("Search")) {
+
+            }
+            else
+                showPeopleList(DBHPInterface.getListOfPeopleByLastName());
+        }
+        else
+            showPeopleList(DBHPInterface.getListOfPeopleByLastName());
+    }
     /**
      * Displays a Family's Profile.
      *
      * @param family The Family whose profile to display.
      */
-    public void showProfile(Family family) {}
-
+    public void showProfile(Family family) { }
     /**
      * Displays a Business's Profile.
      *
      * @param business The Business whose profile to display.
      */
-    public void showProfile(Business business) {}
-
+    public void showProfile(Business business) { }
     /**
      * Display a Person's Profile.
      *
@@ -1713,7 +1753,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
         updateWindow();
     }
-
     /**
      * Shows a JList of People on the Left Side of the Application.
      *
@@ -1723,63 +1762,25 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         //contentPane.removeAll();
         Object[] people = peeps.toArray();
 
-        final JList list = new JList();
-        list.setCellRenderer(new HPCellRenderer());
+        PeopleList list = new PeopleList(this);
         list.setListData(people);
-
-        list.addMouseListener(new MouseListener() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    int index = list.locationToIndex(e.getPoint());
-                    list.setSelectedIndex(index);
-                    KeyValue value = (KeyValue)(list.getSelectedValue());
-                    try {
-                        showProfile(new Person(value.getKey()));
-                    }
-                    catch (Exception ex) {
-                        Debug.print(ex.getMessage());
-                    }
-                }
-                if (e.getClickCount() == 1) {
-                    int index = list.locationToIndex(e.getPoint());
-                    list.setSelectedIndex(index);
-                }
-            }
-            public void mousePressed(MouseEvent e) {}
-            public void mouseReleased(MouseEvent e) {}
-            public void mouseEntered(MouseEvent e) {}
-            public void mouseExited(MouseEvent e) {}
-        });
 
         JScrollPane listScroller = new JScrollPane(list);
         listScroller.setPreferredSize(new Dimension(220, getContentPane().getHeight()));
-        //JSplitPane jsp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listScroller, null);
-
-
-        //jsp.setOneTouchExpandable(true);
-        //jsp.setDividerLocation(150);
-
-        //contentPane.setLayout(new BorderLayout());
+        
         listPane.removeAll();
         listPane.add(listScroller);
         updateWindow();
     }
-
     /** Clears the main application window screen and shows the HP logo in the center.*/
     public void removeAllComponents() {
         contentPane.removeAll();
     }
-
-    public void revalidate() {
-        this.validate();
-        this.validateTree();
-    }
-
+    /** Causes MainMenu and all subcomponents to repaint() */
     public void updateWindow() {
         update(getGraphics());
         setVisible(true);
     }
-
     /**
      * Gets a JTabbedPane showing addresses for a given person.
      *
@@ -1928,7 +1929,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
         return addressPane;
     }
-
     /**
      * Clears and updates the main application window.
      */
@@ -1937,19 +1937,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         removeAllComponents();
         updateWindow();
     }
-    /* Class for text fields so that when given focus automatically select all
-     * text inside.
-     */
-    class FocusSelectAll implements FocusListener {
-        public void focusGained(FocusEvent e) {
-            JTextField source = (JTextField)(e.getSource());
-
-            source.select(0, source.getText().length());
-        }
-
-        public void focusLost(FocusEvent e) { }
-    }
-
     /** The Profile Quick-add Feature */
     public void quickAdd() {
 
@@ -1972,11 +1959,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         categoryBox.addItem("----------------");
 
         JTextField firstNameField = new JTextField(15);
-        firstNameField.addFocusListener(new FocusSelectAll());
+        firstNameField.addFocusListener(new TextCompFocusListener());
         JTextField lastNameField = new JTextField(15);
-        lastNameField.addFocusListener(new FocusSelectAll());
+        lastNameField.addFocusListener(new TextCompFocusListener());
         JTextField newCatField = new JTextField(15);
-        newCatField.addFocusListener(new FocusSelectAll());
+        newCatField.addFocusListener(new TextCompFocusListener());
         newCatField.setText("New Category Name");
         ArrayList tempCatList = DBHPInterface.getListOfCategories();
         if (!(tempCatList == null) || !(tempCatList.isEmpty())) {
@@ -2150,7 +2137,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
         updateWindow();
     }
-
+    /** Handles all the theme change actions. */
     public void actionPerformed(ActionEvent evt) {
         boolean button = true;
         Component source = null;
@@ -2167,8 +2154,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                 THIS.setVisible(true);
             }
         }
-
-
 
         // Theme Buttons
         if (defaultTheme.isSelected()) {
@@ -2206,11 +2191,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             propFile.setProperty("theme", "gray");
             //clearWindow();
         }
-        else if (winTheme.isSelected()) {
-            setTheme("WIN");
-            propFile.setProperty("theme", "win");
-            //clearWindow();
-        }
         else if (charcoalTheme.isSelected()) {
             setTheme("CHARCOAL");
             propFile.setProperty("theme", "charcoal");
@@ -2220,17 +2200,12 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             setTheme("METAL");
             propFile.setProperty("theme", "metal");
         }
-        else if (nimbusTheme.isSelected()) {
-            setTheme("NIMBUS");
-            propFile.setProperty("theme", "nimbus");
-        }
         else if (oceanTheme.isSelected()) {
             setTheme("OCEAN");
             propFile.setProperty("theme", "ocean");
         }
     }
-
-
+    /** Dispatchs the key event for browing profiles with the left and right arrow key */
     public boolean dispatchKeyEvent(KeyEvent e) {
         if (e.getID() == KeyEvent.KEY_RELEASED) {
             if (currentPerson != null) {
@@ -2272,56 +2247,8 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     class FilterTreeSelectionListener implements TreeSelectionListener {
         public void valueChanged(TreeSelectionEvent e) {
             JTree source = (JTree)e.getSource();
-            
-            TreePath selectionPath = source.getSelectionPath();
-            DefaultMutableTreeNode parentNode;
-            
-            if (selectionPath != null && selectionPath.getParentPath() != null) {
-                parentNode = (DefaultMutableTreeNode)(selectionPath.getParentPath().getLastPathComponent());
 
-                if (selectionPath.getLastPathComponent().toString().equals("Everyone")) {
-                    showPeopleList(DBHPInterface.getListOfPeopleByLastName());
-                }
-                else if (parentNode.toString().equals("Category")) {
-                    DefaultMutableTreeNode catNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
-                    KeyValue catValue = (KeyValue)(catNode.getUserObject());
-
-                    showPeopleList(DBHPInterface.getPeopleInCategory(catValue.getKey()));
-                }
-                else if (parentNode.toString().equals("District")) {
-                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
-                    showPeopleList(DBHPInterface.getPeopleInDistrict(filterNode.toString()));
-                }
-                else if (parentNode.toString().equals("Cities")) {
-                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
-                    showPeopleList(DBHPInterface.getPeopleInCity(filterNode.toString()));
-                }
-                else if (parentNode.toString().equals("Countries")) {
-                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
-                    KeyValue countryValue = (KeyValue)(filterNode.getUserObject());
-                    showPeopleList(DBHPInterface.getPeopleInCountry(countryValue.getKey()));
-                }
-                else if (parentNode.toString().equals("Recent")) {
-                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
-                    KeyValue recentValue = (KeyValue)(filterNode.getUserObject());
-
-                    showPeopleList(DBHPInterface.getMostRecentlyAdded(recentValue.getKey()));
-                }
-                else if (parentNode.toString().equals("Birthdays")) {
-                    DefaultMutableTreeNode filterNode = (DefaultMutableTreeNode)(selectionPath.getLastPathComponent());
-
-                    if (filterNode.toString().equals("Last Month"))
-                        showPeopleList(DBHPInterface.getBirthdaysPrevMonth());
-                    else if (filterNode.toString().equals("This Month"))
-                        showPeopleList(DBHPInterface.getBirthdaysThisMonth());
-                    else if (filterNode.toString().equals("Next Month"))
-                        showPeopleList(DBHPInterface.getBirthdaysNextMonth());
-                }
-                else if (selectionPath.getLastPathComponent().toString().equals("Search")) {
-                    
-                }
-            }
-            
+            setFilteredInfo(source);
         }
     }
 
@@ -2343,15 +2270,13 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             else if (selection.equals("Export")) {
                 new Export(THIS);
             }
-            else if (selection.equals("Close")) {
-                // Not sure if this should be close profile or close database?
+            else if (selection.equals("Clear")) {
                 THIS.clearWindow();
             }
             else if (selection.equals("Statistics")) {
                 Stats.showStats(THIS);
             }
             else if (selection.equals("Everyone")) {
-                //new JTempFrame(THIS, DBHPInterface.getListOfPeopleByLastName());
                 showPeopleList(DBHPInterface.getListOfPeopleByLastName());
             }
             else if (selection.equals("Edit Profile")) {
@@ -2381,7 +2306,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                 JOptionPane.showMessageDialog(THIS, "Please donate a blue tooth phone or dongle!");
             }
             else {
-                JOptionPane.showMessageDialog(THIS, selection.toString());
+                JOptionPane.showMessageDialog(THIS, "This feature will be coming in a later version!", selection.toString(), JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
