@@ -1069,7 +1069,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         btnAddContact.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // do stuff for add new contact
-                if (ctnText != null && !ctnText.equals("")) {
+                if (ctnText != null && ctnText.getText().length() != 0) {
                     // Contact Type ID (in Database)
                     int ctnTypeID = ((KeyValue)ctnTypeComboBox.getSelectedItem()).getKey();
 
@@ -1396,8 +1396,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             suffix = "";
 
         String name = prefix + firstName + middleName + lastName + suffix;
-        Debug.print("Name = "+person.getPersonID());
-        if (name == null || name.equals(""))
+        if (name == null || name.length() == 0)
             name = "Unknown Person";
 
         String nickName = "\"" + person.getNickName() + "\"";
