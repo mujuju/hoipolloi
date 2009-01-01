@@ -400,7 +400,6 @@ public class DBHPInterface {
         }
         ArrayList <KeyValue> people = new ArrayList<KeyValue>();
         String sql = "SELECT psnPersonID, psnFirstName, psnLastName, psnBirthday FROM pmp_people WHERE ("+month+" = strftime('%m', psnBirthday)) ORDER BY psnLastName ASC";
-        Debug.print(sql);
         DBConnection db = new DBConnection();
         try {
             Statement stmt  = db.getDBStatement();
