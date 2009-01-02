@@ -119,7 +119,7 @@ public class Cropping extends JPanel
  
     public static void main(String[] args) throws IOException
     {
-        File file = new File("src/splash.jpg");
+        File file = new File("src/splashalpha.jpg");
         Cropping test = new Cropping(ImageIO.read(file));
         ClipMover mover = new ClipMover(test);
         test.addMouseListener(mover);
