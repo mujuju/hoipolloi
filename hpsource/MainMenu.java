@@ -148,19 +148,19 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         PopupMenu popupMenu = new PopupMenu();
 
         MenuItem quickAddItem = new MenuItem("Quick Add");
-        quickAddItem.addActionListener(new MenuAction("Quick Add"));
+        quickAddItem.addActionListener(new MenuAction("Quick Add", this));
         MenuItem addIndItem = new MenuItem("Add Person");
-        addIndItem.addActionListener(new MenuAction("Add Individual"));
+        addIndItem.addActionListener(new MenuAction("Add Individual", this));
         MenuItem addFamItem = new MenuItem("Add Family");
-        addFamItem.addActionListener(new MenuAction("Add Family"));
+        addFamItem.addActionListener(new MenuAction("Add Family", this));
         MenuItem addCorpItem = new MenuItem("Add Business");
-        addCorpItem.addActionListener(new MenuAction("Add Business"));
+        addCorpItem.addActionListener(new MenuAction("Add Business", this));
         MenuItem searchItem = new MenuItem("Search");
-        searchItem.addActionListener(new MenuAction("Search"));
+        searchItem.addActionListener(new MenuAction("Search", this));
         MenuItem aboutItem = new MenuItem("About");
-        aboutItem.addActionListener(new MenuAction("About"));
+        aboutItem.addActionListener(new MenuAction("About", this));
         MenuItem exitItem = new MenuItem("Exit");
-        exitItem.addActionListener(new MenuAction("Exit"));
+        exitItem.addActionListener(new MenuAction("Exit", this));
 
         popupMenu.add(quickAddItem);
         popupMenu.addSeparator();
@@ -244,11 +244,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
 
-        JMenuItem aboutItem = new JMenuItem(new MenuAction("About"));
+        JMenuItem aboutItem = new JMenuItem(new MenuAction("About", this));
         aboutItem.setIcon(infoIcon);
         aboutItem.setMnemonic('A');
 
-        JMenuItem helpItem = new JMenuItem(new MenuAction("Help"));
+        JMenuItem helpItem = new JMenuItem(new MenuAction("Help", this));
         helpItem.setIcon(helpIcon);
         helpItem.setMnemonic('H');
         helpItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
@@ -272,15 +272,15 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JMenu infoMenu = new JMenu("Info");
         infoMenu.setMnemonic('I');
 
-        JMenuItem statItem = new JMenuItem(new MenuAction("Statistics"));
+        JMenuItem statItem = new JMenuItem(new MenuAction("Statistics", this));
         statItem.setIcon(reportIcon);
         statItem.setMnemonic('S');
 
-        JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays"));
+        JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays", this));
         birthdayItem.setIcon(birthdayIcon);
         birthdayItem.setMnemonic('B');
 
-        JMenuItem timeItem = new JMenuItem(new MenuAction("World Clocks"));
+        JMenuItem timeItem = new JMenuItem(new MenuAction("World Clocks", this));
         timeItem.setIcon(timeIcon);
         timeItem.setMnemonic('W');
 
@@ -301,7 +301,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JMenu searchMenu = new JMenu("Search");
         searchMenu.setMnemonic('S');
 
-        JMenuItem searchItem = new JMenuItem(new MenuAction("Search"));
+        JMenuItem searchItem = new JMenuItem(new MenuAction("Search", this));
         searchItem.setIcon(searchIcon);
         searchItem.setMnemonic('e');
         searchItem.setAccelerator(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK));
@@ -329,12 +329,12 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic('E');
 
-        JMenuItem editProfileItem = new JMenuItem(new MenuAction("Edit Profile"));
+        JMenuItem editProfileItem = new JMenuItem(new MenuAction("Edit Profile", this));
         editProfileItem.setIcon(editProfileIcon);
         editProfileItem.setMnemonic('d');
         editProfileItem.setAccelerator(KeyStroke.getKeyStroke('D', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem settingsItem = new JMenuItem(new MenuAction("Settings"));
+        JMenuItem settingsItem = new JMenuItem(new MenuAction("Settings", this));
         settingsItem.setIcon(settingsIcon);
         settingsItem.setMnemonic('S');
 
@@ -448,42 +448,42 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
          *  x - Exit        alt f4
          */
 
-        JMenuItem backupItem = new JMenuItem(new MenuAction("Backup"));
+        JMenuItem backupItem = new JMenuItem(new MenuAction("Backup", this));
         backupItem.setIcon(backupIcon);
         backupItem.setMnemonic('B');
         backupItem.setAccelerator(KeyStroke.getKeyStroke('B', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem restoreItem = new JMenuItem(new MenuAction("Restore"));
+        JMenuItem restoreItem = new JMenuItem(new MenuAction("Restore", this));
         restoreItem.setIcon(restoreIcon);
         restoreItem.setMnemonic('R');
         restoreItem.setAccelerator(KeyStroke.getKeyStroke('R', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem clearItem = new JMenuItem(new MenuAction("Clear"));
+        JMenuItem clearItem = new JMenuItem(new MenuAction("Clear", this));
         clearItem.setIcon(clearIcon);
         clearItem.setMnemonic('C');
         clearItem.setAccelerator(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem importItem = new JMenuItem(new MenuAction("Import"));
+        JMenuItem importItem = new JMenuItem(new MenuAction("Import", this));
         importItem.setIcon(importIcon);
         importItem.setMnemonic('I');
         importItem.setAccelerator(KeyStroke.getKeyStroke('I', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem exportItem = new JMenuItem(new MenuAction("Export"));
+        JMenuItem exportItem = new JMenuItem(new MenuAction("Export", this));
         exportItem.setIcon(exportIcon);
         exportItem.setMnemonic('E');
         exportItem.setAccelerator(KeyStroke.getKeyStroke('E', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem syncItem = new JMenuItem(new MenuAction("Synchronize"));
+        JMenuItem syncItem = new JMenuItem(new MenuAction("Synchronize", this));
         syncItem.setIcon(syncIcon);
         syncItem.setMnemonic('S');
         syncItem.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem printItem = new JMenuItem(new MenuAction("Print"));
+        JMenuItem printItem = new JMenuItem(new MenuAction("Print", this));
         printItem.setIcon(printIcon);
         printItem.setMnemonic('P');
         printItem.setAccelerator(KeyStroke.getKeyStroke('P', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem exitItem = new JMenuItem(new MenuAction("Exit"));
+        JMenuItem exitItem = new JMenuItem(new MenuAction("Exit", this));
         exitItem.setIcon(exitIcon);
         exitItem.setMnemonic('x');
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
@@ -524,22 +524,22 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
          *  u - Add Business    ctrl shift b
          */
 
-        JMenuItem quickAddItem = new JMenuItem(new MenuAction("Quick Add"));
+        JMenuItem quickAddItem = new JMenuItem(new MenuAction("Quick Add", this));
         quickAddItem.setIcon(quickAddIcon);
         quickAddItem.setMnemonic('Q');
         quickAddItem.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
 
-        JMenuItem addIndItem = new JMenuItem(new MenuAction("Add Individual"));
+        JMenuItem addIndItem = new JMenuItem(new MenuAction("Add Individual", this));
         addIndItem.setIcon(addIndIcon);
         addIndItem.setMnemonic('d');
         addIndItem.setAccelerator(KeyStroke.getKeyStroke('I', KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
 
-        JMenuItem addFamItem = new JMenuItem(new MenuAction("Add Family"));
+        JMenuItem addFamItem = new JMenuItem(new MenuAction("Add Family", this));
         addFamItem.setIcon(addFamIcon);
         addFamItem.setMnemonic('a');
         addFamItem.setAccelerator(KeyStroke.getKeyStroke('F', KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
 
-        JMenuItem addCorpItem = new JMenuItem(new MenuAction("Add Business"));
+        JMenuItem addCorpItem = new JMenuItem(new MenuAction("Add Business", this));
         addCorpItem.setIcon(addCorpIcon);
         addCorpItem.setMnemonic('u');
         addCorpItem.setAccelerator(KeyStroke.getKeyStroke('B', KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK));
@@ -567,7 +567,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             propFile.load(new java.io.FileInputStream(new java.io.File("hp.properties")));
         }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(THIS, "Error loading property file!\nShutting down program.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading property file!\nShutting down program.", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
 
@@ -603,7 +603,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             propFile.store(new java.io.FileOutputStream(new java.io.File("hp.properties")), "Property File for Hoi Polloi");
         }
         catch (Exception e) {
-            JOptionPane.showMessageDialog(THIS, "Error saving property file, if you changed\n"
+            JOptionPane.showMessageDialog(this, "Error saving property file, if you changed\n"
                     + "settings then they have not been saved.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -675,11 +675,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             PlafOptions.setCurrentTheme(new javax.swing.plaf.metal.DefaultMetalTheme());
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
-            /*try {
-                javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new javax.swing.plaf.metal.DefaultMetalTheme());
-                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-                SwingUtilities.updateComponentTreeUI(THIS);
-            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }*/
             metalTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
@@ -689,11 +684,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             PlafOptions.setCurrentTheme(new javax.swing.plaf.metal.OceanTheme());
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
-            /*try {
-                javax.swing.plaf.metal.MetalLookAndFeel.setCurrentTheme(new javax.swing.plaf.metal.OceanTheme());
-                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-                SwingUtilities.updateComponentTreeUI(THIS);
-            } catch (Exception exc) { Debug.print("EXCEPTOIN with theme change: " + exc.getMessage()); }*/
             oceanTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
@@ -1139,8 +1129,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                     noob.addContact(ctnTypeID, ctnText.getText());
                     noob.saveToDatabase();
 
-                    //JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
-
                     // Update the contacts table
                     model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
                     ctnText.setText(null);
@@ -1180,8 +1168,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
                         noob.addContact(ctnTypeID, ctnText.getText());
                         noob.saveToDatabase();
-
-                        //JOptionPane.showMessageDialog(THIS, "Success, new contact added!");
 
                         // Update the contacts table
                         model.addRow(new Object[]{((KeyValue)ctnTypeComboBox.getSelectedItem()).getValue(), ctnText.getText()});
@@ -1706,7 +1692,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         lastUpdateLabel.setFont(bottomFont);
         lastUpdateLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
 
-        CategoryLabel categoryLabel = new CategoryLabel(categories, THIS, this.currentPerson);
+        CategoryLabel categoryLabel = new CategoryLabel(categories, this, this.currentPerson);
         categoryLabel.setFont(bottomFont);
 
         bottomPanel.add(categoryLabel, BorderLayout.WEST);
@@ -2131,7 +2117,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                                 newPerson.addCategory(catID);
 
                                 if (success) {
-                                    //JOptionPane.showMessageDialog(THIS, firstName + " " + lastName + " was added to the database!", "Success!", JOptionPane.INFORMATION_MESSAGE);
                                     showProfile(newPerson);
                                     showPeopleList(DBHPInterface.getListOfPeopleByLastName());
                                 }
@@ -2221,7 +2206,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             // Button Pressed
             if (source == cancelButton) {
                 contentPane.removeAll();
-                THIS.setVisible(true);
+                this.setVisible(true);
             }
         }
 
@@ -2314,82 +2299,15 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         return false;
     }
 
+    public String getVersion() {
+        return hpVersion;
+    }
+
     class FilterTreeSelectionListener implements TreeSelectionListener {
         public void valueChanged(TreeSelectionEvent e) {
             JTree source = (JTree)e.getSource();
 
             setFilteredInfo(source);
-        }
-    }
-
-    class MenuAction extends AbstractAction {
-        public MenuAction(String n) {
-            super(n);
-        }
-
-        private void deiconifyParent() {
-            if (!THIS.isVisible()) {
-                THIS.setExtendedState(JFrame.NORMAL);
-                THIS.setVisible(true);
-                THIS.toFront();
-            }
-        }
-
-        public void actionPerformed(ActionEvent evt) {
-            String selection = (String)getValue(Action.NAME);
-
-            if (selection.equals("Exit")) {
-                savePropertyFile();
-                System.exit(0);
-            }
-            else if (selection.equals("Search")) {
-                deiconifyParent();
-                new SearchWindow(THIS);
-            }
-            else if (selection.equals("Export")) {
-                new Export(THIS);
-            }
-            else if (selection.equals("Clear")) {
-                THIS.clearWindow();
-            }
-            else if (selection.equals("Statistics")) {
-                Stats.showStats(THIS);
-            }
-            else if (selection.equals("Everyone")) {
-                showPeopleList(DBHPInterface.getListOfPeopleByLastName());
-            }
-            else if (selection.equals("Edit Profile")) {
-                if (currentPerson != null) {
-                    editProfile(currentPerson);
-                }
-            }
-            else if (selection.equals("Quick Add")) {
-                deiconifyParent();
-                quickAdd();
-            }
-            else if (selection.equals("About")) {
-                deiconifyParent();
-                About.showAboutWindow(THIS, hpVersion);
-            }
-            else if (selection.equals("Print")) {
-                EnvelopeBox.showEnvelopeBox(THIS);
-            }
-            else if (selection.equals("Birthdays")) {
-                new JTempFrame(THIS, DBHPInterface.getBirthdaysThisMonth());
-            }
-            else if (selection.equals("Help")) {
-                JOptionPane.showMessageDialog(THIS, "Help is on the way ...");
-            }
-            else if (selection.equals("World Clocks")) {
-                JOptionPane.showMessageDialog(THIS, "Coming soon!");
-            }
-            else if (selection.equals("Synchronize")) {
-                JOptionPane.showMessageDialog(THIS, "Please donate a blue tooth phone or dongle!");
-            }
-            else {
-                deiconifyParent();
-                JOptionPane.showMessageDialog(THIS, "This feature will be coming in a later version!", selection.toString(), JOptionPane.INFORMATION_MESSAGE);
-            }
         }
     }
 }
