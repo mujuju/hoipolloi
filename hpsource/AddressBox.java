@@ -10,7 +10,7 @@ import java.awt.event.*;
  * @author Brandon Tanner
  * @since  1.0 (Jan 13, 2008)
  */
-public class AddressBox extends JFrame implements ActionListener {
+public class AddressBox extends JDialog implements ActionListener {
     
     private Person     p;
     private JPanel     adrPanel;
@@ -28,29 +28,37 @@ public class AddressBox extends JFrame implements ActionListener {
     private JButton    btnSave;
     private JButton    btnCancel;
     private String     actionText;
+    private MainMenu   owner;
 
-    public AddressBox(Frame owner, Person person, boolean edit) {
+    public AddressBox(MainMenu owner, Person person) {
         super();
-        
-        
+        actionText = "Add";
+        createAddressBox(owner, person);
+    }
+
+    public AddressBox(MainMenu owner, Person person, Address address) {
+        super();
+        actionText = "Edit";
+        createAddressBox(owner, person);
+        //setAddressInformation(address);
+    }
+
+    private void createAddressBox(MainMenu owner, Person person) {
         if (person.getPersonID() > 0) {
             this.p = person;
         }
         else {
-            Debug.print("No Person Supplied to Add/Edit Addresses For, exiting app.");
+            Debug.print("No person supplied to add address for, exiting app.");
             System.exit(0);
         }
-        
-        actionText = "Add";
-        if (edit) {
-            actionText = "Edit";
-        }
+
         this.setTitle(actionText+" Address for "+person.getFirstName());
+        this.setModal(true);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         this.setResizable(false);
-        
+
         Container cp = this.getContentPane();
-        
+
         // Intialize vars
         adrPanel    = new JPanel(new SpringLayout());
         adrType     = new JComboBox();
@@ -62,29 +70,28 @@ public class AddressBox extends JFrame implements ActionListener {
         adrState    = new JTextField(10);
         adrZip      = new JTextField(10);
         adrCountry  = new JComboBox();
-        adrDistrict = new JTextField(10);       
+        adrDistrict = new JTextField(10);
         btnSave     = new JButton(actionText);
         btnCancel   = new JButton("Cancel");
         btnSave     .addActionListener(this);
         btnCancel   .addActionListener(this);
-        
+        this.owner  = owner;
+
         adrPanel.setBorder(BorderFactory.createTitledBorder(actionText+" Address"));
-        
+
         // Populate Types Combo Box
-        for (Object value : AddressType.getAddressTypes()) {
+        for (Object value : AddressType.getAddressTypes())
             adrType.addItem(value);
-        }
-        
+
         // Populate Country Combo Box
-        for (Object value : DBHPInterface.getListOfCountries()) {
+        for (Object value : DBHPInterface.getListOfCountries())
             adrCountry.addItem(value);
-        }
-        
+
         l = new JLabel("Address Type: ", JLabel.TRAILING);
         adrPanel.add(l);
         l.setLabelFor(adrType);
         adrPanel.add(adrType);
-        
+
         l = new JLabel("Mailing Label: ", JLabel.TRAILING);
         adrPanel.add(l);
         l.setLabelFor(adrLabel);
@@ -94,22 +101,22 @@ public class AddressBox extends JFrame implements ActionListener {
         adrPanel.add(l);
         l.setLabelFor(adrLine1);
         adrPanel.add(adrLine1);
-        
+
         l = new JLabel("Address Line 2: ", JLabel.TRAILING);
         adrPanel.add(l);
         l.setLabelFor(adrLine2);
         adrPanel.add(adrLine2);
-        
+
         l = new JLabel("Address Line 3: ", JLabel.TRAILING);
         adrPanel.add(l);
         l.setLabelFor(adrLine3);
         adrPanel.add(adrLine3);
-        
+
         l = new JLabel("City: ", JLabel.TRAILING);
         adrPanel.add(l);
         l.setLabelFor(adrCity);
         adrPanel.add(adrCity);
-        
+
         l = new JLabel("State/Province: ", JLabel.TRAILING);
         adrPanel.add(l);
         l.setLabelFor(adrState);
@@ -119,80 +126,81 @@ public class AddressBox extends JFrame implements ActionListener {
         adrPanel.add(l);
         l.setLabelFor(adrZip);
         adrPanel.add(adrZip);
-        
+
         l = new JLabel("District: ", JLabel.TRAILING);
         adrPanel.add(l);
         l.setLabelFor(adrDistrict);
         adrPanel.add(adrDistrict);
-        
+
         l = new JLabel("Country: ", JLabel.TRAILING);
         adrPanel.add(l);
         l.setLabelFor(adrCountry);
         adrPanel.add(adrCountry);
-        
+
         adrPanel.add(btnSave);
         adrPanel.add(btnCancel);
-        
+
         //Lay out the panel.
         SpringUtilities.makeCompactGrid(adrPanel,
                                         11, 2,   //rows, cols
                                         3, 3,   //initX, initY
                                         3, 3);  //xPad, yPad
-        
-               
+
+
         cp.add(adrPanel);
-        
+
         this.pack();
-        
+
         // Set the location of the About Window centered relative to the MainMenu
         // --CENTER--
         Point aboutBoxLocation = new Point();
-        
+
         double aboutBoxX = owner.getLocation().getX() + ((owner.getWidth() / 2) - (this.getWidth() / 2));
         double aboutBoxY = owner.getLocation().getY() + ((owner.getHeight() / 2) - (this.getHeight() / 2));
-        
+
         aboutBoxLocation.setLocation(aboutBoxX, aboutBoxY);
         this.setLocation(aboutBoxLocation);
         // --END CENTER--
-        
+
         this.setVisible(true);
     }
-    
+
+    private boolean addAddress() {
+        Address a = new Address();
+        a.setAddressType((KeyValue)adrType.getSelectedItem());
+        a.setAddressLabel(adrLabel.getText().trim());
+        a.setAddressLine1(adrLine1.getText().trim());
+        a.setAddressLine2(adrLine2.getText().trim());
+        a.setAddressLine3(adrLine3.getText().trim());
+        a.setAddressCity(adrCity.getText().trim());
+        a.setAddressState(adrState.getText().trim());
+        a.setAddressZip(adrZip.getText().toLowerCase());
+        a.setAddressDistrict(adrDistrict.getText().trim());
+        a.setAddressCountry((KeyValue)adrCountry.getSelectedItem());
+        this.p.addAddress(a);
+
+        return this.p.saveToDatabase();
+    }
+
     /** Performs any actions this object has */
     public void actionPerformed(ActionEvent event) {
         AbstractButton pressedButton = (AbstractButton)event.getSource();
-        if (pressedButton == btnCancel) {
-            this.dispose();
-        }
-        else if (pressedButton == btnSave) {
+        if (pressedButton == btnSave) {
             if (actionText.equals("Edit")) {
                 // Not Implemented Yet
             }
             else {
                 // Need to Check for Required Parts first ...
                 // Add New Address for Person
-                Address a = new Address();
-                a.setAddressType((KeyValue)adrType.getSelectedItem());
-                a.setAddressLabel(adrLabel.getText().trim());
-                a.setAddressLine1(adrLine1.getText().trim());
-                a.setAddressLine2(adrLine2.getText().trim());
-                a.setAddressLine3(adrLine3.getText().trim());
-                a.setAddressCity(adrCity.getText().trim());
-                a.setAddressState(adrState.getText().trim());
-                a.setAddressZip(adrZip.getText().toLowerCase());
-                a.setAddressDistrict(adrDistrict.getText().trim());
-                a.setAddressCountry((KeyValue)adrCountry.getSelectedItem());
-                this.p.addAddress(a);
-                if (this.p.saveToDatabase()) {
+                if (addAddress())
                     Debug.print("Address Successfully Added");
-                }
-                else {
+                else
                     Debug.print("Error Adding Address for ID "+p.getPersonID());
-                }
-                
             }
             this.dispose();
         }
+        else
+            this.dispose();
     }   
     
 }

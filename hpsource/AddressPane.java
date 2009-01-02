@@ -20,9 +20,9 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
     /** The Right Click Popup Menu */
     JPopupMenu rightClickMenu;
     private Person p;
-    private JFrame owner;
+    private MainMenu owner;
 
-    public AddressPane(JFrame owner, Person p) {
+    public AddressPane(MainMenu owner, Person p) {
         super();
         this.addMouseListener(this);
         this.buildRightClickMenu();
@@ -72,7 +72,7 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
         Debug.print(sourceText);
 
         if (sourceText.equals("Add")) {
-            new AddressBox(owner, p, false);
+            new AddressBox(owner, p);
         }
     }
 

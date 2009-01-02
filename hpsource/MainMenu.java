@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
 import java.awt.*;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.awt.event.*;
 import java.util.*;
 import java.text.SimpleDateFormat;
@@ -76,6 +78,8 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     private JButton btnUpdateProfile;
     private JScrollPane filterListScrollPane;
 
+    private TrayIcon hpTrayIcon;
+
     /** Creates a new instance of MainMenu */
     public MainMenu() {
         // Set global variables -- Eventually need to get rid of variable THIS
@@ -94,6 +98,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         this.setHPContent();
         this.initializeButtons();
         this.getContentPane().add(splitPanel);
+        this.setUpTrayIcon();
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 
@@ -111,6 +116,64 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         profileListPane.setDividerLocation(profileListPane.getHeight() / 2);
 
         setVisible(true);
+    }
+    // ANd comment later
+    private TrayIcon getTrayIcon() {
+        return hpTrayIcon;
+    }
+    // Add comment later
+    private void setUpTrayIcon() {
+        if (SystemTray.isSupported()) {
+            SystemTray tray = SystemTray.getSystemTray();
+            Image sysTrayIcon = this.getIconImage();
+
+            Dimension sysTrayIconSize = tray.getTrayIconSize();
+            sysTrayIcon = sysTrayIcon.getScaledInstance((int)(sysTrayIconSize.getWidth()), (int)(sysTrayIconSize.getHeight()), Image.SCALE_AREA_AVERAGING);
+            
+            this.hpTrayIcon = new TrayIcon(sysTrayIcon);
+            this.hpTrayIcon.addMouseListener(new TrayMouseListener(this));
+            this.hpTrayIcon.setPopupMenu(this.getSysTrayMenu());
+
+            try {
+                tray.add(this.hpTrayIcon);
+            } catch (Exception e) {
+                Debug.print("Error with SystemTray functionality, exiting app.");
+                System.exit(0);
+            }
+        }
+        else
+            hpTrayIcon = null;
+    }
+    public PopupMenu getSysTrayMenu() {
+        PopupMenu popupMenu = new PopupMenu();
+
+        MenuItem quickAddItem = new MenuItem("Quick Add");
+        quickAddItem.addActionListener(new MenuAction("Quick Add"));
+        MenuItem addIndItem = new MenuItem("Add Person");
+        addIndItem.addActionListener(new MenuAction("Add Individual"));
+        MenuItem addFamItem = new MenuItem("Add Family");
+        addFamItem.addActionListener(new MenuAction("Add Family"));
+        MenuItem addCorpItem = new MenuItem("Add Business");
+        addCorpItem.addActionListener(new MenuAction("Add Business"));
+        MenuItem searchItem = new MenuItem("Search");
+        searchItem.addActionListener(new MenuAction("Search"));
+        MenuItem aboutItem = new MenuItem("About");
+        aboutItem.addActionListener(new MenuAction("About"));
+        MenuItem exitItem = new MenuItem("Exit");
+        exitItem.addActionListener(new MenuAction("Exit"));
+
+        popupMenu.add(quickAddItem);
+        popupMenu.addSeparator();
+        popupMenu.add(addIndItem);
+        popupMenu.add(addFamItem);
+        popupMenu.add(addCorpItem);
+        popupMenu.addSeparator();
+        popupMenu.add(searchItem);
+        popupMenu.add(aboutItem);
+        popupMenu.addSeparator();
+        popupMenu.add(exitItem);
+
+        return popupMenu;
     }
     /** Initializes all the buttons and adds action listeners to them.
      * Initializes the buttons used by Hoi Polloi and then adds the proper
@@ -550,63 +613,63 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
      * @param theme The name of the theme to set.
      */
     private void setTheme(String theme) {
-        if (theme.equalsIgnoreCase("default")) {
+        if ("default".equalsIgnoreCase(theme)) {
             PlafOptions.setCurrentTheme(DEFAULT);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             defaultTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("gray")) {
+        else if ("gray".equalsIgnoreCase(theme)) {
             PlafOptions.setCurrentTheme(GRAY);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             grayTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("yellow")) {
+        else if ("yellow".equalsIgnoreCase(theme)) {
             PlafOptions.setCurrentTheme(YELLOW);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             yellowTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("ruby")) {
+        else if ("ruby".equalsIgnoreCase(theme)) {
             PlafOptions.setCurrentTheme(RUBY);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             rubyTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("darude")) {
+        else if ("darude".equalsIgnoreCase(theme)) {
             PlafOptions.setCurrentTheme(DARUDE);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             darudeTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("silver")) {
+        else if ("silver".equalsIgnoreCase(theme)) {
             PlafOptions.setCurrentTheme(SILVER);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             silverTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("gold")) {
+        else if ("gold".equalsIgnoreCase(theme)) {
             PlafOptions.setCurrentTheme(GOLD);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             goldTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("charcoal")) {
+        else if ("charcoal".equalsIgnoreCase(theme)) {
             PlafOptions.setCurrentTheme(CHARCOAL);
             PlafOptions.setAsLookAndFeel();
             PlafOptions.updateAllUIs();
             charcoalTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("metal")) {
+        else if ("metal".equalsIgnoreCase(theme)) {
             // Set the Hoi Polloi theme to the java default "Metal" look and feel.
 
             PlafOptions.setCurrentTheme(new javax.swing.plaf.metal.DefaultMetalTheme());
@@ -620,7 +683,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             metalTheme.setSelected(true);
             Debug.print("Set theme: " + theme.toUpperCase());
         }
-        else if (theme.equalsIgnoreCase("ocean")) {
+        else if ("ocean".equalsIgnoreCase(theme)) {
             // Set the Hoi Polloi theme to the java OceanTheme "Metal" look and feel.
 
             PlafOptions.setCurrentTheme(new javax.swing.plaf.metal.OceanTheme());
@@ -1369,6 +1432,14 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     public void showProfile(Person person) {
         this.currentPerson = person;
 
+        StringBuffer trayTooltip = new StringBuffer();
+        trayTooltip.append("Viewing profile for ");
+        trayTooltip.append(person.getLastName());
+        trayTooltip.append(", ");
+        trayTooltip.append(person.getFirstName());
+        trayTooltip.append(".");
+        hpTrayIcon.setToolTip(trayTooltip.toString());
+
         removeAllComponents();
 
         Debug.print("Getting information on person with ID #: "+person.getPersonID());
@@ -1575,7 +1646,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         dobLabel.setFont(boldInfoFont);
         JLabel personDobLabel = new JLabel(dob);
         personDobLabel.setFont(infoFont);
-        personDobLabel.setToolTipText(person.getTimeToNextBirthday());
+        personDobLabel.setToolTipText(Birthday.getETAString(person.getBirthday()));
         JPanel dobPanel = new JPanel();
         dobPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
         dobPanel.add(dobLabel);
@@ -1788,7 +1859,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
      */
     public AddressPane getAddressPane(Person person) {
         // Address Box *******************************************************
-        AddressPane addressPane = new AddressPane(THIS, person);
+        AddressPane addressPane = new AddressPane(this, person);
         ArrayList <Address> addressList = person.getAddresses();
 
         // Loop to Create Tabs
@@ -2256,6 +2327,14 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             super(n);
         }
 
+        private void deiconifyParent() {
+            if (!THIS.isVisible()) {
+                THIS.setExtendedState(JFrame.NORMAL);
+                THIS.setVisible(true);
+                THIS.toFront();
+            }
+        }
+
         public void actionPerformed(ActionEvent evt) {
             String selection = (String)getValue(Action.NAME);
 
@@ -2264,6 +2343,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                 System.exit(0);
             }
             else if (selection.equals("Search")) {
+                deiconifyParent();
                 new SearchWindow(THIS);
             }
             else if (selection.equals("Export")) {
@@ -2284,9 +2364,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                 }
             }
             else if (selection.equals("Quick Add")) {
+                deiconifyParent();
                 quickAdd();
             }
             else if (selection.equals("About")) {
+                deiconifyParent();
                 About.showAboutWindow(THIS, hpVersion);
             }
             else if (selection.equals("Print")) {
@@ -2305,6 +2387,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                 JOptionPane.showMessageDialog(THIS, "Please donate a blue tooth phone or dongle!");
             }
             else {
+                deiconifyParent();
                 JOptionPane.showMessageDialog(THIS, "This feature will be coming in a later version!", selection.toString(), JOptionPane.INFORMATION_MESSAGE);
             }
         }

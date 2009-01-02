@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package hoipolloi;
 import java.awt.event.*;
 /** Listens for the window being closed so HP can save the property file before exiting
@@ -22,7 +17,10 @@ public class HPWindowListener implements WindowListener {
     public void windowDeactivated(WindowEvent evt) { }
     public void windowActivated(WindowEvent evt) { }
     public void windowDeiconified(WindowEvent evt) { }
-    public void windowIconified(WindowEvent evt) { }
+    public void windowIconified(WindowEvent evt) {
+        if (java.awt.SystemTray.isSupported())
+            parent.setVisible(false);
+    }
     public void windowClosed(WindowEvent evt) { }
     public void windowClosing(WindowEvent evt) {
         parent.savePropertyFile();
