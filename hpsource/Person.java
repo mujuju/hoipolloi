@@ -284,6 +284,7 @@ public class Person implements Comparable {
             ResultSet rs    = stmt.executeQuery(sql);
             while (rs.next()) {
                 Address tempAddress = new Address();
+                tempAddress.setAddressID(rs.getInt("adrAddressID"));
                 tempAddress.setAddressType(new KeyValue(rs.getInt("adrAddressTypeID"), rs.getString("atpAddressType")));
                 tempAddress.setAddressLabel(rs.getString("adrAddressLabel"));
                 tempAddress.setAddressLine1(rs.getString("adrAddressLine1"));

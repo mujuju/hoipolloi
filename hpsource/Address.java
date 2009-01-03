@@ -6,11 +6,12 @@ package hoipolloi;
  * Country, District and Type (Residential, Billing, Mailing etc).
  *
  * @author  Brandon Tanner
- * @version 1.2 Jan 2, 2008
+ * @version 1.3 Jan 3, 2009
  * @since   December 12, 2006
  */
 public class Address {
-    
+
+    protected int      addressID;
     protected KeyValue addressType;  // Required
     protected String   addressLabel;
     protected String   addressLine1; // Required
@@ -24,6 +25,7 @@ public class Address {
     
     /** Creates a new instance of Address */
     public Address() {
+        this.addressID     = -1;
         this.addressType   = new KeyValue();
         this.addressLabel  = "";
         this.addressLine1  = "";
@@ -59,6 +61,13 @@ public class Address {
      */
     public KeyValue getAddressType() {
         return this.addressType;
+    }
+
+    /**
+     * Gets the Address ID.
+     */
+    public int getAddressID() {
+        return this.addressID;
     }
     
     /**
@@ -146,6 +155,10 @@ public class Address {
         url += "&state="+state;
         url += "&zip="+zip;
         return url;
+    }
+
+    public void setAddressID(int aid) {
+        this.addressID = aid;
     }
     
     public void setAddressType(KeyValue type) {
