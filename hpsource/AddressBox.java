@@ -29,18 +29,37 @@ public class AddressBox extends JDialog implements ActionListener {
     private JButton    btnCancel;
     private String     actionText;
     private MainMenu   owner;
+    private Address    address;
 
     public AddressBox(MainMenu owner, Person person) {
         super();
         actionText = "Add";
         createAddressBox(owner, person);
+        this.setVisible(true);
     }
 
     public AddressBox(MainMenu owner, Person person, Address address) {
         super();
-        actionText = "Edit";
+        this.actionText = "Edit";
+        this.address = address;
         createAddressBox(owner, person);
-        //setAddressInformation(address);
+        setAddressInformation();
+        this.setVisible(true);
+    }
+
+    private void setAddressInformation() {
+        Debug.print("Called set info!");
+        Debug.print(address.getAddressType());
+        adrType.setSelectedItem(address.getAddressType());
+        adrLabel.setText(address.getAddressLabel());
+        adrLine1.setText(address.getAddressLine1());
+        adrLine2.setText(address.getAddressLine2());
+        adrLine3.setText(address.getAddressLine3());
+        adrCity.setText(address.getAddressCity());
+        adrState.setText(address.getAddressState());
+        adrZip.setText(address.getAddressZip());
+        adrCountry.setSelectedItem(address.getAddressCountry());
+        adrDistrict.setText(address.getAddressDistrict());
     }
 
     private void createAddressBox(MainMenu owner, Person person) {
@@ -161,8 +180,6 @@ public class AddressBox extends JDialog implements ActionListener {
         aboutBoxLocation.setLocation(aboutBoxX, aboutBoxY);
         this.setLocation(aboutBoxLocation);
         // --END CENTER--
-
-        this.setVisible(true);
     }
 
     private boolean addAddress() {
@@ -187,7 +204,7 @@ public class AddressBox extends JDialog implements ActionListener {
         AbstractButton pressedButton = (AbstractButton)event.getSource();
         if (pressedButton == btnSave) {
             if (actionText.equals("Edit")) {
-                // Not Implemented Yet
+                // Not implemented yet
             }
             else {
                 // Need to Check for Required Parts first ...

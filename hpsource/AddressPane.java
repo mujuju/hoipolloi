@@ -74,6 +74,15 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
         if (sourceText.equals("Add")) {
             new AddressBox(owner, p);
         }
+        else if (sourceText.equals("Edit")) {
+            try {
+                AddressPanel panel = (AddressPanel)(this.getSelectedComponent());
+                new AddressBox(owner, p, panel.getAddress());
+            } catch (Exception exc) { Debug.print("No address to edit!"); }
+        }
+        else if (sourceText.equals("Delete")) {
+
+        }
     }
 
 }
