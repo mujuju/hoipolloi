@@ -43,6 +43,7 @@ public class MenuAction extends AbstractAction {
         }
         else if (selection.equals("Clear")) {
             parent.clearWindow();
+            parent.setEditing(false);
         }
         else if (selection.equals("Statistics")) {
             Stats.showStats(parent);

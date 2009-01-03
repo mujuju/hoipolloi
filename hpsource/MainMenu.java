@@ -27,6 +27,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     private JPanel contentPane;
     private JSplitPane profileListPane;
     private JPanel listPane;
+    private JPanel filterListPanel;
     private WatermarkPanel splitPanel;
     private MainMenu THIS;
 
@@ -80,6 +81,9 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
     private TrayIcon hpTrayIcon;
 
+    // Flags if any go here
+    private boolean editing = false;
+
     /** Creates a new instance of MainMenu */
     public MainMenu() {
         // Set global variables -- Eventually need to get rid of variable THIS
@@ -116,12 +120,26 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         profileListPane.setDividerLocation(profileListPane.getHeight() / 2);
 
         setVisible(true);
+
+        int temp = DBHPInterface.getBirthdaysThisMonth().size();
+        if (temp > 0) {
+            if (temp > 1)
+                this.sysTrayMessage("Birthday Notice", "You have " + temp + " contacts with Birthdays this Month!", TrayIcon.MessageType.INFO);
+            else
+                this.sysTrayMessage("Birthday Notice", "You have 1 contact with a Birthday this Month!", TrayIcon.MessageType.INFO);
+        }
     }
-    // ANd comment later
-    private TrayIcon getTrayIcon() {
-        return hpTrayIcon;
-    }
-    // Add comment later
+    /** Creates and sets up the SystemTray Icon if the function is supported.
+     * Creats the System tray icon adding in any necessary parts to it provided
+     * that SystemTray.isSupported() returns true. If System Tray functionality
+     * is not supported then it sets hpIconTray to null.
+     *
+     * ** NOTE **
+     * MainMenu features two helper methods to set the TrayIcon tooltip and to
+     * display messages, they both test to make sure the SystemTray is supported
+     * and check to see if hpTrayIcon is not null. Use them instead of accessing
+     * hpTrayIcon directly.
+     */
     private void setUpTrayIcon() {
         if (SystemTray.isSupported()) {
             SystemTray tray = SystemTray.getSystemTray();
@@ -144,6 +162,35 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         else
             hpTrayIcon = null;
     }
+    /** Calls the TrayIcon displayMessage() method and passes in the given fields.
+     * This method adds a buffer between MainMenu and it's TrayIcon so that the
+     * coder doesn't to bother with double checking to make sure the System Tray
+     * is supported on the OS or that the hpTrayIcon was even initialized.
+     * @param caption The caption to give the displayed message.
+     * @param message The message to included on the displayed box.
+     * @param type The type of message to display (changes icon)
+     */
+    public void sysTrayMessage(String caption, String message, TrayIcon.MessageType type) {
+        if (SystemTray.isSupported() && hpTrayIcon != null) {
+            hpTrayIcon.displayMessage(caption, message, type);
+        }
+    }
+    /** Calls the TrayIcon setToolTip() method and passes in the given field.
+     * This method adds a buffer between MainMenu and it's TrayIcon so that the
+     * coder doesn't to bother with double checking to make sure the System Tray
+     * is supported on the OS or that the hpTrayIcon was even initialized.
+     * @param tooltip The new tooltip to add to the TrayIcon
+     */
+    public void sysTrayTooltip(String tooltip) {
+        if (SystemTray.isSupported() && hpTrayIcon != null) {
+            hpTrayIcon.setToolTip(tooltip);
+        }
+    }
+    /** Creates the PopupMenu used by the TrayIcon and adds all the MenuItems to it.
+     * Creates the PopupMenu for the TrayIcon and sets up all the menu items for
+     * it, then returns the completed menu.
+     * @return Creates the popup menu for the TrayIcon to use.
+     */
     public PopupMenu getSysTrayMenu() {
         PopupMenu popupMenu = new PopupMenu();
 
@@ -201,7 +248,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         contentPane.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK));
         filterListScrollPane = this.getFilterListTree();
 
-        JPanel filterListPanel = new JPanel();
+        filterListPanel = new JPanel();
         filterListPanel.setLayout(new GridLayout(1, 1));
         filterListPanel.add(filterListScrollPane);
 
@@ -702,6 +749,14 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         return format.format(dateObject);
     }
     /**
+     * Sets the state of the editing flag so the program knows if it's being
+     * edited.
+     * @param state The new state for the editing flag.
+     */
+    public void setEditing(boolean state) {
+        this.editing = state;
+    }
+    /**
      * A test approach for editing a profile.
      *
      * Probably won't use this approach, someone make a better idea.
@@ -709,6 +764,9 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
      * @param person The Person's Profile to Edit.
      */
     public void editProfile(Person person) {
+        // Set editing flag on
+        this.setEditing(true);
+
         removeAllComponents();
 
         String prefix     = person.getPrefix();
@@ -1229,6 +1287,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                     p.setDescription(descArea.getText());
                     p.saveToDatabase();
                     updateFilteredList();
+                    THIS.setEditing(false);
                     showProfile(p);
                 }
                 else
@@ -1247,6 +1306,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                         savePropertyFile();
                         clearWindow();
                         showPeopleList(DBHPInterface.getListOfPeopleByLastName());
+                        THIS.setEditing(false);
                     }
                     else {
                         Debug.print("Failed to Purge this Person");
@@ -1424,7 +1484,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         trayTooltip.append(", ");
         trayTooltip.append(person.getFirstName());
         trayTooltip.append(".");
-        hpTrayIcon.setToolTip(trayTooltip.toString());
+        this.sysTrayTooltip(trayTooltip.toString());
 
         removeAllComponents();
 
@@ -1824,9 +1884,9 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JScrollPane listScroller = new JScrollPane(list);
         listScroller.setPreferredSize(new Dimension(220, getContentPane().getHeight()));
         
-        listPane.removeAll();
-        listPane.add(listScroller);
-        updateWindow();
+        this.listPane.removeAll();
+        this.listPane.add(listScroller);
+        this.updateWindow();
     }
     /** Clears the main application window screen and shows the HP logo in the center.*/
     public void removeAllComponents() {
@@ -1834,8 +1894,8 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     }
     /** Causes MainMenu and all subcomponents to repaint() */
     public void updateWindow() {
-        update(getGraphics());
-        setVisible(true);
+        this.update(this.getGraphics());
+        this.setVisible(true);
     }
     /**
      * Gets a JTabbedPane showing addresses for a given person.
@@ -1851,128 +1911,10 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         // Loop to Create Tabs
         if (addressList != null && !addressList.isEmpty()) {
             for (Address address : addressList) {
-                // Get Address Parts
-                String addressType     = address.getAddressType().getValue();
-                String addressLabel    = address.getAddressLabel();
-                String addressLine1    = address.getAddressLine1();
-                String addressLine2    = address.getAddressLine2();
-                String addressLine3    = address.getAddressLine3();
-                String addressCity     = address.getAddressCity();
-                String addressState    = address.getAddressState();
-                String addressZip      = address.getAddressZip();
-                String addressCountry  = address.getAddressCountry().getValue();
-                String addressDistrict = address.getAddressDistrict();
+                String addressType = address.getAddressType().getValue();
 
                 // Make Panel to Display Address (should really make our own component for this)
-                JPanel addressPanel = new JPanel();
-                addressPanel.setLayout(new GridBagLayout());
-                GridBagConstraints c = new GridBagConstraints();
-                Font addressFont = new Font(Font.SANS_SERIF, Font.PLAIN, 16);
-
-                JLabel label = new JLabel(addressLabel);
-                label.setFont(addressFont);
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 0;
-                addressPanel.add(label, c);
-
-                JLabel a1 = new JLabel(addressLine1);
-                a1.setFont(addressFont);
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 1;
-                addressPanel.add(a1, c);
-
-                JLabel a2 = new JLabel(addressLine2);
-                a2.setFont(addressFont);
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 2;
-                addressPanel.add(a2, c);
-
-                JLabel a3 = new JLabel(addressLine3);
-                a3.setFont(addressFont);
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 3;
-                addressPanel.add(a3, c);
-
-                JLabel city  = new JLabel(addressCity+", ");
-                JLabel state = new JLabel(addressState);
-                JLabel zip   = new JLabel(" "+addressZip);
-                city.setFont(addressFont);
-                state.setFont(addressFont);
-                zip.setFont(addressFont);
-                JPanel CityStateZip = new JPanel();
-                CityStateZip.setLayout(new BoxLayout(CityStateZip, BoxLayout.X_AXIS));
-                CityStateZip.add(city);
-                CityStateZip.add(state);
-                CityStateZip.add(zip);
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 4;
-                addressPanel.add(CityStateZip, c);
-
-                JLabel district = new JLabel(addressDistrict);
-                district.setFont(addressFont);
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 5;
-                addressPanel.add(district, c);
-
-                JLabel country = new JLabel(addressCountry);
-                country.setFont(addressFont);
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 6;
-                addressPanel.add(country, c);
-
-                JPanel mapPanel = new JPanel(new FlowLayout());
-                ButtonGroup maps = new ButtonGroup();
-
-                JButton googlemaps = new JButton("Google Maps");
-                googlemaps.setToolTipText("View this Address in Google Maps");
-
-                JButton mapquest = new JButton("MapQuest");
-                mapquest.setToolTipText("MapQuest this Address");
-
-                maps.add(googlemaps);
-                maps.add(mapquest);
-
-                mapPanel.add(googlemaps);
-                mapPanel.add(mapquest);
-
-
-
-                final Address a = address;
-                googlemaps.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent event) {
-                        try {
-                            BrowserLauncher.openURL(a.getGoogleMapsURL());
-                        }
-                        catch (Exception e) {
-                            Debug.print(e.getMessage());
-                        }
-                    }
-                });
-
-                mapquest.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent event) {
-                        try {
-                            BrowserLauncher.openURL(a.getMapquestURL());
-                        }
-                        catch (Exception e) {
-                            Debug.print(e.getMessage());
-                        }
-                    }
-                });
-
-
-                c.fill  = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 7;
-                addressPanel.add(mapPanel, c);
-
+                AddressPanel addressPanel = new AddressPanel(address);
                 addressPane.addTab(addressType, addressPanel);
             }
         }
@@ -2117,6 +2059,10 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                                 newPerson.addCategory(catID);
 
                                 if (success) {
+                                    THIS.filterListScrollPane = THIS.getFilterListTree();
+                                    THIS.filterListPanel.removeAll();
+                                    THIS.filterListPanel.add(THIS.filterListScrollPane);
+                                    THIS.updateWindow();
                                     showProfile(newPerson);
                                     showPeopleList(DBHPInterface.getListOfPeopleByLastName());
                                 }
@@ -2263,7 +2209,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     /** Dispatchs the key event for browing profiles with the left and right arrow key */
     public boolean dispatchKeyEvent(KeyEvent e) {
         if (e.getID() == KeyEvent.KEY_RELEASED) {
-            if (currentPerson != null) {
+            if (this.currentPerson != null && !this.editing) {
                 String personName = currentPerson.getLastName() + ", " + currentPerson.getFirstName();
 
                 java.awt.Toolkit defaultToolkit = java.awt.Toolkit.getDefaultToolkit();

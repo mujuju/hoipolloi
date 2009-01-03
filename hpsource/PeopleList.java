@@ -17,7 +17,7 @@ public class PeopleList extends JList implements MouseListener {
     }
 
     public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
+        if (e.getClickCount() == 1) {
             int index = this.locationToIndex(e.getPoint());
             this.setSelectedIndex(index);
             KeyValue value = (KeyValue)(this.getSelectedValue());
@@ -27,10 +27,6 @@ public class PeopleList extends JList implements MouseListener {
             catch (Exception ex) {
                 Debug.print(ex.getMessage());
             }
-        }
-        if (e.getClickCount() == 1) {
-            int index = this.locationToIndex(e.getPoint());
-            this.setSelectedIndex(index);
         }
     }
     public void mousePressed(MouseEvent e) {}
