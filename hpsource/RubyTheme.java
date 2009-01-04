@@ -6,9 +6,6 @@ package hoipolloi;
 
 import javax.swing.plaf.*;
 import javax.swing.plaf.metal.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
 
 /**
  * This class describes a theme using red colors.
