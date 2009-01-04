@@ -28,7 +28,8 @@ import java.io.*;
  */
 public class HPPictureEditor extends JDialog implements ActionListener {
     private MainMenu parent;
-    
+    private static final int MAX_WIDTH = 291;
+    private static final int MAX_HEIGHT = 356;
     // Buttons
     private JButton acceptButton = new JButton("Accept");
     private JButton cancelButton = new JButton("Cancel");
@@ -61,12 +62,12 @@ public class HPPictureEditor extends JDialog implements ActionListener {
             JMenu fileMenu = new JMenu("File");
             fileMenu.setMnemonic('F');
                 
-            JMenuItem loadImageItem = new JMenuItem(new MenuAction("Open Picture"));
+            JMenuItem loadImageItem = new JMenuItem(new MenuAction("Open Picture", this));
             loadImageItem.setIcon(loadImageIcon);
             loadImageItem.setMnemonic('O');
             loadImageItem.setAccelerator(KeyStroke.getKeyStroke('O', KeyEvent.CTRL_DOWN_MASK));
             
-            JMenuItem disposeItem = new JMenuItem(new MenuAction("Close"));
+            JMenuItem disposeItem = new JMenuItem(new MenuAction("Close", this));
             disposeItem.setIcon(blankImageIcon);
             disposeItem.setAccelerator(KeyStroke.getKeyStroke('D', KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK));
             disposeItem.setMnemonic('C');
@@ -79,7 +80,7 @@ public class HPPictureEditor extends JDialog implements ActionListener {
             JMenu editMenu = new JMenu("Edit");
             editMenu.setMnemonic('E');
             
-            JMenuItem resizeImageItem = new JMenuItem(new MenuAction("Resize"));
+            JMenuItem resizeImageItem = new JMenuItem(new MenuAction("Resize", this));
             resizeImageItem.setIcon(resizeImageIcon);
             resizeImageItem.setMnemonic('R');
             resizeImageItem.setAccelerator(KeyStroke.getKeyStroke('R', KeyEvent.ALT_DOWN_MASK));
@@ -192,12 +193,26 @@ public class HPPictureEditor extends JDialog implements ActionListener {
     public void disposeEditor() {
         this.dispose();
     }
-    
+
+    public void resizeImage(int newWidth, int newHeight) {
+
+        Image scaledImage = currentImage.getScaledInstance(newWidth, newHeight, Image.SCALE_AREA_AVERAGING);
+        BufferedImage newCurrentImage = createBlankImage(currentImage, newWidth, newHeight);
+        Graphics2D g2 = newCurrentImage.createGraphics();
+        g2.drawImage(scaledImage, 0, 0, null);
+        g2.dispose();
+        currentImage = newCurrentImage;
+        imageLabel.setIcon(new ImageIcon(scaledImage));
+        imageLabel.setText("");
+    }
+
     class MenuAction extends AbstractAction {
-        public MenuAction(String name) {
+        private HPPictureEditor parent;
+        public MenuAction(String name, HPPictureEditor parent) {
             super(name);
+            this.parent = parent;
         }
-        
+
         public void actionPerformed(ActionEvent evt) {
             String selection = (String)getValue(Action.NAME);
             
@@ -219,30 +234,42 @@ public class HPPictureEditor extends JDialog implements ActionListener {
                         lastSelectedFile = browser.getSelectedFile();
                         currentImage = ImageIO.read(lastSelectedFile);
                         imageLabel.setIcon(new ImageIcon(lastSelectedFile.getPath()));
-                        
-                        if (currentImage.getWidth() > parent.getWidth()) {
-                            if (currentImage.getHeight() > parent.getHeight()) {
+                        boolean done = false;
+                        while (!done) {
+                            if (currentImage.getWidth() > parent.getWidth() && currentImage.getHeight() > parent.getHeight()) {
                                 Debug.print("Resizing...");
                                 int width = currentImage.getWidth();
                                 int height = currentImage.getHeight();
-                                
+
                                 int maxSide = Math.max(width, height);
-                                
-                                double scale = (double)(parent.getWidth() - 20) / maxSide;
-                                
+
+                                double scale = (double)(parent.getHeight() - 40) / maxSide;
+
                                 int newWidth = (int)(scale * width);
                                 int newHeight = (int)(scale * height);
-                                
-                                Image scaledImage = currentImage.getScaledInstance(newWidth, newHeight, Image.SCALE_AREA_AVERAGING);
-                                BufferedImage newCurrentImage = createBlankImage(currentImage, newWidth, newHeight);
-                                Graphics2D g2 = newCurrentImage.createGraphics();
-                                g2.drawImage(scaledImage, 0, 0, null);
-                                g2.dispose();
-                                currentImage = newCurrentImage;
-                                imageLabel.setIcon(new ImageIcon(scaledImage));
-                                imageLabel.setText("");
-                                Debug.print("Done resizing: " + "resized by " + scale);
+
+                                resizeImage(newWidth, newHeight);
+
+                                Debug.print("Done resizing: resized by " + scale);
                             }
+                            else if (currentImage.getWidth() > parent.getWidth()) {
+                                double scale = (double)(parent.getWidth() - 20) / currentImage.getWidth();
+
+                                int newWidth = (int)(scale * currentImage.getWidth());
+                                int newHeight = (int)(scale * currentImage.getHeight());
+
+                                resizeImage(newWidth, newHeight);
+                            }
+                            else if (currentImage.getHeight() > parent.getHeight()) {
+                                double scale = (double)(parent.getHeight() - 20) / currentImage.getHeight();
+
+                                int newWidth = (int)(scale * currentImage.getWidth());
+                                int newHeight = (int)(scale * currentImage.getHeight());
+
+                                resizeImage(newWidth, newHeight);
+                            }
+                            else
+                                done = true;
                         }
                         
                         resizeFrame();
@@ -250,8 +277,12 @@ public class HPPictureEditor extends JDialog implements ActionListener {
                         Debug.print("ERROR: Problem reading file in.");
                     }
                 }
-            } else if (selection.equals("Close")) {
+            }
+            else if (selection.equals("Close")) {
                 disposeEditor();
+            }
+            else if (selection.equals("Resize")) {
+                new ResizeDialog(parent);
             }
         }
     }
@@ -363,6 +394,108 @@ public class HPPictureEditor extends JDialog implements ActionListener {
                 //g.setColor(Color.BLACK);
                 //g.drawString("Not an image", 30, 100);
             //}
+        }
+    }
+
+    class ResizeDialog extends JDialog implements ActionListener{
+        private HPPictureEditor parent;
+
+        private JRadioButton setSizeRadio;
+        private JRadioButton byPercentageRadio;
+        private JTextField percentageField;
+        private JCheckBox constraintsBox;
+        private JTextField newHeightField;
+        private JTextField newWidthField;
+        private JLabel constraintWidthLabel;
+        private JLabel constraintHeightLabel;
+
+        private ImageIcon locked;
+        private ImageIcon unlocked;
+
+        public ResizeDialog(HPPictureEditor parent) {
+            super();
+            this.setTitle("Resize");
+            this.setModal(true);
+            this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            this.parent = parent;
+            this.createDialog();
+
+            // Set the location of the frame relative to the MainMenu
+            // --CENTER--
+            Point frameLocation = new Point();
+
+            double frameX = this.parent.getLocation().getX() + ((this.parent.getWidth() / 2) - (this.getWidth() / 2));
+            double frameY = this.parent.getLocation().getY() + ((this.parent.getHeight() / 2) - (this.getHeight() / 2));
+
+            frameLocation.setLocation(frameX, frameY);
+            this.setLocation(frameLocation);
+            // --END CENTER--
+
+            this.setVisible(true);
+        }
+
+        private void createDialog() {
+            locked = new ImageIcon(getClass().getClassLoader().getResource("link.png"));
+            unlocked = new ImageIcon(getClass().getClassLoader().getResource("link_break.png"));
+
+            constraintsBox = new JCheckBox("Keep constraints");
+            constraintsBox.setSelected(true);
+            constraintsBox.addActionListener(this);
+            setSizeRadio = new JRadioButton("Scale by height and width");
+            setSizeRadio.addActionListener(this);
+            byPercentageRadio = new JRadioButton("Scale by percenage");
+            byPercentageRadio.addActionListener(this);
+
+            newWidthField = new JTextField(15);
+            newHeightField = new JTextField(15);
+
+            constraintWidthLabel = new JLabel();
+            constraintWidthLabel.setIcon(locked);
+            constraintHeightLabel = new JLabel();
+            constraintHeightLabel.setIcon(locked);
+
+            JLabel widthLabel = new JLabel("Width:");
+            JLabel heightLabel = new JLabel("Height:");
+
+            JPanel widthTextPanel = new JPanel();
+            widthTextPanel.add(widthLabel);
+            widthTextPanel.add(newWidthField);
+            widthTextPanel.add(constraintWidthLabel);
+            JPanel widthPanel = new JPanel();
+            widthPanel.add(widthTextPanel);
+            
+            JPanel heightTextPanel = new JPanel();
+            heightTextPanel.add(heightLabel);
+            heightTextPanel.add(newHeightField);
+            heightTextPanel.add(constraintHeightLabel);
+            JPanel heightPanel = new JPanel();
+            heightPanel.add(heightTextPanel);
+
+            JPanel constraintPanel = new JPanel();
+            constraintPanel.add(constraintsBox);
+            
+            JPanel bySizePanel = new JPanel();
+            bySizePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "By Size"));
+            bySizePanel.setLayout(new BorderLayout());
+            bySizePanel.add(widthPanel, BorderLayout.NORTH);
+            bySizePanel.add(heightPanel, BorderLayout.CENTER);
+            bySizePanel.add(constraintPanel, BorderLayout.SOUTH);
+
+            this.add(bySizePanel);
+            this.pack();
+        }
+
+        public void actionPerformed(ActionEvent evt) {
+            if (evt.getSource() == constraintsBox) {
+                if (constraintsBox.isSelected()) {
+                    constraintWidthLabel.setIcon(locked);
+                    constraintHeightLabel.setIcon(locked);
+                }
+                else {
+                    constraintWidthLabel.setIcon(unlocked);
+                    constraintHeightLabel.setIcon(unlocked);
+                }
+            }
         }
     }
 }
