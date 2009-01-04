@@ -306,14 +306,15 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
         return helpMenu;
     }
-    /** Builds this menu and then returns the completed object.
+    /** 
+     * Builds the Info menu and then returns the completed object.
      * Loads the images used by the this menu, creates and adds all menu items
      * and sub menus that belong to this menu.
-     * @return The completed JMenu for the JMenuBar
+     *
+     * @return The completed Info menu for the JMenuBar
      */
     private JMenu getInfoMenu() {
         ImageIcon reportIcon = new ImageIcon(getClass().getClassLoader().getResource("report.png"));
-        ImageIcon birthdayIcon = new ImageIcon(getClass().getClassLoader().getResource("birthday.png"));
         ImageIcon timeIcon = new ImageIcon(getClass().getClassLoader().getResource("time.png"));
 
         JMenu infoMenu = new JMenu("Info");
@@ -323,16 +324,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         statItem.setIcon(reportIcon);
         statItem.setMnemonic('S');
 
-        JMenuItem birthdayItem = new JMenuItem(new MenuAction("Birthdays", this));
-        birthdayItem.setIcon(birthdayIcon);
-        birthdayItem.setMnemonic('B');
-
         JMenuItem timeItem = new JMenuItem(new MenuAction("World Clocks", this));
         timeItem.setIcon(timeIcon);
         timeItem.setMnemonic('W');
 
         infoMenu.add(statItem);
-        infoMenu.add(birthdayItem);
         infoMenu.add(timeItem);
 
         return infoMenu;
