@@ -77,6 +77,7 @@ public class AddressBox extends JDialog implements ActionListener {
         this.setResizable(false);
 
         Container cp = this.getContentPane();
+        cp.setLayout(new BorderLayout());
 
         // Intialize vars
         adrPanel    = new JPanel(new SpringLayout());
@@ -156,17 +157,19 @@ public class AddressBox extends JDialog implements ActionListener {
         l.setLabelFor(adrCountry);
         adrPanel.add(adrCountry);
 
-        adrPanel.add(btnSave);
-        adrPanel.add(btnCancel);
-
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(btnSave);
+        buttonPanel.add(btnCancel);
+        
         //Lay out the panel.
         SpringUtilities.makeCompactGrid(adrPanel,
-                                        11, 2,   //rows, cols
+                                        10, 2,   //rows, cols
                                         3, 3,   //initX, initY
                                         3, 3);  //xPad, yPad
 
 
-        cp.add(adrPanel);
+        cp.add(adrPanel, BorderLayout.NORTH);
+        cp.add(buttonPanel, BorderLayout.SOUTH);
 
         this.pack();
 
@@ -182,7 +185,7 @@ public class AddressBox extends JDialog implements ActionListener {
         // --END CENTER--
     }
 
-    private boolean addAddress() {
+    private Address getAddress() {
         Address a = new Address();
         a.setAddressType((KeyValue)adrType.getSelectedItem());
         a.setAddressLabel(adrLabel.getText().trim());
@@ -194,9 +197,8 @@ public class AddressBox extends JDialog implements ActionListener {
         a.setAddressZip(adrZip.getText().toLowerCase());
         a.setAddressDistrict(adrDistrict.getText().trim());
         a.setAddressCountry((KeyValue)adrCountry.getSelectedItem());
-        this.p.addAddress(a);
 
-        return this.p.saveToDatabase();
+        return a;
     }
 
     /** Performs any actions this object has */
@@ -204,15 +206,20 @@ public class AddressBox extends JDialog implements ActionListener {
         AbstractButton pressedButton = (AbstractButton)event.getSource();
         if (pressedButton == btnSave) {
             if (actionText.equals("Edit")) {
-                p.removeAddress(address.getAddressID());
-                addAddress();
+                Address newAddress = getAddress();
+                
+                p.updateAddress(address.getAddressID(), newAddress);
+                p.saveToDatabase();
+                //p.removeAddress(address.getAddressID());
+                //addAddress();
             }
             else {
                 // Need to Check for Required Parts first ...
                 // Add New Address for Person
-                if (addAddress()) {
+                p.addAddress(this.getAddress());
+                
+                if (p.saveToDatabase()) {
                     Debug.print("Address Successfully Added");
-
                 }
                 else
                     Debug.print("Error Adding Address for ID "+p.getPersonID());

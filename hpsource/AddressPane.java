@@ -91,6 +91,7 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
             try {
                 AddressPanel panel = (AddressPanel)(this.getSelectedComponent());
                 p.removeAddress(panel.getAddress().getAddressID());
+                owner.updateFilterTree();
                 owner.showProfile(p);
             } catch (Exception exc) { Debug.print("No address to delete!"); }
         }
