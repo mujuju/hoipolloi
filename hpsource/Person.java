@@ -1065,6 +1065,18 @@ public class Person implements Comparable {
             }
         }
     }
+
+    /**
+     * Checks if this person has any addresses.
+     */
+    protected boolean hasAddresses() {
+        if (this.addresses.isEmpty()) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
     
     /**
      * Removes a Contact for this Person.

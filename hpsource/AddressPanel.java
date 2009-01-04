@@ -1,12 +1,15 @@
 package hoipolloi;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-/** A panel that displays individual components to an Address.
+
+/**
+ * A panel that displays individual components to an Address.
  *
- * @author Brandon Buck
- * @since January 2, 2009
- * @version 1.0
+ * @author  Brandon Buck
+ * @since   January 2, 2009
+ * @version 1.1
  */
 public class AddressPanel extends JPanel {
     private Address address;
@@ -90,52 +93,6 @@ public class AddressPanel extends JPanel {
         c.gridx = 0;
         c.gridy = 6;
         this.add(country, c);
-
-        JPanel mapPanel = new JPanel(new FlowLayout());
-        ButtonGroup maps = new ButtonGroup();
-
-        JButton googlemaps = new JButton("Google Maps");
-        googlemaps.setToolTipText("View this Address in Google Maps");
-
-        JButton mapquest = new JButton("MapQuest");
-        mapquest.setToolTipText("MapQuest this Address");
-
-        maps.add(googlemaps);
-        maps.add(mapquest);
-
-        mapPanel.add(googlemaps);
-        mapPanel.add(mapquest);
-
-
-
-        final Address a = address;
-        googlemaps.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                try {
-                    BrowserLauncher.openURL(a.getGoogleMapsURL());
-                }
-                catch (Exception e) {
-                    Debug.print(e.getMessage());
-                }
-            }
-        });
-
-        mapquest.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                try {
-                    BrowserLauncher.openURL(a.getMapquestURL());
-                }
-                catch (Exception e) {
-                    Debug.print(e.getMessage());
-                }
-            }
-        });
-
-
-        c.fill  = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 7;
-        this.add(mapPanel, c);
     }
 
     public Address getAddress() {

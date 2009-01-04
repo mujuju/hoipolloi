@@ -1899,10 +1899,10 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         this.setVisible(true);
     }
     /**
-     * Gets a JTabbedPane showing addresses for a given person.
+     * Gets an AddressPane showing addresses for a given person.
      *
      * @param person The Target Person
-     * @return A JTabbedPane showing Addresses for the Target Person
+     * @return An AddressPane showing Addresses for the Target Person
      */
     public AddressPane getAddressPane(Person person) {
         // Address Box *******************************************************
@@ -1921,13 +1921,14 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         }
         else {
             JPanel noAddressPanel = new JPanel(new BorderLayout());
-            noAddressPanel.add(new JLabel("     Edit Profile to Add Addresses"), BorderLayout.CENTER);
+            noAddressPanel.add(new JLabel("     Right Click in this area to Manage Addresses"), BorderLayout.CENTER);
             addressPane.addTab("Address", noAddressPanel);
         }
         // End Address Box ***************************************************
 
         return addressPane;
     }
+
     /**
      * Clears and updates the main application window.
      */
@@ -1936,6 +1937,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         removeAllComponents();
         updateWindow();
     }
+
     /** The Profile Quick-add Feature */
     public void quickAdd() {
 
@@ -2139,6 +2141,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
         updateWindow();
     }
+
     /** Handles all the theme change actions. */
     public void actionPerformed(ActionEvent evt) {
         boolean button = true;
@@ -2207,7 +2210,13 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             propFile.setProperty("theme", "ocean");
         }
     }
-    /** Dispatchs the key event for browing profiles with the left and right arrow key */
+
+    /**
+     * Dispatchs the key event for browing profiles with the left and right arrow keys.
+     * 
+     * @param e The KeyEvent.
+     * @return  True if there is a current person shown and not editing profile.
+     */
     public boolean dispatchKeyEvent(KeyEvent e) {
         if (e.getID() == KeyEvent.KEY_RELEASED) {
             if (this.currentPerson != null && !this.editing) {
@@ -2243,10 +2252,18 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         return false;
     }
 
+    /**
+     * Gets the current version of Hoi Polloi.
+     *
+     * @return The Hoi Polloi Version.
+     */
     public String getVersion() {
         return hpVersion;
     }
 
+    /**
+     * Not sure exactly, subclass for something. Brandon should javadoc this.
+     */
     class FilterTreeSelectionListener implements TreeSelectionListener {
         public void valueChanged(TreeSelectionEvent e) {
             JTree source = (JTree)e.getSource();

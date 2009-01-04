@@ -48,10 +48,13 @@ public class Address {
      * @return True if all the required parts are filled, otherwise false.
      */
     public boolean areRequiredPartsFilled() {
+        /*
         if (this.addressLine1.equals("") || this.addressLine1 == null)
             return false;
         else
             return true;
+        */
+        return true;
     }
     
     /**

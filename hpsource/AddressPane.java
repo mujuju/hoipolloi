@@ -25,13 +25,22 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
     public AddressPane(MainMenu owner, Person p) {
         super();
         this.addMouseListener(this);
-        this.buildRightClickMenu();
+        
+        // If the person has any addresses, show all popup menu items.
+        if (p.hasAddresses()) {
+            this.buildRightClickMenu(true);
+        }
+        else {
+            // Show only Add option in popup menu.
+            this.buildRightClickMenu(false);
+        }
+        
         this.p = p;
         this.owner = owner;
     }
 
 
-    private void buildRightClickMenu() {
+    private void buildRightClickMenu(boolean hasAddresses) {
         rightClickMenu = new JPopupMenu();
         JMenuItem addAddress = new JMenuItem("Add");
         addAddress.addActionListener(this);
@@ -40,15 +49,20 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
         JMenuItem delAddress = new JMenuItem("Delete");
         delAddress.addActionListener(this);
         JMenuItem title = new JMenuItem("Address Actions");
-        title.setEnabled(false);
         rightClickMenu.add(title);
         rightClickMenu.addSeparator();
         rightClickMenu.add(addAddress);
-        rightClickMenu.add(editAddress);
-        rightClickMenu.add(delAddress);
-        rightClickMenu.addSeparator();
-        rightClickMenu.add(new JMenuItem("Google Maps"));
-        rightClickMenu.add(new JMenuItem("Mapquest"));
+        if (hasAddresses) {
+            rightClickMenu.add(editAddress);
+            rightClickMenu.add(delAddress);
+            rightClickMenu.addSeparator();
+            JMenuItem googleMaps = new JMenuItem("Google Maps");
+            googleMaps.addActionListener(this);
+            JMenuItem mapquest   = new JMenuItem("Mapquest");
+            mapquest.addActionListener(this);
+            rightClickMenu.add(googleMaps);
+            rightClickMenu.add(mapquest);
+        }
     }
 
     private void showRightClickMenu(MouseEvent e) {
@@ -86,6 +100,27 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
                 p.removeAddress(panel.getAddress().getAddressID());
                 owner.showProfile(p);
             } catch (Exception exc) { Debug.print("No address to delete!"); }
+        }
+        else if (sourceText.equals("Google Maps")) {
+            Debug.print("GMs PopmenuItem Fired");
+            try {
+                AddressPanel panel = (AddressPanel)(this.getSelectedComponent());
+                String googleMapsURL = panel.getAddress().getGoogleMapsURL();
+                BrowserLauncher.openURL(googleMapsURL);
+            }
+            catch (Exception exc) {
+                Debug.print(exc.getMessage());
+            }
+        }
+        else if ("Mapquest".equals(sourceText)) {
+            try {
+                AddressPanel panel = (AddressPanel)(this.getSelectedComponent());
+                String mapquestURL = panel.getAddress().getMapquestURL();
+                BrowserLauncher.openURL(mapquestURL);
+            }
+            catch (Exception exc) {
+                Debug.print(exc.getMessage());
+            }
         }
     }
 

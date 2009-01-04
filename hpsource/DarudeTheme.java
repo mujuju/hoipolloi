@@ -1,14 +1,7 @@
-/*
- * @(#)DarudeTheme.java	1.0 12/14/07
- */
-
 package hoipolloi;
 
 import javax.swing.plaf.*;
 import javax.swing.plaf.metal.*;
-import javax.swing.*;
-import javax.swing.border.*;
-import java.awt.*;
 
 /**
  * This class describes a theme using orange colors.

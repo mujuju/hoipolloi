@@ -1,7 +1,3 @@
-/*
- * @(#)RubyTheme.java	1.0 12/19/06
- */
-
 package hoipolloi;
 
 import javax.swing.plaf.*;
