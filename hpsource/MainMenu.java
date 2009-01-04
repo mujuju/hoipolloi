@@ -119,8 +119,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         // Center the divider between the filter tree and the filtered list
         profileListPane.setDividerLocation(profileListPane.getHeight() / 2);
 
-        setVisible(true);
-
         int temp = DBHPInterface.getBirthdaysThisMonth().size();
         if (temp > 0) {
             if (temp > 1)
@@ -128,6 +126,8 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             else
                 this.sysTrayMessage("Birthday Notice", "You have 1 contact with a Birthday this Month!", TrayIcon.MessageType.INFO);
         }
+
+        this.setVisible(true);
     }
     /** Creates and sets up the SystemTray Icon if the function is supported.
      * Creats the System tray icon adding in any necessary parts to it provided
@@ -743,6 +743,11 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
         java.sql.Date dateObject = java.sql.Date.valueOf(dateString);
         return format.format(dateObject);
+    }
+    public void updateFilterTree() {
+        this.filterListPanel.removeAll();
+        this.filterListPanel.add(this.getFilterListTree());
+        this.updateWindow();
     }
     /**
      * Sets the state of the editing flag so the program knows if it's being
@@ -2208,10 +2213,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             if (this.currentPerson != null && !this.editing) {
                 String personName = currentPerson.getLastName() + ", " + currentPerson.getFirstName();
 
-                java.awt.Toolkit defaultToolkit = java.awt.Toolkit.getDefaultToolkit();
-                boolean numLockOn = defaultToolkit.getLockingKeyState(KeyEvent.VK_NUM_LOCK);
-
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT || (!numLockOn && (e.getKeyCode() == KeyEvent.VK_NUMPAD6))) {
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     ArrayList<KeyValue> listOfPeople = DBHPInterface.getListOfPeopleByLastName();
                     int nextPerson = listOfPeople.indexOf(new KeyValue(0, personName)) + 1;
 
@@ -2223,7 +2225,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                     } catch (Exception exc) { }
                 }
 
-                if (e.getKeyCode() == KeyEvent.VK_LEFT || (!numLockOn && (e.getKeyCode() == KeyEvent.VK_NUMPAD4))) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     ArrayList<KeyValue> listOfPeople = DBHPInterface.getListOfPeopleByLastName();
                     int previousPerson = listOfPeople.indexOf(new KeyValue(0, personName)) - 1;
 

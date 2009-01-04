@@ -204,16 +204,21 @@ public class AddressBox extends JDialog implements ActionListener {
         AbstractButton pressedButton = (AbstractButton)event.getSource();
         if (pressedButton == btnSave) {
             if (actionText.equals("Edit")) {
-                // Not implemented yet
+                p.removeAddress(address.getAddressID());
+                addAddress();
             }
             else {
                 // Need to Check for Required Parts first ...
                 // Add New Address for Person
-                if (addAddress())
+                if (addAddress()) {
                     Debug.print("Address Successfully Added");
+
+                }
                 else
                     Debug.print("Error Adding Address for ID "+p.getPersonID());
             }
+            owner.showProfile(owner.getCurrentPerson());
+            owner.updateFilterTree();
             this.dispose();
         }
         else

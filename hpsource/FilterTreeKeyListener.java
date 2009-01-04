@@ -17,10 +17,10 @@ public class FilterTreeKeyListener implements KeyListener {
     public void keyTyped(KeyEvent e) { }
 
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT || (Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_NUM_LOCK) && (e.getKeyCode() == KeyEvent.VK_NUMPAD6)))
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT)
             e.consume();
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT || (Toolkit.getDefaultToolkit().getLockingKeyState(KeyEvent.VK_NUM_LOCK) && (e.getKeyCode() == KeyEvent.VK_NUMPAD4)))
+        if (e.getKeyCode() == KeyEvent.VK_LEFT)
             e.consume();
     }
 
