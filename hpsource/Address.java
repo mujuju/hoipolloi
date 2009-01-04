@@ -6,7 +6,7 @@ package hoipolloi;
  * Country, District and Type (Residential, Billing, Mailing etc).
  *
  * @author  Brandon Tanner
- * @version 1.4 Jan 4, 2009
+ * @version 1.4a Jan 4, 2009
  * @since   December 12, 2006
  */
 public class Address {
@@ -164,6 +164,15 @@ public class Address {
         url += "&state="+state;
         url += "&zip="+zip;
         return url;
+    }
+
+    /**
+     * Gets the World Time Clock URL.
+     * 
+     * @return
+     */
+    public String getWorldTimeURL() {
+        return "http://www.timeanddate.com/worldclock/results.html?query="+this.city;
     }
 
     public void setAddressID(int aid) {

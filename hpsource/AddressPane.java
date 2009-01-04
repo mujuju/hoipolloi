@@ -10,7 +10,7 @@ import java.awt.event.*;
  * and do actions like edit and delete.
  *
  * @author  Brandon Tanner
- * @version 1.1 (Jan 4, 2009)
+ * @version 1.1a (Jan 4, 2009)
  * @since   December 28, 2008
  */
 public class AddressPane extends JTabbedPane implements MouseListener, ActionListener {
@@ -53,8 +53,11 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
             googleMaps.addActionListener(this);
             JMenuItem mapquest   = new JMenuItem("Mapquest");
             mapquest.addActionListener(this);
+            JMenuItem localTime = new JMenuItem("Local Time");
+            localTime.addActionListener(this);
             rightClickMenu.add(googleMaps);
             rightClickMenu.add(mapquest);
+            rightClickMenu.add(localTime);
         }
     }
 
@@ -111,6 +114,16 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
                 AddressPanel panel = (AddressPanel)(this.getSelectedComponent());
                 String mapquestURL = panel.getAddress().getMapquestURL();
                 BrowserLauncher.openURL(mapquestURL);
+            }
+            catch (Exception exc) {
+                Debug.print(exc.getMessage());
+            }
+        }
+        else if ("Local Time".equals(sourceText)) {
+            try {
+                AddressPanel panel = (AddressPanel)(this.getSelectedComponent());
+                String timeURL = panel.getAddress().getWorldTimeURL();
+                BrowserLauncher.openURL(timeURL);
             }
             catch (Exception exc) {
                 Debug.print(exc.getMessage());
