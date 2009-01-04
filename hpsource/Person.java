@@ -9,7 +9,7 @@ import java.util.regex.*;
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99t Dec 1, 2008
+ * @version 0.99u Jan 4, 2009
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -1153,20 +1153,6 @@ public class Person implements Comparable {
         cols.add("Nick Name");
         
         return cols;
-    }
-    
-    /** 
-     * Used for testing and debugging methods in this class.
-     * @param args Not Used
-     */
-    public static void main(String[] args) {
-        Debug.turnOn();
-        try {
-            // do some stuff
-        }
-        catch (Exception e) {
-            Debug.print(e.getMessage());
-        }
     }
     
 }
