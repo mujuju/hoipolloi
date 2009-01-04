@@ -2,8 +2,6 @@ package hoipolloi;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.*;
-import java.awt.*;
 
 /**
  * A JTabbedPane for Addresses.
@@ -12,7 +10,7 @@ import java.awt.*;
  * and do actions like edit and delete.
  *
  * @author  Brandon Tanner
- * @version 1.0 (Dec 28, 2008)
+ * @version 1.1 (Jan 4, 2009)
  * @since   December 28, 2008
  */
 public class AddressPane extends JTabbedPane implements MouseListener, ActionListener {
@@ -26,14 +24,9 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
         super();
         this.addMouseListener(this);
         
-        // If the person has any addresses, show all popup menu items.
-        if (p.hasAddresses()) {
-            this.buildRightClickMenu(true);
-        }
-        else {
-            // Show only Add option in popup menu.
-            this.buildRightClickMenu(false);
-        }
+        // If the person has any addresses, show all popup menu items,
+        // otherwise, show only the Add menu item.
+        this.buildRightClickMenu(p.hasAddresses());
         
         this.p = p;
         this.owner = owner;
@@ -85,23 +78,23 @@ public class AddressPane extends JTabbedPane implements MouseListener, ActionLis
         String sourceText = source.getText();
         Debug.print(sourceText);
 
-        if (sourceText.equals("Add")) {
+        if ("Add".equals(sourceText)) {
             new AddressBox(owner, p);
         }
-        else if (sourceText.equals("Edit")) {
+        else if ("Edit".equals(sourceText)) {
             try {
                 AddressPanel panel = (AddressPanel)(this.getSelectedComponent());
                 new AddressBox(owner, p, panel.getAddress());
             } catch (Exception exc) { Debug.print("No address to edit!"); }
         }
-        else if (sourceText.equals("Delete")) {
+        else if ("Delete".equals(sourceText)) {
             try {
                 AddressPanel panel = (AddressPanel)(this.getSelectedComponent());
                 p.removeAddress(panel.getAddress().getAddressID());
                 owner.showProfile(p);
             } catch (Exception exc) { Debug.print("No address to delete!"); }
         }
-        else if (sourceText.equals("Google Maps")) {
+        else if ("Google Maps".equals(sourceText)) {
             Debug.print("GMs PopmenuItem Fired");
             try {
                 AddressPanel panel = (AddressPanel)(this.getSelectedComponent());

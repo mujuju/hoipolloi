@@ -2,7 +2,6 @@ package hoipolloi;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 /**
  * A panel that displays individual components to an Address.

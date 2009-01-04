@@ -9,7 +9,7 @@ import java.util.regex.*;
  * The Person Class stores people objects and has methods to send and retrieve their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99u Jan 4, 2009
+ * @version 0.99v Jan 4, 2009
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -816,6 +816,52 @@ public class Person implements Comparable {
      */
     public int getCurrentAge() {
         return DBHPInterface.getAge(this.birthday);
+    }
+
+    /**
+     * Updates an address.
+     *
+     * @param addressID  The Address ID Number of the existing address to update.
+     * @param newAddress The new address to replace the old one.
+     * @return           True if successful, false if not.
+     */
+    protected boolean updateAddress(int addressID, Address newAddress) {
+        if (this.personID < 1) {
+            Debug.print("Error: Person ID is less than 1 somehow.");
+            return false;
+        }
+        else if (addressID < 1) {
+            Debug.print("Parameter addressID is less than 1.");
+            return false;
+        }
+        else if (newAddress.isEmpty()) {
+            Debug.print("Parameter newAddress contains no useful information");
+            return false;
+        }
+        else {
+            DBConnection db = new DBConnection();
+            try {
+                setLastUpdate();
+                Statement stmt  = db.getDBStatement();
+                stmt.executeUpdate("UPDATE pmp_addresses SET adrAddressLabel = \""+newAddress.getAddressLabel()+"\", adrAddressTypeID = \""+newAddress.getAddressType().getKey()+"\", adrAddressLine1 = \""+newAddress.getAddressLine1()+"\", adrAddressLine2 = \""+newAddress.getAddressLine2()+"\", adrAddressLine3 = \""+newAddress.getAddressLine3()+"\", adrCity = \""+newAddress.getAddressCity()+"\", adrState = \""+newAddress.getAddressState()+"\", adrZip = \""+newAddress.getAddressZip()+"\", adrCountryID = \""+newAddress.getAddressCountry().getKey()+"\", adrDistrict = \""+newAddress.getAddressDistrict()+"\" WHERE (adrAddressID = \""+addressID+"\")");
+
+                // Reload Addresses from Database into this Object
+                loadAddressesFromDB();
+
+                // Somehow call something to refresh address pane.
+
+                return true;
+            }
+            catch (Exception e) {
+                Debug.print("Update Address Failed.");
+                Debug.print(e.getMessage());
+                return false;
+            }
+            finally {
+                // Close the Connection to the Database
+                db.closeConnection();
+            }
+        }
     }
     
     /**

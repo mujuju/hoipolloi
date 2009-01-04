@@ -6,7 +6,7 @@ package hoipolloi;
  * Country, District and Type (Residential, Billing, Mailing etc).
  *
  * @author  Brandon Tanner
- * @version 1.3 Jan 3, 2009
+ * @version 1.4 Jan 4, 2009
  * @since   December 12, 2006
  */
 public class Address {
@@ -39,7 +39,19 @@ public class Address {
     }
     
     /**
+     * Checks to see if this Address is empty (contains no information).
+     * 
+     * @return True if this Address contains no useful information, false otherwise.
+     */
+    public boolean isEmpty() {
+        // Need to think about how to implement this first.
+        return false;
+    }
+
+    /**
      * Checks if all the required parts of this Address are filled.
+     *
+     * This method is not implemented. Plans to do so are uncertain.
      * 
      * The minimum required parts are: 
      * Type, Line 1, City, State, Zip and Country.
@@ -48,12 +60,6 @@ public class Address {
      * @return True if all the required parts are filled, otherwise false.
      */
     public boolean areRequiredPartsFilled() {
-        /*
-        if (this.addressLine1.equals("") || this.addressLine1 == null)
-            return false;
-        else
-            return true;
-        */
         return true;
     }
     
