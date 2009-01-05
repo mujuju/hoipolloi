@@ -10,8 +10,10 @@ import javax.swing.*;
 
 /**
  * Used by CategoryBox for Drag/Drop.
+ *
+ * http://www.java-forums.org/awt-swing/3030-help-drag-drop-jlist.html
  * 
- * @author Unknown
+ * @author hardwired
  */
 public class ReportingListTransferHandler extends TransferHandler {
     DataFlavor localArrayListFlavor, serialArrayListFlavor;

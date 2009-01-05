@@ -1,28 +1,34 @@
 package hoipolloi;
-import java.util.Date;
+
 import java.util.Calendar;
-import java.text.DateFormat;
-/** Contains various functions related to a persons date of birth.
+
+/**
+ * Contains various functions related to a persons date of birth.
+ *
  * Contains various functions related to a persons date of birth, such as
  * figuring their current age, their age from a given date, if their birthday
  * is today, the date of their next birthday, days until next birthday,
  * get number of seconds left till next birthday, convert time from seconds to
  * readable format, and determine how many days in a particular month.
- * @author Brandon Buck
- * @since January 1, 2009
+ *
+ * @author  Brandon Buck
+ * @since   January 1, 2009
  * @version 1.0
  */
 public class Birthday {
+
     private static final int HOURS_IN_DAY = 24;
     private static final int MINUTES_IN_HOUR = 60;
     private static final int SECONDS_IN_MINUTE = 60;
     private static final int MILLISECONDS_IN_SECOND = 1000;
     private static final int SECONDS_IN_DAY = HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE;
     private static final int SECONDS_IN_HOUR = MINUTES_IN_HOUR * SECONDS_IN_MINUTE;
-    /** Get the age of a person as of today given their date of birth.
+    
+    /**
+     * Get the age of a person as of today given their date of birth.
      * Takes the DOB given (YYYY-MM-DD) and returns the age of the person
      * given as of today.
-     * @param dob A persons Date of Birth (YYYY-MM-DD)
+     * @param dobString A persons Date of Birth (YYYY-MM-DD)
      * @return The age of the person as of today
      */
     public static int getCurrentAge(String dobString) {
@@ -93,10 +99,11 @@ public class Birthday {
 
         return false;
     }
-    /** Deteremines the date of this persons next birthday.
-     * Given a date, determines when the next birthday
+    /** 
+     * Deteremines the date of this persons next birthday.
+     *
      * @param dobString
-     * @return
+     * @return The next birthday
      */
     public static String getNextBirthday(String dobString) {
         Calendar dob = getCalendarFromString(dobString);

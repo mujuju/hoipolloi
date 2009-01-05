@@ -8,7 +8,9 @@ import java.awt.event.ActionListener;
 /**
  * Displays a window to manage categories for a Person.
  *
- * @author  Brandon Tanner
+ * Original Code: http://www.java-forums.org/awt-swing/3030-help-drag-drop-jlist.html
+ *
+ * @author  hardwired
  * @version 0.8 (Dec 1, 2008)
  */
 public class CategoryBox extends JFrame {

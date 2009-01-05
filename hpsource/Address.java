@@ -6,7 +6,7 @@ package hoipolloi;
  * Country, District and Type (Residential, Billing, Mailing etc).
  *
  * @author  Brandon Tanner
- * @version 1.4a Jan 4, 2009
+ * @version 1.4b Jan 5, 2009
  * @since   December 12, 2006
  */
 public class Address {
@@ -169,7 +169,7 @@ public class Address {
     /**
      * Gets the World Time Clock URL.
      * 
-     * @return
+     * @return A URL to see the local time at the given city.
      */
     public String getWorldTimeURL() {
         return "http://www.timeanddate.com/worldclock/results.html?query="+this.city;

@@ -8,7 +8,7 @@ import java.sql.*;
  * A class with various static methods to interact with the database.
  *
  * @author  Brandon Tanner
- * @version 1.5a (Dec 29, 2008)
+ * @version 1.5b (Jan 5, 2009)
  * @since   December 12, 2006
  */
 public class DBHPInterface {
@@ -117,7 +117,7 @@ public class DBHPInterface {
      */
     protected static ArrayList getListOfCategories() {
         ArrayList <KeyValue> categories = new ArrayList<KeyValue>();
-        String sql = "SELECT catCategoryID, catCategoryName FROM pmp_categories";
+        String sql = "SELECT catCategoryID, catCategoryName FROM pmp_categories ORDER BY catCategoryName ASC";
         DBConnection db = new DBConnection();
         try {
             Statement stmt  = db.getDBStatement();
@@ -317,6 +317,41 @@ public class DBHPInterface {
             db.closeConnection();
         }
     }
+
+    /**
+     * Update a Category in the Hoi Polloi Database.
+     * 
+     * @param categoryID      The ID of the Category to Update.
+     * @param newCategoryText The new category text.
+     * @return                True if successful, false if not.
+     */
+    protected static boolean updateCategory(int categoryID, String newCategoryText) {
+        if (categoryID < 1) {
+            Debug.print("Parameter: categoryID of category to update is less than 1.");
+            return false;
+        }
+        else if (newCategoryText.isEmpty()) {
+            Debug.print("Parameter: newCategoryText is empty.");
+            return false;
+        }
+        else {
+            DBConnection db = new DBConnection();
+            try {
+                Statement stmt  = db.getDBStatement();
+                stmt.executeUpdate("UPDATE pmp_categories SET catCategoryName = \""+newCategoryText.trim()+"\" WHERE (catCategoryID = \""+categoryID+"\")");
+                return true;
+            }
+            catch (Exception e) {
+                Debug.print("Update Category Failed in DBHPInterface.updateCategory()");
+                Debug.print(e.getMessage());
+                return false;
+            }
+            finally {
+                // Close the Connection to the Database
+                db.closeConnection();
+            }
+        }
+    }
     
     /**
      * Removes a Category from the Database *BEWARE - SEE Notes Below*
@@ -443,7 +478,7 @@ public class DBHPInterface {
      */
     public static ArrayList getListOfDistricts() {
         ArrayList districts = new ArrayList();
-        String sql = "SELECT DISTINCT adrDistrict FROM pmp_addresses";
+        String sql = "SELECT DISTINCT adrDistrict FROM pmp_addresses ORDER BY adrDistrict ASC";
         DBConnection db = new DBConnection();
         try {
             Statement stmt  = db.getDBStatement();
@@ -492,7 +527,7 @@ public class DBHPInterface {
      */
     public static ArrayList getCitiesPeopleAreIn() {
         ArrayList <String> locations = new ArrayList<String>();
-        String sql = "SELECT DISTINCT adrCity FROM pmp_addresses WHERE (adrCity <> '') ORDER BY adrCity";
+        String sql = "SELECT DISTINCT adrCity FROM pmp_addresses WHERE (adrCity <> '') ORDER BY adrCity ASC";
         DBConnection db = new DBConnection();
         try {
             Statement stmt = db.getDBStatement();
@@ -577,6 +612,7 @@ public class DBHPInterface {
             return "WINDOWS";
         }
         else {
+            // Could be Linux, Mac OSX, Solaris, FreeBSD etc.
             return "UNIX";
         }
     }

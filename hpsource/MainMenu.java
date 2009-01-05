@@ -744,11 +744,14 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         java.sql.Date dateObject = java.sql.Date.valueOf(dateString);
         return format.format(dateObject);
     }
+
+    /** Need to Javadoc this, and what is the difference between updateFilteredList */
     public void updateFilterTree() {
         this.filterListPanel.removeAll();
         this.filterListPanel.add(this.getFilterListTree());
         this.updateWindow();
     }
+
     /**
      * Sets the state of the editing flag so the program knows if it's being
      * edited.
@@ -799,20 +802,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             lastUpdate = "Never";
         else
             lastUpdate = convertDate(lastUpdate);
-
-        ArrayList cats = person.getCategories();
-        String categories = "";
-        if (cats == null || cats.isEmpty())
-            categories = "This person isn't in any Categories!";
-        else {
-            for (int i = 0; i < cats.size(); i++) {
-                KeyValue temp = (KeyValue)(cats.get(i));
-                if (i == cats.size() - 1)
-                    categories += temp.getValue();
-                else
-                    categories += temp.getValue() + ", ";
-            }
-        }
 
         final JTextField psnPrefixBox     = new JTextField(prefix);
         final JTextField psnFirstNameBox  = new JTextField(firstName);
@@ -1053,10 +1042,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         lastUpdateLabel.setFont(bottomFont);
         lastUpdateLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
 
-        JLabel categoryLabel = new JLabel(categories);
-        categoryLabel.setFont(bottomFont);
-
-        bottomPanel.add(categoryLabel, BorderLayout.WEST);
+        bottomPanel.add(this.getCategoryPanel(), BorderLayout.WEST);
         bottomPanel.add(lastUpdateLabel, BorderLayout.EAST);
 
         // Add to Frame
@@ -1394,15 +1380,16 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         JScrollPane treeView = new JScrollPane(tree);
         return treeView;
     }
-    /** Updates the filtered list to reflect changes in the database.
+
+    /**
      * Updates the filtered list to reflect changes in the database.
      */
     public void updateFilteredList() {
         JTree filterTree = (JTree)((JViewport)filterListScrollPane.getComponent(0)).getComponent(0);
-
         setFilteredInfo(filterTree);
         
     }
+
     /** Sets the contents of the Filter list based on filter parameters from the given tree
      * Using the already selected filter settings from the filter tree, or by
      * default, showing everyone if no valid sort is selected.
@@ -1569,20 +1556,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
             lastUpdate = "Never";
         else
             lastUpdate = convertDate(lastUpdate);
-
-        ArrayList cats = person.getCategories();
-        String categories = "";
-        if (cats == null || cats.isEmpty())
-            categories = "This person isn't in any Categories!";
-        else {
-            for (int i = 0; i < cats.size(); i++) {
-                KeyValue temp = (KeyValue)(cats.get(i));
-                if (i == cats.size() - 1)
-                    categories += temp.getValue();
-                else
-                    categories += temp.getValue() + ", ";
-            }
-        }
 
         Debug.print("Done getting info for this person:");
 
@@ -1753,10 +1726,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         lastUpdateLabel.setFont(bottomFont);
         lastUpdateLabel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
 
-        CategoryLabel categoryLabel = new CategoryLabel(categories, this, this.currentPerson);
-        categoryLabel.setFont(bottomFont);
-
-        bottomPanel.add(categoryLabel, BorderLayout.WEST);
+        bottomPanel.add(this.getCategoryPanel(), BorderLayout.WEST);
         bottomPanel.add(lastUpdateLabel, BorderLayout.EAST);
 
         // Add to Frame
@@ -2259,6 +2229,35 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
      */
     public String getVersion() {
         return hpVersion;
+    }
+
+    /**
+     * Gets the Category JPanel to show at the bottom of showProfile/editProfile.
+     *
+     * @return The JPanel with Categories.
+     */
+    private JPanel getCategoryPanel() {
+        JPanel categoryPanel = new JPanel();
+        categoryPanel.add(new JLabel("Categories: "));
+        int numCategoriesIn = this.currentPerson.getCategories().size();
+        if (numCategoriesIn < 1) {
+            categoryPanel.add(new JLabel("This person isn't in any categories yet."));
+        }
+        else {
+            int counter = 1;
+            for (Object cat : this.currentPerson.getCategories()) {
+                String category = ((KeyValue)cat).getValue();
+                int cid = ((KeyValue)cat).getKey();
+                CategoryLabel cl = new CategoryLabel(category, this, this.currentPerson, cid);
+                cl.setFont(new Font("Arial", Font.PLAIN, 10));
+                categoryPanel.add(cl);
+                if (counter < numCategoriesIn) {
+                    categoryPanel.add(new JLabel(", "));
+                }
+                counter++;
+            }
+        }
+        return categoryPanel;
     }
 
     /**
