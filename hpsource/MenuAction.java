@@ -1,15 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package hoipolloi;
+
 import javax.swing.*;
 import java.awt.event.*;
+
 /**
+ * Handles most of the actionPerformed's for the MainMenu singleton.
  *
- * @author Brandon Buck
- * @since January 2, 2009
+ * @author  Brandon Buck
+ * @since   January 2, 2009
+ * @version April 13, 2009
  */
 public class MenuAction extends AbstractAction {
     private MainMenu parent;
@@ -40,6 +39,9 @@ public class MenuAction extends AbstractAction {
         }
         else if (selection.equals("Export")) {
             new Export(parent);
+        }
+        else if (selection.equals("Import")) {
+            new Import(parent);
         }
         else if (selection.equals("Clear")) {
             parent.clearWindow();
