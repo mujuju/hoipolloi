@@ -20,6 +20,8 @@ public class CategoryLabel extends JTextField implements MouseListener, KeyListe
     private Person   p;
     /** The ID of this category */
     private int categoryID;
+    /** The Right Click Popup Menu */
+    JPopupMenu rightClickMenu;
 
     /**
      * Default Constructor.
@@ -37,6 +39,7 @@ public class CategoryLabel extends JTextField implements MouseListener, KeyListe
         this.mm = mm;
         this.p = p;
         this.categoryID = categoryID;
+        this.buildRightClickMenu();
     }
 
     /** Sets this JTextField to act like a JLabel */
@@ -48,25 +51,44 @@ public class CategoryLabel extends JTextField implements MouseListener, KeyListe
     /** Sets this JTextField to act like a normal JTextField */
     private void showTextField() {
         this.setEditable(true);
+        this.setColumns(500);
+    }
+
+    private void buildRightClickMenu() {
+        this.rightClickMenu = new JPopupMenu();
+        this.rightClickMenu.add(new JMenuItem("Edit"));
+        this.rightClickMenu.add(new JMenuItem("Remove"));
+    }
+
+    private void showRightClickMenu(MouseEvent e) {
+        rightClickMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 
     public void mouseClicked(MouseEvent e) {
-        this.showTextField();
-        if (e.getClickCount() == 2) {
-            new CategoryBox(mm, p);
+        if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
+            // Edit the Category Name Itself
+            // this.showTextField();
+            this.showRightClickMenu(e);
+        }
+        
+        if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
+            // If they right click a category label, show context menu to remove it.
+            //this.showRightClickMenu(e);
         }
     }
     public void mousePressed(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+        //this.showLabel();
+    }
 
     public void keyTyped(KeyEvent e) {}
     public void keyReleased(KeyEvent e) {}
     
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            if (DBHPInterface.updateCategory(this.categoryID, this.getText())) {
+            if (DBHPInterface.updateCategory(this.categoryID, this.getText().trim())) {
                 this.mm.updateFilterTree();
                 this.mm.updateFilteredList();
                 this.mm.updateWindow();

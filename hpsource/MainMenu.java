@@ -788,11 +788,14 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         String gender     = person.getGender();
         KeyValue demonym  = person.getDemonym();
 
+        // Font to use for Labels beside TextFields
+        Font boldInfoFont = new Font("Arial", Font.BOLD, 12);
 
         String desc = person.getDescription();
-        if (desc == null || desc.equals(""))
+        if (desc == null || desc.isEmpty())
             desc = "You have not entered a description for this person yet!";
 
+        // The IF statement might be redundant since the method might already do this.
         String fileName = person.getPhotoFileName();
         if (fileName == null || fileName.equals(""))
             fileName = "pictures/unknown.jpg";
@@ -803,43 +806,61 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         else
             lastUpdate = convertDate(lastUpdate);
 
+        // Edit Person's Full Name
+        JLabel prefixLabel = new JLabel("Prefix:");
+        JLabel firstLabel  = new JLabel("First:");
+        JLabel middleLabel = new JLabel("Middle:");
+        JLabel lastLabel   = new JLabel("Last:");
+        JLabel suffixLabel = new JLabel("Suffix:");
+        prefixLabel.setFont(boldInfoFont);
+        firstLabel.setFont(boldInfoFont);
+        middleLabel.setFont(boldInfoFont);
+        lastLabel.setFont(boldInfoFont);
+        suffixLabel.setFont(boldInfoFont);
         final JTextField psnPrefixBox     = new JTextField(prefix);
         final JTextField psnFirstNameBox  = new JTextField(firstName);
         final JTextField psnMiddleNameBox = new JTextField(middleName);
         final JTextField psnLastNameBox   = new JTextField(lastName);
         final JTextField psnSuffixBox     = new JTextField(suffix);
-
-        psnPrefixBox.setColumns(5);
+        psnPrefixBox.setColumns(3);
         psnFirstNameBox.setColumns(5);
         psnMiddleNameBox.setColumns(5);
         psnLastNameBox.setColumns(5);
-        psnSuffixBox.setColumns(5);
+        psnSuffixBox.setColumns(3);
 
         JPanel namePanel = new JPanel();
         namePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        namePanel.add(prefixLabel);
         namePanel.add(psnPrefixBox);
+        namePanel.add(firstLabel);
         namePanel.add(psnFirstNameBox);
+        namePanel.add(middleLabel);
         namePanel.add(psnMiddleNameBox);
+        namePanel.add(lastLabel);
         namePanel.add(psnLastNameBox);
+        namePanel.add(suffixLabel);
         namePanel.add(psnSuffixBox);
 
-        btnUpdateProfile = new JButton("Update Profile");
-        btnDelProfile    = new JButton("Delete Profile");
+        btnUpdateProfile = new JButton("Save");
+        btnDelProfile    = new JButton("Delete");
 
         namePanel.add(btnUpdateProfile);
         namePanel.add(btnDelProfile);
 
+        // Nick Name
+        JLabel nickNameLabel = new JLabel("Nick Name:");
+        nickNameLabel.setFont(boldInfoFont);
+        final JTextField nickNameTextField = new JTextField(nickName);
+        nickNameTextField.setColumns(5);
+        JPanel nickNamePanel = new JPanel();
+        nickNamePanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        nickNamePanel.add(nickNameLabel);
+        nickNamePanel.add(nickNameTextField);
 
-        final JTextField nickLabel = new JTextField(nickName);
-        nickLabel.setColumns(5);
-
-        JPanel nickLabelPanel = new JPanel();
-        nickLabelPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        nickLabelPanel.add(nickLabel);
-
+        // What's the point of this second JPanel for the NickName???
         JPanel nickPanel = new JPanel();
         nickPanel.setLayout(new BorderLayout());
-        nickPanel.add(nickLabelPanel, BorderLayout.SOUTH);
+        nickPanel.add(nickNamePanel, BorderLayout.SOUTH);
 
         // Add Picture
         JLabel picLabel = new JLabel();
@@ -861,12 +882,8 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         descArea.setCaretPosition(desc.length());
         JScrollPane descScroller = new JScrollPane(descArea);
         descScroller.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, Color.BLACK));
-
-        //picPanel.add(descScroller, BorderLayout.CENTER);
-
-        // Add Information
-        Font boldInfoFont = new Font("Arial", Font.BOLD, 12);
-
+  
+        // Fields to the right of the Picture
         JLabel eyeLabel = new JLabel("Eye Color:");
         eyeLabel.setFont(boldInfoFont);
 
@@ -1259,7 +1276,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                     p.setMiddleName(psnMiddleNameBox.getText());
                     p.setLastName(psnLastNameBox.getText());
                     p.setSuffix(psnSuffixBox.getText());
-                    p.setNickName(nickLabel.getText());
+                    p.setNickName(nickNameTextField.getText());
                     p.setEyeColor(personEyeLabel.getText());
                     p.setHairColor(personHairLabel.getText());
                     p.setHeight(personHeightLabel.getText());
@@ -1949,6 +1966,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         final JTextField FIRST_NAME_REF = firstNameField;
         final JTextField LAST_NAME_REF = lastNameField;
         final JTextField NEWCAT_TEXT_REF = newCatField;
+        
         final JComboBox CAT_COMBO_REF = categoryBox;
         final JTextArea DESC_REF = descArea;
 
@@ -1956,8 +1974,8 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         comboBox.addItem("Select Profile Type");
         comboBox.addItem("--------------------");
         comboBox.addItem("Individual");
-        comboBox.addItem("Family");
-        comboBox.addItem("Business");
+        //comboBox.addItem("Family");
+        //comboBox.addItem("Business");
         comboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 JPanel inputPanel = INFO_PANEL_REF;
@@ -1965,7 +1983,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
                 String selected = (String)(e.getItem());
 
-                if (selected.equals("Individual")) {
+                if ("Individual".equals(selected)) {
                     inputPanel.removeAll();
                     buttonPanel.removeAll();
 
@@ -1976,15 +1994,18 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                     JComboBox catCombo = CAT_COMBO_REF;
                     catCombo.addItemListener(new ItemListener() {
                         public void itemStateChanged(ItemEvent e) {
-                            if (((String)(e.getItem())).equals("New Category"))
-                                NEWCAT_TEXT_REF.setEditable(true);
-                            else
-                                NEWCAT_TEXT_REF.setEditable(false);
+                            if (((String)(e.getItem())).equals("New Category")) {
+                                NEWCAT_TEXT_REF.setVisible(true);
+                            }
+                            else {
+                                NEWCAT_TEXT_REF.setVisible(false);
+                            }
                         }
                     });
 
                     JTextField newCatField = NEWCAT_TEXT_REF;
-                    newCatField.setEditable(false);
+                    //newCatField.setEditable(false);
+                    newCatField.setVisible(false);
 
                     JButton addButton = new JButton("Add Profile");
                     addButton.addActionListener(new ActionListener() {
@@ -2097,6 +2118,12 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                     buttonPanel.add(exitButton);
 
                     updateWindow();
+                }
+                else if ("Family".equals(selected)) {
+                    // Later Version
+                }
+                else if ("Business".equals(selected)) {
+                    // Later Version
                 }
             }
         });

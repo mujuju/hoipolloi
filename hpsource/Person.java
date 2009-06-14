@@ -1,15 +1,18 @@
 package hoipolloi;
 
-import java.sql.*;
-import java.util.*;
-import java.io.*;
-import java.util.regex.*;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.io.File;
 
 /**
- * The Person Class stores people objects and has methods to send and retrieve their information from the database.
+ * The Person Class stores people objects and has methods to send and retrieve
+ * their information from the database.
  *
  * @author  Brandon Tanner
- * @version 0.99v Jan 4, 2009
+ * @version 0.99w June 14, 2009
  * @since   November 20, 2006
  */
 public class Person implements Comparable {
@@ -548,6 +551,38 @@ public class Person implements Comparable {
      */
     public void setOccupation(String occupation) {
         this.occupation = occupation.trim();
+    }
+
+    /**
+     * Simple cheap hack to get a person's cellphone number,
+     * returning the first one it finds.
+     * @return Cell Phone Number
+     */
+    public String getCellPhone() {
+        String cellphone = "";
+        for (Contact c : this.contacts) {
+            if (c.getContactType().equals("Cell Phone")) {
+                cellphone = c.getContact();
+                break;
+            }
+        }
+        return cellphone;
+    }
+
+    /**
+     * Simple cheap hack to get a person's home phone number,
+     * returning the first one it finds.
+     * @return Home Phone Number
+     */
+    public String getHomePhone() {
+        String homePhone = "";
+        for (Contact c : this.contacts) {
+            if (c.getContactType().equals("Home Phone")) {
+                homePhone = c.getContact();
+                break;
+            }
+        }
+        return homePhone;
     }
     
     /**

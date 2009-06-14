@@ -86,7 +86,7 @@ public class DBHPInterface {
             db.closeConnection();
         }
     }
-    
+   
     /**
      * Gets a List of all people sorted by Last Name.
      *
@@ -608,13 +608,7 @@ public class DBHPInterface {
      * @return WINDOWS or UNIX.
      */
     public static String getOS() {
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            return "WINDOWS";
-        }
-        else {
-            // Could be Linux, Mac OSX, Solaris, FreeBSD etc.
-            return "UNIX";
-        }
+        return (System.getProperty("os.name").startsWith("Windows")) ? "WINDOWS" : "UNIX";
     }
     
     /**
