@@ -236,6 +236,7 @@ public class HPPictureEditor extends JDialog implements ActionListener {
                         imageLabel.setIcon(new ImageIcon(lastSelectedFile.getPath()));
                         boolean done = false;
                         while (!done) {
+                            /*
                             if (currentImage.getWidth() > parent.getWidth() && currentImage.getHeight() > parent.getHeight()) {
                                 Debug.print("Resizing...");
                                 int width = currentImage.getWidth();
@@ -269,6 +270,7 @@ public class HPPictureEditor extends JDialog implements ActionListener {
                                 resizeImage(newWidth, newHeight);
                             }
                             else
+                            */
                                 done = true;
                         }
                         
