@@ -2,6 +2,7 @@ package hoipolloi;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * JTextField that acts like a JLabel, except can be edited on the fly.
@@ -9,10 +10,10 @@ import java.awt.event.*;
  * This is only used for Categories.
  *
  * @author  Brandon Tanner
- * @version 1.0 (Jan 5, 2009)
+ * @version 1.1 (June 14, 2009)
  * @since   Jan 4, 2009
  */
-public class CategoryLabel extends JTextField implements MouseListener, KeyListener {
+public class CategoryLabel extends JTextField implements MouseListener, KeyListener, ActionListener {
 
     /** The referrence to MainMenu */
     private MainMenu mm;
@@ -20,8 +21,8 @@ public class CategoryLabel extends JTextField implements MouseListener, KeyListe
     private Person   p;
     /** The ID of this category */
     private int categoryID;
-    /** The Right Click Popup Menu */
-    JPopupMenu rightClickMenu;
+    /** The Left Click Popup Menu */
+    protected JPopupMenu leftClickMenu;
 
     /**
      * Default Constructor.
@@ -39,7 +40,7 @@ public class CategoryLabel extends JTextField implements MouseListener, KeyListe
         this.mm = mm;
         this.p = p;
         this.categoryID = categoryID;
-        this.buildRightClickMenu();
+        this.buildLeftClickMenu();
     }
 
     /** Sets this JTextField to act like a JLabel */
@@ -51,38 +52,67 @@ public class CategoryLabel extends JTextField implements MouseListener, KeyListe
     /** Sets this JTextField to act like a normal JTextField */
     private void showTextField() {
         this.setEditable(true);
-        this.setColumns(500);
     }
 
-    private void buildRightClickMenu() {
-        this.rightClickMenu = new JPopupMenu();
-        this.rightClickMenu.add(new JMenuItem("Edit"));
-        this.rightClickMenu.add(new JMenuItem("Remove"));
+    public void putPersonIntoCategory() {
+        JPanel panel = new JPanel();
+
+        ArrayList cats = DBHPInterface.getListOfCategories();
+        JComboBox catComboBox = new JComboBox();
+        catComboBox.setEditable(false);
+        for (Object foo : cats) {
+            catComboBox.addItem(foo);
+        }
+
+        panel.add(catComboBox);
+
+        int response = JOptionPane.showConfirmDialog(this.mm, panel, "Categorize "+this.p.getFirstName(), JOptionPane.OK_CANCEL_OPTION);
+        if (response == JOptionPane.OK_OPTION) {
+            // Add Person Into Category
+            KeyValue category = (KeyValue)catComboBox.getSelectedItem();
+            this.p.addCategory(category.getKey());
+            this.mm.showProfile(this.p);
+        }
     }
 
-    private void showRightClickMenu(MouseEvent e) {
-        rightClickMenu.show(e.getComponent(), e.getX(), e.getY());
+    private void buildLeftClickMenu() {
+        this.leftClickMenu = new JPopupMenu();
+
+        JMenuItem add = new JMenuItem("Add Category");
+        add.setToolTipText("Add this person to a category.");
+        add.addActionListener(this);
+
+
+        
+
+
+        JMenuItem edit = new JMenuItem("Edit Category");
+        edit.setToolTipText("Edit the Category name itself (applies globally).");
+        edit.addActionListener(this);
+
+        JMenuItem remove = new JMenuItem("Remove");
+        remove.setIcon(new ImageIcon(getClass().getClassLoader().getResource("user_edit.png")));
+        remove.setToolTipText("Remove this person from this category.");
+        remove.addActionListener(this);
+
+        this.leftClickMenu.add(add);
+        this.leftClickMenu.add(edit);
+        this.leftClickMenu.add(remove);
+    }
+
+    private void showLeftClickMenu(MouseEvent e) {
+        leftClickMenu.show(e.getComponent(), e.getX(), e.getY());
     }
 
     public void mouseClicked(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
-            // Edit the Category Name Itself
-            // this.showTextField();
-            this.showRightClickMenu(e);
-        }
-        
-        if (SwingUtilities.isRightMouseButton(e) && e.getClickCount() == 1) {
-            // If they right click a category label, show context menu to remove it.
-            //this.showRightClickMenu(e);
+            this.showLeftClickMenu(e);
         }
     }
     public void mousePressed(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {
-        //this.showLabel();
-    }
-
+    public void mouseExited(MouseEvent e) {}
     public void keyTyped(KeyEvent e) {}
     public void keyReleased(KeyEvent e) {}
     
@@ -97,6 +127,29 @@ public class CategoryLabel extends JTextField implements MouseListener, KeyListe
             // Need to call something to resize text field to fit new text
             this.p.loadFromDatabase();
             mm.showProfile(this.p); //easy hack
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.showLabel();
+        }
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        JMenuItem source = (JMenuItem)(e.getSource());
+        String sourceText = source.getText();
+
+        if ("Add Category".equals(sourceText)) {
+            // Provide way to add person to new category
+            this.putPersonIntoCategory();
+        }
+        else if ("Edit Category".equals(sourceText)) {
+            this.showTextField();
+        }
+        else if ("Remove".equals(sourceText)) {
+            // Remove Person from Category
+            this.p.removeCategory(this.categoryID);
+            this.mm.updateFilterTree();
+            this.mm.updateFilteredList();
+            this.setVisible(false);
         }
     }
 
