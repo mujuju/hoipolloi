@@ -37,6 +37,19 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
     private BufferedImage currentImage = null;
     private java.io.File lastSelectedFile = null;
     private int userID;
+
+    /**
+     *   <AMcBain> I'd store the width/height as doubles, and only lose the precision at the last possible moment.
+     *   <freeone3000> The extra half-pixels that should be there, but can't be there, arn't included in the calculation for next time.
+     *   <Pyrite> originalAspectRatio = (double) curWidth / curHeight;
+     *   <freeone3000> Okay. Now when you round to an int, subtract that int from the double to get the fractional bit. Take the fractional bit and add it to the double next time.
+     *   <freeone3000> That'll minimize round-off error to that of a double instead of that of an int. (And since you're doing floating-point math...)
+     *   <Pyrite> interesting. thanks freeone3000
+     *   <Pyrite> So like make some private memebers to hold the last fractional bits
+     *   <freeone3000> Yes.
+     */
+    private double lastFractionalBitWidth;
+    private double lastFractionalBitHeight;
     
     /**
      * Default constructor for the HPPictureEditor. This constructer sets up
@@ -211,6 +224,8 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
      * 
      * TODO: Need to implement keep aspect ratio resizing.
      * That should solve the fuzzyness after resizing a bunch.
+     *
+     * The aspect ratio of an image is its width divided by its height.
      */
     public void mouseWheelMoved(MouseWheelEvent e) {
         String message;
@@ -220,9 +235,12 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
         int curWidth = this.currentImage.getWidth();
         int curHeight = this.currentImage.getHeight();
 
+        // Original Aspect Ratio
+        double oAR = curWidth / curHeight;
+
         // 5% Increments of the Picture
-        int fivePercentWidth = (int)(.05 * curWidth);
-        int fivePercentHeight = (int)(.05 * curHeight);
+        int fivePercentWidth = (int)(.05 * curWidth * oAR);
+        int fivePercentHeight = (int)(.05 * curHeight * oAR);
 
         if (notches < 0) {
             message = "Resizing Picture to "+(curWidth+fivePercentWidth)+" x "+(curHeight+fivePercentHeight);
@@ -265,7 +283,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
                         currentImage = ImageIO.read(lastSelectedFile);
                         imageLabel.setIcon(new ImageIcon(lastSelectedFile.getPath()));
                         Debug.print("Current Size: "+currentImage.getWidth()+" x "+currentImage.getHeight());
-                        
+                        Debug.print("Original Aspect Ratio is: "+(double)currentImage.getWidth() / currentImage.getHeight());
                         boolean done = false;
                         while (!done) {
                             /*
