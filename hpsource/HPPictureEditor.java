@@ -26,7 +26,7 @@ import java.io.*;
  * @version 1.2 (March 12, 2008)
  * @since   December 18, 2007
  */
-public class HPPictureEditor extends JDialog implements ActionListener {
+public class HPPictureEditor extends JDialog implements ActionListener, MouseWheelListener {
     private MainMenu parent;
     private static final int MAX_WIDTH = 291;
     private static final int MAX_HEIGHT = 356;
@@ -108,6 +108,7 @@ public class HPPictureEditor extends JDialog implements ActionListener {
         imagePanel.setLayout(new BorderLayout());
         imagePanel.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
         imagePanel.add(BorderLayout.CENTER, imageLabel);
+        imagePanel.addMouseWheelListener(this);
         
         this.add(BorderLayout.CENTER, imagePanel);
         this.add(BorderLayout.SOUTH, buttonPanel);
@@ -195,7 +196,6 @@ public class HPPictureEditor extends JDialog implements ActionListener {
     }
 
     public void resizeImage(int newWidth, int newHeight) {
-
         Image scaledImage = currentImage.getScaledInstance(newWidth, newHeight, Image.SCALE_AREA_AVERAGING);
         BufferedImage newCurrentImage = createBlankImage(currentImage, newWidth, newHeight);
         Graphics2D g2 = newCurrentImage.createGraphics();
@@ -204,6 +204,36 @@ public class HPPictureEditor extends JDialog implements ActionListener {
         currentImage = newCurrentImage;
         imageLabel.setIcon(new ImageIcon(scaledImage));
         imageLabel.setText("");
+    }
+
+    /**
+     * Captures mouse scroll events, and resizes the picture.
+     * 
+     * TODO: Need to implement keep aspect ratio resizing.
+     * That should solve the fuzzyness after resizing a bunch.
+     */
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        String message;
+        int notches = e.getWheelRotation(); // Up is negative, down is positive.
+
+        // Get Current Width/Height of Image
+        int curWidth = this.currentImage.getWidth();
+        int curHeight = this.currentImage.getHeight();
+
+        // 5% Increments of the Picture
+        int fivePercentWidth = (int)(.05 * curWidth);
+        int fivePercentHeight = (int)(.05 * curHeight);
+
+        if (notches < 0) {
+            message = "Resizing Picture to "+(curWidth+fivePercentWidth)+" x "+(curHeight+fivePercentHeight);
+            this.resizeImage((curWidth+fivePercentWidth), (curHeight+fivePercentHeight));
+            this.resizeFrame();
+        } else {
+            message = "Resizing Picture to "+(curWidth-fivePercentWidth)+" x "+(curHeight-fivePercentHeight);
+            this.resizeImage((curWidth-fivePercentWidth), (curHeight-fivePercentHeight));
+            this.resizeFrame();
+        }
+        Debug.print(message);
     }
 
     class MenuAction extends AbstractAction {
@@ -234,6 +264,8 @@ public class HPPictureEditor extends JDialog implements ActionListener {
                         lastSelectedFile = browser.getSelectedFile();
                         currentImage = ImageIO.read(lastSelectedFile);
                         imageLabel.setIcon(new ImageIcon(lastSelectedFile.getPath()));
+                        Debug.print("Current Size: "+currentImage.getWidth()+" x "+currentImage.getHeight());
+                        
                         boolean done = false;
                         while (!done) {
                             /*
