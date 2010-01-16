@@ -28,31 +28,19 @@ import java.io.*;
  */
 public class HPPictureEditor extends JDialog implements ActionListener, MouseWheelListener {
     private MainMenu parent;
-    private static final int MAX_WIDTH = 291;
-    private static final int MAX_HEIGHT = 356;
     // Buttons
     private JButton acceptButton = new JButton("Accept");
     private JButton cancelButton = new JButton("Cancel");
     private JImageLabel imageLabel = new JImageLabel(291, 356);
+    private BufferedImage originalImage = null;
     private BufferedImage currentImage = null;
     private java.io.File lastSelectedFile = null;
     private int userID;
 
+    private double oAR;
+
     /**
-     *   <AMcBain> I'd store the width/height as doubles, and only lose the precision at the last possible moment.
-     *   <freeone3000> The extra half-pixels that should be there, but can't be there, arn't included in the calculation for next time.
-     *   <Pyrite> originalAspectRatio = (double) curWidth / curHeight;
-     *   <freeone3000> Okay. Now when you round to an int, subtract that int from the double to get the fractional bit. Take the fractional bit and add it to the double next time.
-     *   <freeone3000> That'll minimize round-off error to that of a double instead of that of an int. (And since you're doing floating-point math...)
-     *   <Pyrite> interesting. thanks freeone3000
-     *   <Pyrite> So like make some private memebers to hold the last fractional bits
-     *   <freeone3000> Yes.
-     */
-    private double lastFractionalBitWidth;
-    private double lastFractionalBitHeight;
-    
-    /**
-     * Default constructor for the HPPictureEditor. This constructer sets up
+     * Default constructor for the HPPictureEditor. This constructor sets up
      * frames and frame components for use with the editor.
      * 
      * @param parent The Frame that is HPPictureEditor belongs to.
@@ -65,86 +53,86 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
         this.setModal(true);
         this.setResizable(false);
         this.userID = uid;
-        
+
         // JMenu
             ImageIcon loadImageIcon = new ImageIcon(getClass().getClassLoader().getResource("picture.png"));
             ImageIcon resizeImageIcon = new ImageIcon(getClass().getClassLoader().getResource("shape_handles.png"));
             ImageIcon blankImageIcon = new ImageIcon(getClass().getClassLoader().getResource("blank.png"));
-            
+
             // File menu
             JMenu fileMenu = new JMenu("File");
             fileMenu.setMnemonic('F');
-                
+
             JMenuItem loadImageItem = new JMenuItem(new MenuAction("Open Picture", this));
             loadImageItem.setIcon(loadImageIcon);
             loadImageItem.setMnemonic('O');
             loadImageItem.setAccelerator(KeyStroke.getKeyStroke('O', KeyEvent.CTRL_DOWN_MASK));
-            
+
             JMenuItem disposeItem = new JMenuItem(new MenuAction("Close", this));
             disposeItem.setIcon(blankImageIcon);
             disposeItem.setAccelerator(KeyStroke.getKeyStroke('D', KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK));
             disposeItem.setMnemonic('C');
-            
+
             fileMenu.add(loadImageItem);
             fileMenu.addSeparator();
             fileMenu.add(disposeItem);
-            
+
             // Edit Menu
             JMenu editMenu = new JMenu("Edit");
             editMenu.setMnemonic('E');
-            
+
             JMenuItem resizeImageItem = new JMenuItem(new MenuAction("Resize", this));
             resizeImageItem.setIcon(resizeImageIcon);
             resizeImageItem.setMnemonic('R');
             resizeImageItem.setAccelerator(KeyStroke.getKeyStroke('R', KeyEvent.ALT_DOWN_MASK));
-                
+
             editMenu.add(resizeImageItem);
-                
+
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         this.setJMenuBar(menuBar);
         // End JMenu
-        
+
         // Component set up
         acceptButton.addActionListener(this);
         cancelButton.addActionListener(this);
         // End Component set up
-        
+
         // Frame Contents
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
         buttonPanel.add(acceptButton);
         buttonPanel.add(cancelButton);
-        
+
         JPanel imagePanel = new JPanel();
         imagePanel.setLayout(new BorderLayout());
         imagePanel.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
         imagePanel.add(BorderLayout.CENTER, imageLabel);
         imagePanel.addMouseWheelListener(this);
-        
+
         this.add(BorderLayout.CENTER, imagePanel);
         this.add(BorderLayout.SOUTH, buttonPanel);
         // End Frame Contents
-        
+
         // Frame size and location
-        
+
         this.setSize(400, 400);
         //this.pack();
-        
+
         // Set the location of the frame relative to the MainMenu
         // --CENTER--
         Point frameLocation = new Point();
-        
+
         double frameX = parent.getLocation().getX() + ((parent.getWidth() / 2) - (this.getWidth() / 2));
         double frameY = parent.getLocation().getY() + ((parent.getHeight() / 2) - (this.getHeight() / 2));
-        
+
         frameLocation.setLocation(frameX, frameY);
         this.setLocation(frameLocation);
         // --END CENTER--
         this.setVisible(true);
     }
-    
+
     /**
      * Displays the HPPictureEditor with the given owner.
      * 
@@ -154,7 +142,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
     public static void showHPPictureEditor(Frame owner, int uid) {
         new HPPictureEditor(owner, uid);
     }
-    
+
     /**
      * Handles any events that may be generated or used by this HPPictureEditor.
      * 
@@ -162,9 +150,9 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
      */
     public void actionPerformed(ActionEvent evt) {
         JButton sourceButton = (JButton)(evt.getSource());
-        
+
         if (sourceButton == acceptButton) {
-            // Use getSubimage to get an area of the original image into a new bufferedimage
+            // Use getSubimage to get an area of the original image into a new BufferedImage
             // then use ImageIO to save to disk.
             try {
                Rectangle mybox = imageLabel.getCropBounds();
@@ -183,74 +171,73 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
                 Debug.print("Error Cropping Photo:");
                 Debug.print(e.getMessage());
             }
-            
+
         } else if (sourceButton == cancelButton) {
             this.dispose();
         }
     }
-    
+
     public void resizeFrame() {
         this.pack();
-        
+
         // Set the location of the frame relative to the MainMenu
         // --CENTER--
         Point frameLocation = new Point();
-        
+
         double frameX = parent.getLocation().getX() + ((parent.getWidth() / 2) - (this.getWidth() / 2));
         double frameY = parent.getLocation().getY() + ((parent.getHeight() / 2) - (this.getHeight() / 2));
-        
+
         frameLocation.setLocation(frameX, frameY);
         this.setLocation(frameLocation);
         // --END CENTER--
     }
-    
+
     public void disposeEditor() {
         this.dispose();
     }
 
-    public void resizeImage(int newWidth, int newHeight) {
-        Image scaledImage = currentImage.getScaledInstance(newWidth, newHeight, Image.SCALE_AREA_AVERAGING);
-        BufferedImage newCurrentImage = createBlankImage(currentImage, newWidth, newHeight);
-        Graphics2D g2 = newCurrentImage.createGraphics();
-        g2.drawImage(scaledImage, 0, 0, null);
+    public void resizeImage( final int newWidth, final int newHeight) {
+        final BufferedImage newCurrentImage = createBlankImage(originalImage, newWidth, newHeight);
+        final Graphics2D g2 = newCurrentImage.createGraphics();
+        g2.drawImage(originalImage, 0, 0, newWidth, newHeight, 0, 0, originalImage.getWidth(), originalImage.getHeight(), null );
         g2.dispose();
         currentImage = newCurrentImage;
-        imageLabel.setIcon(new ImageIcon(scaledImage));
+        imageLabel.setIcon(new ImageIcon(currentImage));
         imageLabel.setText("");
     }
 
     /**
      * Captures mouse scroll events, and resizes the picture.
-     * 
-     * TODO: Need to implement keep aspect ratio resizing.
-     * That should solve the fuzzyness after resizing a bunch.
      *
      * The aspect ratio of an image is its width divided by its height.
      */
     public void mouseWheelMoved(MouseWheelEvent e) {
         String message;
-        int notches = e.getWheelRotation(); // Up is negative, down is positive.
 
-        // Get Current Width/Height of Image
-        int curWidth = this.currentImage.getWidth();
-        int curHeight = this.currentImage.getHeight();
-
-        // Original Aspect Ratio
-        double oAR = curWidth / curHeight;
-
-        // 5% Increments of the Picture
-        int fivePercentWidth = (int)(.05 * curWidth * oAR);
-        int fivePercentHeight = (int)(.05 * curHeight * oAR);
-
-        if (notches < 0) {
-            message = "Resizing Picture to "+(curWidth+fivePercentWidth)+" x "+(curHeight+fivePercentHeight);
-            this.resizeImage((curWidth+fivePercentWidth), (curHeight+fivePercentHeight));
-            this.resizeFrame();
-        } else {
-            message = "Resizing Picture to "+(curWidth-fivePercentWidth)+" x "+(curHeight-fivePercentHeight);
-            this.resizeImage((curWidth-fivePercentWidth), (curHeight-fivePercentHeight));
-            this.resizeFrame();
+        if( currentImage == null )
+        {
+          message = "No image to resize yet.";
         }
+        else
+        {
+          final boolean  bWheelUp = ( e.getWheelRotation() < 0 ); // Up is negative, down is positive.
+
+          // Get Current Width/Height of Image
+          final int curWidth = this.currentImage.getWidth();
+          final int curHeight = this.currentImage.getHeight();
+
+          // 5% Increments of the Picture
+          final int fivePercentWidth = (int)(.05 * curWidth * oAR);
+          final int fivePercentHeight = (int)(.05 * curHeight * oAR);
+
+          final int newWidth = curWidth + fivePercentWidth * ( bWheelUp ? 1 : -1 );
+          final int newHeight = curHeight + fivePercentHeight * ( bWheelUp ? 1 : -1 );;
+
+          message = "Resizing Picture to " + newWidth + " x " + newHeight;
+          this.resizeImage(newWidth, newHeight);
+          this.resizeFrame();
+        }
+
         Debug.print(message);
     }
 
@@ -263,7 +250,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
 
         public void actionPerformed(ActionEvent evt) {
             String selection = (String)getValue(Action.NAME);
-            
+
             if (selection.equals("Open Picture")) {
                 JFileChooser browser = new JFileChooser();
                 browser.setFileFilter(new ImageFileFilter());
@@ -271,59 +258,22 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
                 ImagePreview preview = new ImagePreview(browser);
                 browser.addPropertyChangeListener(preview);
                 browser.setAccessory(preview);
-                
+
                 if (lastSelectedFile != null)
                     browser.setSelectedFile(lastSelectedFile);
-                
+
                 int browserSelection = browser.showDialog(parent, "Open");
-            
+
                 if (browserSelection == JFileChooser.APPROVE_OPTION) {
                     try {
                         lastSelectedFile = browser.getSelectedFile();
-                        currentImage = ImageIO.read(lastSelectedFile);
+                        originalImage = ImageIO.read(lastSelectedFile);
+                        currentImage = originalImage;
+                        oAR = originalImage.getWidth() / originalImage.getHeight();
                         imageLabel.setIcon(new ImageIcon(lastSelectedFile.getPath()));
-                        Debug.print("Current Size: "+currentImage.getWidth()+" x "+currentImage.getHeight());
-                        Debug.print("Original Aspect Ratio is: "+(double)currentImage.getWidth() / currentImage.getHeight());
-                        boolean done = false;
-                        while (!done) {
-                            /*
-                            if (currentImage.getWidth() > parent.getWidth() && currentImage.getHeight() > parent.getHeight()) {
-                                Debug.print("Resizing...");
-                                int width = currentImage.getWidth();
-                                int height = currentImage.getHeight();
+                        Debug.print("Current Size: "+originalImage.getWidth()+" x "+originalImage.getHeight());
+                        Debug.print("Original Aspect Ratio is: "+(double)originalImage.getWidth() / originalImage.getHeight());
 
-                                int maxSide = Math.max(width, height);
-
-                                double scale = (double)(parent.getHeight() - 40) / maxSide;
-
-                                int newWidth = (int)(scale * width);
-                                int newHeight = (int)(scale * height);
-
-                                resizeImage(newWidth, newHeight);
-
-                                Debug.print("Done resizing: resized by " + scale);
-                            }
-                            else if (currentImage.getWidth() > parent.getWidth()) {
-                                double scale = (double)(parent.getWidth() - 20) / currentImage.getWidth();
-
-                                int newWidth = (int)(scale * currentImage.getWidth());
-                                int newHeight = (int)(scale * currentImage.getHeight());
-
-                                resizeImage(newWidth, newHeight);
-                            }
-                            else if (currentImage.getHeight() > parent.getHeight()) {
-                                double scale = (double)(parent.getHeight() - 20) / currentImage.getHeight();
-
-                                int newWidth = (int)(scale * currentImage.getWidth());
-                                int newHeight = (int)(scale * currentImage.getHeight());
-
-                                resizeImage(newWidth, newHeight);
-                            }
-                            else
-                            */
-                                done = true;
-                        }
-                        
                         resizeFrame();
                     } catch(java.io.IOException exc) {
                         Debug.print("ERROR: Problem reading file in.");
@@ -338,7 +288,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
             }
         }
     }
-    
+
     public static BufferedImage createBlankImage(BufferedImage src, int w, int h) {
         int type = src.getType();
         if (type != BufferedImage.TYPE_CUSTOM)
@@ -350,10 +300,10 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
             return new BufferedImage(cm, raster, isRasterPremultiplied, null);
         }
     }
-    
+
     class ImageFileFilter extends javax.swing.filechooser.FileFilter {
         public ImageFileFilter() { super(); }
-        
+
         public boolean accept(java.io.File file) {
             String filePath = file.getPath();
             String fileType = "";
@@ -365,16 +315,16 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
             }
             //Debug.print("fileType: " + fileType);
             boolean answer = false;
-            
+
             if (fileType.equalsIgnoreCase(".jpg") ||
                     fileType.equalsIgnoreCase(".jpeg") || 
                     fileType.equalsIgnoreCase(".gif") || 
                     fileType.equalsIgnoreCase(".png") || file.isDirectory())
                 answer = true;
-            
+
             return answer;
         }
-                
+
         public String getDescription() {
             return "Picture files (JPG, JPEG, PNG, GIF)";
         }
@@ -398,7 +348,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
             Dimension sz = new Dimension(200,200);
             setPreferredSize(sz);
         }
-        
+
         public void propertyChange(PropertyChangeEvent evt) {
             try {
                 //Debug.print("Updating.");
@@ -408,21 +358,21 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
                     Debug.print(ex.getMessage());
             }
         }
-        
+
         public void updateImage(java.io.File file) throws java.io.IOException {
             if(file == null) {
                 return;
             }
-            
+
             img = ImageIO.read(file);
             repaint();
         }
-        
+
         public void paintComponent(Graphics g) {
             // fill the background
             g.setColor(Color.GRAY);
             g.fillRect(0, 0, getWidth(), getHeight());
-        
+
             if(img != null) {
                 // calculate the scaling factor
                 int imgW = img.getWidth(null);
@@ -434,7 +384,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
 
                 // draw the image
                 g.drawImage(img, 0, 0, w, h, null);
-                
+
                 // draw the image dimensions
                 String dim = imgW + " x " + imgH;
                 g.setColor(Color.BLACK);
@@ -454,7 +404,6 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
 
         private JRadioButton setSizeRadio;
         private JRadioButton byPercentageRadio;
-        private JTextField percentageField;
         private JCheckBox constraintsBox;
         private JTextField newHeightField;
         private JTextField newWidthField;
@@ -515,7 +464,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
             widthTextPanel.add(constraintWidthLabel);
             JPanel widthPanel = new JPanel();
             widthPanel.add(widthTextPanel);
-            
+
             JPanel heightTextPanel = new JPanel();
             heightTextPanel.add(heightLabel);
             heightTextPanel.add(newHeightField);
@@ -525,7 +474,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
 
             JPanel constraintPanel = new JPanel();
             constraintPanel.add(constraintsBox);
-            
+
             JPanel bySizePanel = new JPanel();
             bySizePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "By Size"));
             bySizePanel.setLayout(new BorderLayout());
