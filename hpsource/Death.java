@@ -1,6 +1,7 @@
 package hoipolloi;
 
 import java.sql.*;
+import java.io.File;
 
 /**
  * A genocide class to delete things from the Hoi Polloi database.
@@ -21,7 +22,7 @@ public class Death {
      * 
      * This method removes the Person's addresses, contacts, 
      * category links, contacts and finally the person itself.
-     * 
+     *
      * @param person The Person to Purge.
      * @return       True if successful, false otherwise.
      */
@@ -34,6 +35,12 @@ public class Death {
             stmt.executeUpdate("DELETE FROM pmp_categorylink WHERE (clkPersonID = \""+personID+"\")");
             stmt.executeUpdate("DELETE FROM pmp_contacts WHERE (ctnPersonID = \""+personID+"\")");
             stmt.executeUpdate("DELETE FROM pmp_people WHERE (psnPersonID = \""+personID+"\")");
+            File outputFile = new File("pictures/"+personID+".jpg");
+            if (outputFile.exists()) {
+                if (!outputFile.delete()) {
+                    Debug.print("Failed to Delete Profile Photo");
+                }
+            }
             return true;
         }
         catch (Exception e) {

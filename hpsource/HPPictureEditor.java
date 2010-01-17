@@ -24,7 +24,7 @@ import java.io.*;
  * @author  Brandon Buck
  * @author  Brandon Tanner
  * @author  Sam Harrison
- * @version 1.3 (Jan 17, 2010)
+ * @version 1.4 (Jan 17, 2010)
  * @since   December 18, 2007
  */
 public class HPPictureEditor extends JDialog implements ActionListener, MouseWheelListener {
@@ -38,7 +38,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
     private java.io.File lastSelectedFile = null;
     private int userID;
 
-    /** Original Aspect Ratio (oAR) */
+    /** The Original Aspect Ratio (oAR) of the Photo being Cropped. */
     protected double oAR;
 
     /**
@@ -59,8 +59,8 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
 
         // JMenu
         ImageIcon loadImageIcon = new ImageIcon(getClass().getClassLoader().getResource("picture.png"));
-        ImageIcon resizeImageIcon = new ImageIcon(getClass().getClassLoader().getResource("shape_handles.png"));
-        ImageIcon blankImageIcon = new ImageIcon(getClass().getClassLoader().getResource("blank.png"));
+        ImageIcon resetImageIcon = new ImageIcon(getClass().getClassLoader().getResource("bomb.png"));
+        ImageIcon closeImageIcon = new ImageIcon(getClass().getClassLoader().getResource("blank.png"));
 
         // File menu
         JMenu fileMenu = new JMenu("File");
@@ -71,29 +71,24 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
         loadImageItem.setMnemonic('O');
         loadImageItem.setAccelerator(KeyStroke.getKeyStroke('O', KeyEvent.CTRL_DOWN_MASK));
 
+        JMenuItem resetImageItem = new JMenuItem(new MenuAction("Reset", this));
+        resetImageItem.setIcon(resetImageIcon);
+        resetImageItem.setAccelerator(KeyStroke.getKeyStroke('R', KeyEvent.CTRL_DOWN_MASK));
+        resetImageItem.setMnemonic('R');
+
         JMenuItem disposeItem = new JMenuItem(new MenuAction("Close", this));
-        disposeItem.setIcon(blankImageIcon);
+        disposeItem.setIcon(closeImageIcon);
         disposeItem.setAccelerator(KeyStroke.getKeyStroke('D', KeyEvent.CTRL_DOWN_MASK + KeyEvent.ALT_DOWN_MASK));
         disposeItem.setMnemonic('C');
 
         fileMenu.add(loadImageItem);
+        fileMenu.add(resetImageItem);
         fileMenu.addSeparator();
         fileMenu.add(disposeItem);
-
-        // Edit Menu
-        JMenu editMenu = new JMenu("Edit");
-        editMenu.setMnemonic('E');
-
-        JMenuItem resizeImageItem = new JMenuItem(new MenuAction("Resize", this));
-        resizeImageItem.setIcon(resizeImageIcon);
-        resizeImageItem.setMnemonic('R');
-        resizeImageItem.setAccelerator(KeyStroke.getKeyStroke('R', KeyEvent.ALT_DOWN_MASK));
-
-        editMenu.add(resizeImageItem);
-
+        
+        // Setup Main Menu Bar
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
-        menuBar.add(editMenu);
         this.setJMenuBar(menuBar);
         // End JMenu
 
@@ -119,20 +114,17 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
         // End Frame Contents
 
         // Frame size and location
-
         this.setSize(400, 400);
-        //this.pack();
 
         // Set the location of the frame relative to the MainMenu
         // --CENTER--
         Point frameLocation = new Point();
-
         double frameX = parent.getLocation().getX() + ((parent.getWidth() / 2) - (this.getWidth() / 2));
         double frameY = parent.getLocation().getY() + ((parent.getHeight() / 2) - (this.getHeight() / 2));
-
         frameLocation.setLocation(frameX, frameY);
         this.setLocation(frameLocation);
         // --END CENTER--
+        
         this.setVisible(true);
     }
 
@@ -199,6 +191,20 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
     /** Closed the picture editor window. */
     public void disposeEditor() {
         this.dispose();
+    }
+
+    /** Deletes a current profile photo if it exists. */
+    public void resetImage() {
+        // Delete Image from Disk
+        File outputFile = new File("pictures/"+this.userID+".jpg");
+        if (outputFile.exists()) {
+            if (!outputFile.delete()) {
+                Debug.print("Failed to Delete Current Image File");
+            }
+        }
+        parent.showProfile(parent.getCurrentPerson());
+        // Dispose of Editor Window
+        disposeEditor();
     }
 
     /**
@@ -291,8 +297,8 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
             else if (selection.equals("Close")) {
                 disposeEditor();
             }
-            else if (selection.equals("Resize")) {
-                new ResizeDialog(parent);
+            else if (selection.equals("Reset")) {
+                resetImage();
             }
         }
     }
@@ -321,7 +327,6 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
                 else
                     return false;
             }
-            //Debug.print("fileType: " + fileType);
             boolean answer = false;
 
             if (fileType.equalsIgnoreCase(".jpg") ||
@@ -337,6 +342,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
             return "Picture files (JPG, JPEG, PNG, GIF)";
         }
     }
+
     /**
      * Following code is Hack #31 from "Swing Hacks" by Chris Adamson and
      * Joshua Marinacci. Minor edits include making the classes internal instead
@@ -407,6 +413,7 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
         }
     }
 
+    /** Unused now? */
     class ResizeDialog extends JDialog implements ActionListener{
         private HPPictureEditor parent;
 
