@@ -2004,8 +2004,6 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
                     });
 
                     JTextField newCatField = NEWCAT_TEXT_REF;
-                    //newCatField.setEditable(false);
-                    newCatField.setVisible(false);
 
                     JButton addButton = new JButton("Add Profile");
                     addButton.addActionListener(new ActionListener() {
