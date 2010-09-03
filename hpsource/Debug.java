@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class Debug  {
     /** Holds the state of this object */
     private static boolean  on = false;
+    private static ArrayList<TimerKey> timerList = new ArrayList<TimerKey>();
     
     /** Creates a new instance of Debug */
     public Debug() {}
@@ -68,5 +69,45 @@ public class Debug  {
         else {
             Debug.print("There is nothing to Print.");
         }
+    }
+
+    public static void startTimer(String key) {
+        if (on)
+            timerList.add(new TimerKey(System.currentTimeMillis(), key));
+    }
+
+    public static void endTimer(String key) {
+        if (on) {
+            TimerKey temp = timerList.remove(timerList.indexOf(new TimerKey(0, key)));
+            long diff = System.currentTimeMillis() - temp.getTime();
+
+            System.out.println("Time Elapsed (" + temp.getKey() + "): " + diff + " ms");
+        }
+    }
+
+    static class TimerKey {
+        private long time;
+        private String key;
+        public TimerKey(long time, String key) {
+            this.time = time;
+            this.key = key;
+        }
+
+        public long getTime() {
+            return this.time;
+        }
+
+        public String getKey() {
+            return this.key;
+        }
+
+        public boolean equals(Object o) {
+            TimerKey other = (TimerKey)o;
+            if (other.getKey().equals(this.key))
+                return true;
+
+            return false;
+        }
+
     }
 }
