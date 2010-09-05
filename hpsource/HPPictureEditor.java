@@ -153,9 +153,9 @@ public class HPPictureEditor extends JDialog implements ActionListener, MouseWhe
                Rectangle mybox = imageLabel.getCropBounds();
                int topLeftX = (int)mybox.getX();
                int topLeftY = (int)mybox.getY();
-               BufferedImage outimage = currentImage.getSubimage(topLeftX, topLeftY, 291, 356);
+               BufferedImage outimage = currentImage.getSubimage(topLeftX + 1, topLeftY + 1, 289, 354); // Added 1 to the X and the Y to get the image within the outline
                // Save the new Picture to Disk
-               File outputFile = new File("pictures/"+this.userID+".jpg");
+               File outputFile = new File("pictures/" + this.userID + ".jpg");
                ImageIO.write(outimage, "JPG", outputFile);
                // Update the Main Window
                parent.showProfile(parent.getCurrentPerson());

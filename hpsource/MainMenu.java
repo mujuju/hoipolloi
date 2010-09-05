@@ -25,7 +25,8 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
 
     // Data members for the JFrame
     private JPanel contentPane;
-    private JSplitPane profileListPane;
+    //private JSplitPane profileListPane;
+    private JPanel profileListPane;
     private JPanel listPane;
     private JPanel filterListPanel;
     private WatermarkPanel splitPanel;
@@ -99,7 +100,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         this.addWindowListener(new HPWindowListener(this));
         this.setJMenuBar(this.getHPMenuBar());
         this.setSize(1080, 600);
-        this.setHPContent();
+        this.setHPLayout();
         this.initializeButtons();
         this.getContentPane().add(splitPanel);
         this.setUpTrayIcon();
@@ -117,7 +118,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         showPeopleList(DBHPInterface.getListOfPeopleByLastName());
 
         // Center the divider between the filter tree and the filtered list
-        profileListPane.setDividerLocation(profileListPane.getHeight() / 2);
+        //profileListPane.setDividerLocation(profileListPane.getHeight() / 2);
 
         int temp = DBHPInterface.getBirthdaysThisMonth().size();
         if (temp > 0) {
@@ -130,7 +131,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         this.setVisible(true);
     }
     /** Creates and sets up the SystemTray Icon if the function is supported.
-     * Creats the System tray icon adding in any necessary parts to it provided
+     * Creates the System tray icon adding in any necessary parts to it provided
      * that SystemTray.isSupported() returns true. If System Tray functionality
      * is not supported then it sets hpIconTray to null.
      *
@@ -189,7 +190,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     /** Creates the PopupMenu used by the TrayIcon and adds all the MenuItems to it.
      * Creates the PopupMenu for the TrayIcon and sets up all the menu items for
      * it, then returns the completed menu.
-     * @return Creates the popup menu for the TrayIcon to use.
+     * @return Creates the pop up menu for the TrayIcon to use.
      */
     public PopupMenu getSysTrayMenu() {
         PopupMenu popupMenu = new PopupMenu();
@@ -238,12 +239,12 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(this);
     }
-    /** Creats the panels and lays them out properly for all the visual items in Hoi Polli
-     * Creats the WatermarkPanel and adds the Cotenet and sort panes in their
+    /** Creates the panels and lays them out properly for all the visual items in Hoi Polli
+     * Creates the WatermarkPanel and adds the Content and sort panes in their
      * proper place. Also creates the split pane for the sorted list and filter
      * tree.
      */
-    private void setHPContent() {
+    private void setHPLayout() {
         contentPane = new JPanel();
         contentPane.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK));
         filterListScrollPane = this.getFilterListTree();
@@ -251,17 +252,26 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         filterListPanel = new JPanel();
         filterListPanel.setLayout(new GridLayout(1, 1));
         filterListPanel.add(filterListScrollPane);
+        filterListPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
 
         listPane = new JPanel();
         listPane.setLayout(new GridLayout(1, 1));
+        listPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
 
-        profileListPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, filterListPanel, listPane);
-        profileListPane.setOneTouchExpandable(true);
+        profileListPane = new JPanel();
+        profileListPane.setLayout(new GridLayout(2, 1));
+        profileListPane.add(filterListPanel);
+        profileListPane.add(listPane);
+        profileListPane.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, Color.BLACK));
+
+        //profileListPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, filterListPanel, listPane);
+        //profileListPane.setOneTouchExpandable(true);
 
         splitPanel = new WatermarkPanel(JSplitPane.HORIZONTAL_SPLIT, profileListPane, contentPane, "wtlogo.png");
+        splitPanel.setDividerSize(1);
         splitPanel.setDividerLocation(180);
         splitPanel.setOpaque(false);
-        splitPanel.setOneTouchExpandable(true);
+        splitPanel.setOneTouchExpandable(false);
     }
     /** Gets the menu bar for Hoi Polloi and returns it.
      * Builds the menu bar for Hoi Polloi using all the helper methods laid out
@@ -349,7 +359,14 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         searchItem.setMnemonic('e');
         searchItem.setAccelerator(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK));
 
+        JMenuItem activeSearchItem = new JMenuItem(new MenuAction("Active Search", this));
+        activeSearchItem.setIcon(searchIcon);
+        activeSearchItem.setMnemonic('A');
+        activeSearchItem.setAccelerator(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK + InputEvent.ALT_DOWN_MASK));
+
+
         searchMenu.add(searchItem);
+        searchMenu.add(activeSearchItem);
 
         return searchMenu;
     }
@@ -546,6 +563,19 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         fileMenu.add(exitItem);
 
         return fileMenu;
+    }
+    /** Pulls in a new HPSearchPanel to perform an active "as entered" text search.
+     * Uses an active search, changing the search results as you type or make
+     * changes by checking/unchecking the "Search in" boxes.
+     *
+     * Performs the same search as the Search Window, but uses mini profiles
+     * and performs it's task in the main window instead of moving the user to
+     * another window.
+     */
+    public void showActiveSearch() {
+        this.removeAllComponents();
+        contentPane.add(new HPSearchPanel(this));
+        this.updateWindow();
     }
     /** Builds this menu and then returns the completed object.
      * Loads the images used by the this menu, creates and adds all menu items
@@ -745,7 +775,7 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
         return format.format(dateObject);
     }
 
-    /** Need to Javadoc this, and what is the difference between updateFilteredList */
+    /** Need to Java Doc this, and what is the difference between updateFilteredList */
     public void updateFilterTree() {
         this.filterListPanel.removeAll();
         this.filterListPanel.add(this.getFilterListTree());
@@ -1882,8 +1912,9 @@ public class MainMenu extends JFrame implements ActionListener, KeyEventDispatch
     }
     /** Causes MainMenu and all subcomponents to repaint() */
     public void updateWindow() {
-        this.update(this.getGraphics());
-        this.setVisible(true);
+        //this.update(this.getGraphics());
+        //this.setVisible(true);
+        contentPane.updateUI();
     }
     /**
      * Gets an AddressPane showing addresses for a given person.

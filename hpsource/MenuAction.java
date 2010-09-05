@@ -81,6 +81,9 @@ public class MenuAction extends AbstractAction {
         else if (selection.equals("Synchronize")) {
             JOptionPane.showMessageDialog(parent, "Please donate a blue tooth phone or dongle!");
         }
+        else if (selection.equals("Active Search")) {
+            parent.showActiveSearch();
+        }
         else {
             deiconifyParent();
             JOptionPane.showMessageDialog(parent, "This feature will be coming in a later version!", selection.toString(), JOptionPane.INFORMATION_MESSAGE);

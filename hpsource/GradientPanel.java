@@ -116,8 +116,10 @@ public class GradientPanel extends JPanel {
         Rectangle fillArea = this.getFillArea();
         GradientPoints fillPoints = this.getGradientPoints(fillArea);
         GradientPaint gradientPaint = new GradientPaint(fillPoints.getPointOne(), this.startColor, fillPoints.getPointTwo(), this.endColor);
+        Paint oldPaint = g2.getPaint();
         g2.setPaint(gradientPaint);
         g2.fill(fillArea);
+        g2.setPaint(oldPaint);
 
     }
 
