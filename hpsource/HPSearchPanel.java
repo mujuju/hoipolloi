@@ -22,14 +22,22 @@ public class HPSearchPanel extends JPanel implements ActionListener {
     private JCheckBox contactsBox;
     private JCheckBox addressesBox;
 
-    private Search search;
+    private UpdateSearchListThread updateThread;
 
     public HPSearchPanel(MainMenu menuFrame) {
         super();
         this.menuFrame = menuFrame;
-        search = new Search();
+        this.updateThread = new UpdateSearchListThread(this);
+        this.updateThread.start();
+
         this.setLayout(new GridLayout(1, 1));
         this.add(buildPanel());
+
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                searchField.requestFocusInWindow();
+            }
+        });
     }
 
     private JPanel buildPanel() {
@@ -107,9 +115,15 @@ public class HPSearchPanel extends JPanel implements ActionListener {
         return northPanel;
     }
 
+    private JPanel getNewMiniProfilePanel() {
+        JPanel returnPanel = new JPanel();
+        returnPanel.setLayout(new BoxLayout(returnPanel, BoxLayout.Y_AXIS));
+
+        return returnPanel;
+    }
+
     private JPanel buildSouthPanel() {
-        miniProfilePanel = new JPanel();
-        miniProfilePanel.setLayout(new BoxLayout(miniProfilePanel, BoxLayout.Y_AXIS));
+        this.miniProfilePanel = getNewMiniProfilePanel();
 
         JScrollPane miniScrollPane = new JScrollPane(miniProfilePanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         miniScrollPane.getVerticalScrollBar().setUnitIncrement(30);
@@ -121,32 +135,10 @@ public class HPSearchPanel extends JPanel implements ActionListener {
         return southPanel;
     }
 
-    private void updateResults(ArrayList<KeyValue> searchResults) {
-        Debug.startTimer("update");
-        int results;
-
-        if (searchResults == null)
-            results = 0;
-        else
-            results = searchResults.size();
-        if (results == 0)
-            emptyResults();
-        else if (searchField.getText().length() > 0) {
-            miniProfilePanel.removeAll();
-            resultsTotalLabel.setText("" + results);
-            for (KeyValue kv: searchResults) {
-                try {
-                    miniProfilePanel.add(new HPMiniProfilePanel(new Person(kv.getKey()), menuFrame));
-                } catch (Exception exc) {
-                    exc.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private void emptyResults() {
+    protected void emptyResults() {
         resultsTotalLabel.setText("0");
         miniProfilePanel.removeAll();
+        miniProfilePanel.validate();
         miniProfilePanel.updateUI();
     }
 
@@ -155,67 +147,141 @@ public class HPSearchPanel extends JPanel implements ActionListener {
 
         if (source.equals(firstNameBox)) {
             if (firstNameBox.isSelected())
-                search.searchFirstName(true);
+                updateThread.getSearch().searchFirstName(true);
             else
-                search.searchFirstName(false);
+                updateThread.getSearch().searchFirstName(false);
         }
         else if (source.equals(lastNameBox)) {
             if (lastNameBox.isSelected())
-                search.searchLastName(true);
+                updateThread.getSearch().searchLastName(true);
             else
-                search.searchLastName(false);
+                updateThread.getSearch().searchLastName(false);
         }
         else if (source.equals(nickNameBox)) {
             if (nickNameBox.isSelected())
-                search.searchNickName(true);
+                updateThread.getSearch().searchNickName(true);
             else
-                search.searchNickName(false);
+                updateThread.getSearch().searchNickName(false);
         }
         else if (source.equals(descriptionBox)) {
             if (descriptionBox.isSelected())
-                search.searchDescription(true);
+                updateThread.getSearch().searchDescription(true);
             else
-                search.searchDescription(false);
+                updateThread.getSearch().searchDescription(false);
         }
         else if (source.equals(contactsBox)) {
             if (contactsBox.isSelected())
-                search.searchContacts(true);
+                updateThread.getSearch().searchContacts(true);
             else
-                search.searchContacts(false);
+                updateThread.getSearch().searchContacts(false);
         }
         else if (source.equals(addressesBox)) {
             if (addressesBox.isSelected())
-                search.searchAddresses(true);
+                updateThread.getSearch().searchAddresses(true);
             else
-                search.searchAddresses(false);
+                updateThread.getSearch().searchAddresses(false);
         }
 
-        updateResults(search.performSearch(searchField.getText()));
+        updateThread.updateResults(searchField.getText());
     }
 
-    class SearchFieldDocumentListener implements DocumentListener {
+    protected JPanel getMiniProfilPanel() {
+        return miniProfilePanel;
+    }
+
+    protected void setNumResults(int numResults) {
+        resultsTotalLabel.setText("" + numResults);
+    }
+
+    protected int getSearchFieldLength() {
+        return searchField.getText().length();
+    }
+
+    private class SearchFieldDocumentListener implements DocumentListener {
 
         public void insertUpdate(DocumentEvent e) {
-            Debug.startTimer("minisearch");
-            updateResults(search.performSearch(searchField.getText()));
-            Debug.endTimer("minisearch");
+            Debug.startTimer("minisearch-update");
+            new Thread() {
+                public void run() {
+                    updateThread.interrupt();
+                    updateThread.updateResults(searchField.getText());
+                }
+            }.start();
+            Debug.endTimer("minisearch-update");
         }
 
         public void removeUpdate(DocumentEvent e) {
-            Debug.startTimer("minisearch");
-            try {
-                if (e.getDocument().getText(0, e.getDocument().getLength()).equals(""))
-                    emptyResults();
-                else {
-                    updateResults(search.performSearch(searchField.getText()));
+            Debug.startTimer("minisearch-remove");
+            new Thread() {
+                public void run() {
+                    updateThread.interrupt();
+                    updateThread.updateResults(searchField.getText());
                 }
-            } catch (Exception exc) {
-                exc.printStackTrace();
-            }
-            Debug.endTimer("minisearch");
+            }.start();
+            Debug.endTimer("minisearch-remove");
         }
 
         public void changedUpdate(DocumentEvent e) { }
+    }
 
+    private class UpdateSearchListThread extends Thread {
+        private HPSearchPanel searchPanel;
+        private ArrayList<KeyValue> results;
+        private boolean updating;
+        private Search search;
+        
+        public UpdateSearchListThread(HPSearchPanel searchPanel) {
+            this.searchPanel = searchPanel;
+            results = new ArrayList<KeyValue>();
+            updating = false;
+            search = new Search();
+        }
+
+        public void run() {
+            try {
+                if (updating) {
+                    int resultsLength;
+                    JPanel miniPanel = searchPanel.getMiniProfilPanel();
+
+                    if (results == null)
+                        resultsLength = 0;
+                    else
+                        resultsLength = results.size();
+
+                    if (resultsLength == 0 || getSearchFieldLength() == 0)
+                        searchPanel.emptyResults();
+                    else {
+                        searchPanel.emptyResults();
+                        searchPanel.setNumResults(resultsLength);
+
+                        for (KeyValue kv: results) 
+                            miniPanel.add(new HPMiniProfilePanel(new Person(kv.getKey()), menuFrame));
+
+                        System.out.println("\n\n" + resultsLength + "\n\n");
+                        searchPanel.validate();
+                        searchPanel.updateUI();
+                        updating = false;
+                    }
+                }
+            } catch (Exception e) {
+                Debug.print(e.getMessage());
+                updating = false;
+                results = null;
+            }
+        }
+
+        private void updateResults(String query) {
+            if (updating)
+                interrupt();
+
+            results = search.performSearch(query);
+            
+            updating = true;
+            run();
+        }
+
+        public Search getSearch() {
+            return search;
+        }
     }
 }

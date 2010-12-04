@@ -42,7 +42,11 @@ public class Main {
      */
     public static void main(String[] args) {
         Debug.turnOn();
-        new MainMenu();
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new MainMenu();
+            }
+        });
     }
     
 }
